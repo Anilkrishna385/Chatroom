@@ -2,25 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Pulse Messenger — Ultimate Hybrid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Pulse Messenger — Ultimate Abstract</title>
   <style>
     :root {
-      --bg-dark: #0B1120;
-      --bg-panel: #151D30;
-      --bg-card: #1E293B;
+      --bg-dark: #090D16;
+      --bg-panel: #111827;
+      --bg-card: #1F2937;
       --primary: #6366F1;
       --primary-hover: #4F46E5;
       --accent: #38BDF8;
-      --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
+      --text-main: #F9FAFB;
+      --text-muted: #9CA3AF;
       --border: rgba(255, 255, 255, 0.08);
       --success: #10B981;
       --danger: #EF4444;
-      --shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
     }
 
-    /* Anti-Screenshot & Selection Protection */
+    /* Anti-Screenshot, Anti-Selection & Print DRM Shield */
     * { 
       box-sizing: border-box; margin: 0; padding: 0; 
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
@@ -28,52 +28,65 @@
       user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
     }
     input, textarea { user-select: text !important; -webkit-user-select: text !important; }
+    @media print { body * { display: none !important; } }
 
-    body { background: var(--bg-dark); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+    body { 
+      background: var(--bg-dark); color: var(--text-main); 
+      display: flex; justify-content: center; align-items: center; 
+      height: 100dvh; width: 100vw; overflow: hidden;
+    }
 
     /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
 
-    /* Security Privacy Blur Shield */
+    /* Security Privacy Shield (Triggers when screen recording overlay or blur occurs) */
     #privacy-shield {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(25px);
-      z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+      background: rgba(9, 13, 22, 0.98); backdrop-filter: blur(30px);
+      z-index: 999999; display: none; flex-direction: column; align-items: center; justify-content: center;
       text-align: center; padding: 24px;
     }
     #privacy-shield.active { display: flex; }
 
     /* Toast System */
-    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-    .toast { background: rgba(21, 29, 48, 0.95); color: #fff; padding: 12px 22px; border-radius: 30px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); backdrop-filter: blur(12px); animation: toastIn 0.25s ease; }
+    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { background: rgba(17, 24, 39, 0.95); color: #fff; padding: 12px 22px; border-radius: 30px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); backdrop-filter: blur(12px); animation: toastIn 0.25s ease; }
     .toast.success { border-left: 4px solid var(--success); }
     .toast.error { border-left: 4px solid var(--danger); }
     @keyframes toastIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Modal Overlay & Cards */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(10px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.2s ease; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(11, 17, 32, 0.88); backdrop-filter: blur(12px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.2s ease; }
     .modal-overlay.active { display: flex; opacity: 1; }
-    .modal-card { background: var(--bg-panel); width: 100%; max-width: 420px; border-radius: 28px; padding: 24px; border: 1px solid var(--border); box-shadow: var(--shadow); transform: scale(0.95); transition: transform 0.2s ease; max-height: 88vh; overflow-y: auto; }
+    .modal-card { background: var(--bg-panel); width: 100%; max-width: 420px; border-radius: 28px; padding: 24px; border: 1px solid var(--border); box-shadow: var(--shadow); transform: scale(0.95); transition: transform 0.2s ease; max-height: 88dvh; overflow-y: auto; }
     .modal-overlay.active .modal-card { transform: scale(1); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
     .btn-close { background: var(--bg-card); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-weight: bold; }
 
-    /* Telegram Profile Card */
-    .telegram-profile-card { text-align: center; }
-    .telegram-avatar-lg { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 12px; background: var(--bg-card); }
-    .telegram-name { font-size: 22px; font-weight: 700; color: var(--text-main); }
-    .telegram-status { font-size: 13px; margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; }
-    .telegram-status.active { color: var(--success); }
-    .telegram-status.offline { color: var(--text-muted); }
-    .telegram-handle { color: var(--accent); font-size: 14px; font-weight: 600; margin-top: 4px; }
-    .telegram-bio-box { background: var(--bg-dark); padding: 14px; border-radius: 16px; border: 1px solid var(--border); text-align: left; margin: 18px 0; font-size: 13.5px; color: var(--text-main); }
-
-    /* Photo Preview Modal */
-    .preview-image-box { width: 100%; max-height: 360px; border-radius: 18px; overflow: hidden; margin-bottom: 18px; border: 1px solid var(--border); background: #000; display: flex; align-items: center; justify-content: center; }
-    #preview-img-el { max-width: 100%; max-height: 360px; object-fit: contain; }
+    /* Full-Screen Media Lightbox (Cinema Viewer) */
+    #fullscreen-media-modal {
+      position: fixed; inset: 0; z-index: 100000; background: rgba(0, 0, 0, 0.96);
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      padding: 16px; backdrop-filter: blur(20px);
+    }
+    #fullscreen-media-modal.active { display: flex; }
+    .lightbox-header {
+      position: absolute; top: 16px; left: 16px; right: 16px;
+      display: flex; justify-content: space-between; align-items: center; z-index: 10;
+    }
+    .btn-lightbox-back {
+      background: rgba(255,255,255,0.12); color: #fff; border: 1px solid var(--border);
+      padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(8px);
+    }
+    .lightbox-content-box {
+      width: 100%; height: 85dvh; display: flex; align-items: center; justify-content: center;
+    }
+    #lightbox-img-el { max-width: 98vw; max-height: 85dvh; object-fit: contain; border-radius: 12px; display: none; }
+    #lightbox-video-el { max-width: 98vw; max-height: 85dvh; border-radius: 12px; display: none; outline: none; }
 
     /* Inputs & Buttons */
     .field-group { margin-bottom: 16px; text-align: left; }
@@ -84,25 +97,27 @@
     .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
     .btn-secondary { width: 100%; padding: 12px; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); border-radius: 14px; font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 8px; }
 
-    /* App Frame */
-    #app-shell { width: 100%; max-width: 1180px; height: 93vh; background: var(--bg-panel); border-radius: 28px; border: 1px solid var(--border); box-shadow: var(--shadow); display: flex; overflow: hidden; position: relative; }
+    /* Main App Shell */
+    #app-shell { width: 100%; max-width: 1180px; height: 94dvh; background: var(--bg-panel); border-radius: 28px; border: 1px solid var(--border); box-shadow: var(--shadow); display: flex; overflow: hidden; position: relative; }
     
     /* Left Panel */
     #sidebar-panel { width: 380px; height: 100%; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: var(--bg-panel); z-index: 10; }
-    .nav-header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+    .nav-header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .user-badge { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 6px 10px; border-radius: 16px; transition: background 0.15s; }
     .user-badge:hover { background: var(--bg-card); }
     .avatar-icon { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #1E293B; flex-shrink: 0; }
     .header-actions { display: flex; gap: 8px; }
-    .icon-btn-round { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-main); font-size: 16px; }
+    .icon-btn-round { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: all 0.15s; }
+    .icon-btn-round:hover { background: var(--primary); }
+    .icon-btn-round svg { width: 18px; height: 18px; fill: currentColor; }
 
-    /* Segmented Navigation Tabs with Unread Badges */
-    #tabs-bar { display: flex; padding: 10px 14px; border-bottom: 1px solid var(--border); gap: 8px; background: rgba(11, 17, 32, 0.4); }
+    /* Segmented Navigation Tabs */
+    #tabs-bar { display: flex; padding: 10px 14px; border-bottom: 1px solid var(--border); gap: 8px; background: rgba(11, 17, 32, 0.4); flex-shrink: 0; }
     .tab-btn { flex: 1; padding: 10px 0; border: none; background: transparent; font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-radius: 12px; position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .tab-btn.active { background: var(--primary); color: #fff; }
     .tab-pill-badge { background: var(--success); color: #000; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 10px; display: none; }
 
-    /* Conversation List & Unread Badges */
+    /* Conversation List */
     #chat-list { flex: 1; overflow-y: auto; list-style: none; }
     .list-item { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; gap: 14px; position: relative; }
     .list-item:hover { background: rgba(255, 255, 255, 0.04); }
@@ -114,33 +129,33 @@
     .item-title { font-size: 15px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .item-time { font-size: 11px; color: var(--text-muted); }
     .item-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    
     .unread-badge { background: var(--success); color: #000; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 12px; display: inline-block; flex-shrink: 0; }
 
-    /* Typing & Recording Animations */
+    /* Typing & Recording Animation */
     .status-active-text { color: var(--success) !important; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
     .typing-dots span { display: inline-block; animation: bounceDot 1.2s infinite; }
     .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
     .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes bounceDot { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-3px); } }
 
-    /* Right Main Room */
+    /* Right Main Chat Room */
     #room-panel { flex: 1; display: flex; flex-direction: column; background: var(--bg-dark); height: 100%; position: relative; overflow: hidden; }
-    #room-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); flex-shrink: 0; }
-    .peer-info { display: flex; align-items: center; gap: 14px; cursor: pointer; min-width: 0; flex: 1; }
+    #room-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); flex-shrink: 0; }
+    .peer-info { display: flex; align-items: center; gap: 12px; cursor: pointer; min-width: 0; flex: 1; }
     .peer-name { font-size: 16px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .peer-sub { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
     #back-btn { display: none; background: none; border: none; font-size: 24px; color: var(--accent); margin-right: 8px; cursor: pointer; flex-shrink: 0; }
 
-    /* Disappearing Messages & Header Actions */
+    /* Disappearing Clock Action */
     .header-right-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .disappear-clock-btn { background: var(--bg-card); border: 1px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; position: relative; transition: all 0.15s; }
+    .disappear-clock-btn { background: var(--bg-card); border: 1px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; transition: all 0.15s; }
     .disappear-clock-btn:hover { background: var(--primary); }
-    .disappear-active-indicator { position: absolute; top: -2px; right: -2px; background: var(--accent); color: #000; font-size: 9px; font-weight: 900; padding: 1px 4px; border-radius: 8px; }
+    .disappear-clock-btn svg { width: 18px; height: 18px; fill: currentColor; }
+    .disappear-active-indicator { position: absolute; top: -4px; right: -4px; background: var(--accent); color: #000; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 8px; }
 
     /* Messages Stream */
-    #messages-feed { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 14px; background: radial-gradient(circle at top right, rgba(30,41,59,0.3) 0%, rgba(11,17,32,1) 100%); }
-    .msg-bubble { max-width: 68%; padding: 12px 16px; border-radius: 20px; font-size: 14px; line-height: 1.45; position: relative; word-break: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.3); animation: bubbleIn 0.15s ease; }
+    #messages-feed { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; background: radial-gradient(circle at top right, rgba(30,41,59,0.3) 0%, rgba(11,17,32,1) 100%); }
+    .msg-bubble { max-width: 72%; padding: 12px 16px; border-radius: 20px; font-size: 14px; line-height: 1.45; position: relative; word-break: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.3); animation: bubbleIn 0.15s ease; }
     @keyframes bubbleIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .msg-me { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
     .msg-other { align-self: flex-start; background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
@@ -148,31 +163,35 @@
     .msg-sender-tag { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 6px; display: inline-block; cursor: pointer; padding: 2px 8px; border-radius: 10px; background: rgba(56, 189, 248, 0.12); }
     .msg-sender-tag:hover { background: rgba(56, 189, 248, 0.25); text-decoration: underline; }
 
-    /* Rendered Media Display */
-    .msg-img { max-width: 100%; max-height: 320px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); object-fit: cover; }
-    .msg-audio-player { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 16px; margin-top: 6px; min-width: 230px; }
+    /* Clickable Chat Media Images & Videos */
+    .msg-img { max-width: 100%; max-height: 280px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); object-fit: cover; cursor: pointer; transition: transform 0.15s; }
+    .msg-img:hover { transform: scale(1.02); }
+    .msg-video { max-width: 100%; max-height: 280px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); outline: none; background: #000; }
+    .msg-audio-player { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 16px; margin-top: 6px; min-width: 220px; }
     .msg-audio-player audio { width: 100%; height: 32px; border-radius: 8px; outline: none; }
 
-    /* Input Dock (Fixed & docked at bottom on Mobile) */
-    #room-footer { padding: 14px 20px; border-top: 1px solid var(--border); background: var(--bg-panel); display: flex; align-items: center; gap: 10px; min-height: 72px; flex-shrink: 0; width: 100%; z-index: 10; }
-    #default-input-bar { display: flex; align-items: center; gap: 10px; width: 100%; }
-    #message-input { flex: 1; padding: 13px 18px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 24px; font-size: 14px; color: #fff; outline: none; }
+    /* Input Dock — FIXED 100Dvh Mobile Docking (Fixes cutoff bug) */
+    #room-footer { 
+      padding: 12px 18px; border-top: 1px solid var(--border); background: var(--bg-panel); 
+      display: flex; align-items: center; gap: 8px; min-height: 68px; flex-shrink: 0; width: 100%; 
+      z-index: 10; padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+    #default-input-bar { display: flex; align-items: center; gap: 8px; width: 100%; }
+    #message-input { flex: 1; padding: 12px 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 24px; font-size: 14px; color: #fff; outline: none; }
     #message-input:focus { border-color: var(--primary); }
-    .dock-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-main); transition: all 0.15s; flex-shrink: 0; }
+    .dock-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: all 0.15s; flex-shrink: 0; }
     .dock-btn:hover { background: var(--primary); }
     .dock-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
     /* Interactive Voice Recording Bar Overlay */
     #recording-bar { display: none; align-items: center; justify-content: space-between; width: 100%; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 16px; border-radius: 24px; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .recording-status { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 14px; color: #fff; }
+    .recording-status { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; color: #fff; }
     .red-pulse-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--danger); animation: pulseDot 0.8s infinite; }
     @keyframes pulseDot { 0% { transform: scale(0.9); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } 100% { transform: scale(0.9); opacity: 1; } }
     .recording-actions { display: flex; align-items: center; gap: 8px; }
     .btn-cancel-record { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 18px; font-size: 13px; font-weight: 600; cursor: pointer; }
-    .btn-cancel-record:hover { background: rgba(239, 68, 68, 0.3); }
-    .btn-send-record { background: var(--primary); color: #fff; border: none; padding: 8px 18px; border-radius: 18px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-    .btn-send-record:hover { background: var(--primary-hover); }
+    .btn-send-record { background: var(--primary); color: #fff; border: none; padding: 8px 16px; border-radius: 18px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
     /* Member List Item */
     .member-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
@@ -181,13 +200,13 @@
     .status-badge.active { background: rgba(16, 185, 129, 0.2); color: var(--success); }
     .status-badge.inactive { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
 
-    /* Mobile Fixed Modal Screen Transition (Fixes input bar truncation) */
+    /* Mobile Responsive Layout — FIXED FULL-SCREEN LAYER (Fixes cutoff bug) */
     @media (max-width: 768px) {
       body { padding: 0; }
-      #app-shell { height: 100vh; border-radius: 0; border: none; }
-      #sidebar-panel { width: 100%; }
+      #app-shell { height: 100dvh; width: 100vw; border-radius: 0; border: none; }
+      #sidebar-panel { width: 100%; height: 100dvh; }
       #room-panel { 
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; 
         background: var(--bg-dark); z-index: 500; 
         transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1); 
       }
@@ -198,14 +217,14 @@
 </head>
 <body>
 
-  <!-- DRM PRIVACY & ANTI-SCREENSHOT SECURITY SHIELD -->
+  <!-- SECURITY SHIELD (Triggers on blur/screen-recording overlay) -->
   <div id="privacy-shield">
-    <div style="font-size: 48px; margin-bottom: 16px;">🛡️</div>
+    <div style="font-size: 52px; margin-bottom: 16px;">🛡️</div>
     <h2 style="font-size: 22px; margin-bottom: 8px;">Security Protection Active</h2>
     <p style="color: var(--text-muted); max-width: 320px; margin-bottom: 20px; font-size: 14px;">
-      Screenshots and screen recording are restricted on Pulse Messenger to protect message privacy.
+      Screen recording and screenshots are restricted on Pulse Messenger to protect conversation privacy.
     </p>
-    <button class="btn-primary" style="width: auto; padding: 10px 24px;" onclick="dismissPrivacyShield()">Return to App</button>
+    <button class="btn-primary" style="width: auto; padding: 10px 24px;" onclick="dismissPrivacyShield()">Return to Chat</button>
   </div>
 
   <!-- TOAST CONTAINER -->
@@ -248,6 +267,19 @@
     </div>
   </div>
 
+  <!-- FULL-SCREEN CINEMA MEDIA LIGHTBOX -->
+  <div id="fullscreen-media-modal">
+    <div class="lightbox-header">
+      <button class="btn-lightbox-back" onclick="closeMediaLightbox()">
+        <span>‹</span> Back to Chat
+      </button>
+    </div>
+    <div class="lightbox-content-box">
+      <img id="lightbox-img-el" src="" alt="Full Screen Preview" />
+      <video id="lightbox-video-el" controls></video>
+    </div>
+  </div>
+
   <!-- MAIN APP SHELL -->
   <div id="app-shell" style="display: none;">
     
@@ -262,12 +294,17 @@
           </div>
         </div>
         <div class="header-actions">
-          <button class="icon-btn-round" onclick="openSearchModal()" title="Search">🔍</button>
-          <button class="icon-btn-round" onclick="openCreateGroupModal()" title="Create Group">➕</button>
+          <!-- Abstract Search Vector -->
+          <button class="icon-btn-round" onclick="openSearchModal()" title="Search">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </button>
+          <!-- Abstract Plus Vector -->
+          <button class="icon-btn-round" onclick="openCreateGroupModal()" title="Create Group">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          </button>
         </div>
       </div>
 
-      <!-- Segmented Navigation Tabs with Total Unread Badges -->
       <div id="tabs-bar">
         <button class="tab-btn active" onclick="switchTab('all')">
           All <span id="badge-tab-all" class="tab-pill-badge">0</span>
@@ -296,9 +333,9 @@
         </div>
         
         <div class="header-right-actions">
-          <!-- Top-Right Disappearing Messages Clock Toggle -->
-          <button class="disappear-clock-btn" onclick="openDisappearingModal()" title="Set Disappearing Messages Timer">
-            ⏱️
+          <!-- Abstract Disappearing Clock Vector -->
+          <button class="disappear-clock-btn" onclick="openDisappearingModal()" title="Disappearing Messages Timer">
+            <svg viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
             <span id="disappear-badge-num" class="disappear-active-indicator" style="display: none;">24h</span>
           </button>
           <button id="invite-btn" class="btn-secondary" style="padding: 6px 14px; margin: 0; display: none;" onclick="copyGroupInviteLink(event)">🔗 Invite</button>
@@ -307,31 +344,35 @@
       
       <div id="messages-feed"></div>
 
-      <!-- Footer Input Dock -->
+      <!-- Footer Dock -->
       <div id="room-footer">
         <div id="default-input-bar">
           <input type="text" id="message-input" placeholder="Type a message..." />
           
-          <label class="dock-btn" title="Send Photo">
-            <svg viewBox="0 0 24 24">
-              <path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/>
-            </svg>
-            <input type="file" id="image-picker" accept="image/*" style="display: none;" />
+          <!-- Abstract Attachment Vector (Photos & Videos) -->
+          <label class="dock-btn" title="Attach Photo or Video">
+            <svg viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
+            <input type="file" id="media-picker" accept="image/*,video/*" style="display: none;" />
+          </label>
+
+          <!-- Abstract Geometric Camera Vector (Launches Native Camera Snap) -->
+          <label class="dock-btn" title="Open Native Camera">
+            <svg viewBox="0 0 24 24"><path d="M12 12c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0-2c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm8-3h-3.17L15 5H9L7.17 7H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
+            <input type="file" id="camera-picker" accept="image/*,video/*" capture="environment" style="display: none;" />
           </label>
           
+          <!-- Abstract Audio Waveform Vector -->
           <button id="record-btn" class="dock-btn" title="Record Voice Note">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
           </button>
           
+          <!-- Minimalist Geometric Dart Vector -->
           <button id="send-text-btn" class="dock-btn" style="background: var(--primary); color: #fff;" title="Send">
-            <svg viewBox="0 0 24 24" style="transform: translateX(1px);">
-              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-            </svg>
+            <svg viewBox="0 0 24 24" style="transform: translateX(1px);"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </button>
         </div>
 
+        <!-- Recording Audio Bar -->
         <div id="recording-bar">
           <div class="recording-status">
             <div class="red-pulse-dot"></div>
@@ -341,7 +382,7 @@
           <div class="recording-actions">
             <button id="cancel-record-btn" class="btn-cancel-record">🗑️ Cancel</button>
             <button id="send-record-btn" class="btn-send-record">
-              <span>➤</span> Send Voice
+              <span>➤</span> Send
             </button>
           </div>
         </div>
@@ -367,24 +408,7 @@
     </div>
   </div>
 
-  <!-- TELEGRAM PHOTO PREVIEW MODAL -->
-  <div id="image-preview-modal" class="modal-overlay">
-    <div class="modal-card" style="text-align: center;">
-      <div class="modal-header">
-        <span class="modal-title">Send Photo</span>
-        <button class="btn-close" onclick="closeModal('image-preview-modal')">✕</button>
-      </div>
-      <div class="preview-image-box">
-        <img id="preview-img-el" src="" alt="Preview" />
-      </div>
-      <button id="send-preview-img-btn" class="btn-primary">
-        <span>➤</span> Send Photo
-      </button>
-      <button class="btn-secondary" onclick="closeModal('image-preview-modal')">Cancel</button>
-    </div>
-  </div>
-
-  <!-- TELEGRAM FULL USER PROFILE CARD MODAL -->
+  <!-- TELEGRAM USER PROFILE CARD MODAL -->
   <div id="telegram-profile-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -448,12 +472,11 @@
       </div>
       <div class="field-group">
         <label class="field-label">Group Name</label>
-        <input type="text" id="new-group-name" class="input-dark" placeholder="Design HQ" />
+        <input type="text" id="new-group-name" class="input-dark" placeholder="Design Studio" />
       </div>
       
-      <!-- Privacy Toggle -->
       <div class="field-group">
-        <label class="field-label">Group Privacy</label>
+        <label class="field-label">Group Privacy Mode</label>
         <div style="display: flex; gap: 8px;">
           <button id="toggle-privacy-pub" class="btn-primary" style="flex:1; padding:10px;" onclick="setGroupPrivacyMode(false)">🌐 Public</button>
           <button id="toggle-privacy-priv" class="btn-secondary" style="flex:1; padding:10px; margin:0;" onclick="setGroupPrivacyMode(true)">🔒 Private</button>
@@ -467,7 +490,7 @@
 
       <div class="field-group">
         <label class="field-label">Description</label>
-        <input type="text" id="new-group-desc" class="input-dark" placeholder="Team inspiration & chat" />
+        <input type="text" id="new-group-desc" class="input-dark" placeholder="Official group collaboration" />
       </div>
       <div class="field-group">
         <label class="field-label">Group Cover Photo</label>
@@ -477,19 +500,19 @@
     </div>
   </div>
 
-  <!-- SEARCH MODAL (Prefix & exact similarity matching only) -->
+  <!-- SEARCH MODAL (Precision Prefix Matching Only) -->
   <div id="search-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
         <span class="modal-title">Discover Directory</span>
         <button class="btn-close" onclick="closeModal('search-modal')">✕</button>
       </div>
-      <input type="text" id="search-query" class="input-dark" placeholder="Search prefix matching (@name or handle)..." style="margin-bottom: 16px;" oninput="executeSearch(this.value)" />
+      <input type="text" id="search-query" class="input-dark" placeholder="Type exact prefix matching (@name or handle)..." style="margin-bottom: 16px;" oninput="executeSearch(this.value)" />
       <ul id="search-results" style="list-style: none; max-height: 300px; overflow-y: auto;"></ul>
     </div>
   </div>
 
-  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL (With Revoke/Regenerate Link) -->
+  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL -->
   <div id="group-about-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -506,9 +529,8 @@
       <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding-top: 14px; margin-bottom: 14px;">
         <span class="field-label" style="color: var(--accent);">Admin: Group Settings & Invite Controls</span>
         
-        <!-- Invite Link Controls for Private Groups -->
         <div id="admin-invite-controls" style="margin-bottom: 14px; background: var(--bg-dark); padding: 12px; border-radius: 14px;">
-          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Private Invite Link Active</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Invite Link Status: Active</div>
           <div style="display: flex; gap: 8px;">
             <button class="btn-primary" style="padding: 8px 12px; font-size: 12px;" onclick="copyGroupInviteLink(event)">📋 Copy Link</button>
             <button class="btn-secondary" style="margin:0; padding: 8px 12px; font-size: 12px; color: var(--danger);" onclick="adminRevokeAndRegenerateLink()">🔄 Revoke & Regenerate</button>
@@ -559,7 +581,7 @@
     const unreadMessageCounts = new Map();
     let typingStatusTimeout = null;
 
-    // Built-in HTML5 Web Audio Message Tone Synthesizer
+    // Built-in HTML5 Web Audio Notification Tone
     function playNotificationTone() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -577,19 +599,16 @@
       } catch (e) {}
     }
 
-    // DRM Security Shield Protection Handlers
+    // Security Privacy Shield Handlers
     function dismissPrivacyShield() {
       document.getElementById('privacy-shield').classList.remove('active');
     }
-
     window.addEventListener('blur', () => {
       if (currentUser) document.getElementById('privacy-shield').classList.add('active');
     });
     window.addEventListener('focus', () => {
       document.getElementById('privacy-shield').classList.remove('active');
     });
-
-    // Intercept PrintScreen and Screenshot Shortcuts
     document.addEventListener('keyup', (e) => {
       if (e.key === 'PrintScreen' || e.keyCode === 44 || (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5'))) {
         document.getElementById('privacy-shield').classList.add('active');
@@ -599,7 +618,6 @@
     });
 
     // Media & Voice Recording State
-    let pendingPreviewImageBase64 = null;
     let isRecording = false;
     let mediaRecorder = null;
     let audioChunks = [];
@@ -607,7 +625,7 @@
     let recordSeconds = 0;
     let discardRecording = false;
 
-    // Base64 Image Compression Engine (~80 KB JPEG)
+    // Base64 Compression Helpers (~80 KB JPEG)
     function compressImageToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -617,7 +635,7 @@
           img.src = event.target.result;
           img.onload = () => {
             const canvas = document.createElement("canvas");
-            const maxDim = 800;
+            const maxDim = 900;
             let width = img.width;
             let height = img.height;
             if (width > maxDim || height > maxDim) {
@@ -633,7 +651,7 @@
             canvas.height = height;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL("image/jpeg", 0.75));
+            resolve(canvas.toDataURL("image/jpeg", 0.78));
           };
           img.onerror = (err) => reject(err);
         };
@@ -664,6 +682,33 @@
 
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    // Full-Screen Media Cinema Lightbox Control
+    function openMediaLightbox(url, isVideo = false) {
+      const modal = document.getElementById('fullscreen-media-modal');
+      const imgEl = document.getElementById('lightbox-img-el');
+      const vidEl = document.getElementById('lightbox-video-el');
+
+      if (isVideo) {
+        imgEl.style.display = 'none';
+        vidEl.src = url;
+        vidEl.style.display = 'block';
+        vidEl.play();
+      } else {
+        vidEl.pause();
+        vidEl.style.display = 'none';
+        imgEl.src = url;
+        imgEl.style.display = 'block';
+      }
+      modal.classList.add('active');
+    }
+
+    function closeMediaLightbox() {
+      const modal = document.getElementById('fullscreen-media-modal');
+      const vidEl = document.getElementById('lightbox-video-el');
+      vidEl.pause();
+      modal.classList.remove('active');
+    }
 
     // 2. AUTH & ACTIVE PRESENCE MONITOR
     auth.onAuthStateChanged(async (user) => {
@@ -839,7 +884,7 @@
       showToast('Profile updated!');
     }
 
-    // 4. CONVERSATION FEED & UNREAD TAB BADGES
+    // 4. CONVERSATION FEED & TOTAL UNREAD BADGES
     function switchTab(tabName) {
       currentTab = tabName;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1005,7 +1050,6 @@
 
       const collName = item.type === 'group' ? 'groups' : 'dms';
       
-      // Check Disappearing Messages Timer indicator
       db.collection(collName).doc(item.id).get().then((doc) => {
         const timer = doc.data()?.disappearingTimer || 0;
         updateDisappearingClockBadge(timer);
@@ -1018,7 +1062,6 @@
           const feed = document.getElementById('messages-feed');
           feed.innerHTML = '';
           
-          // Check disappearing timer threshold
           db.collection(collName).doc(item.id).get().then((docMeta) => {
             const timer = docMeta.data()?.disappearingTimer || 0;
             updateDisappearingClockBadge(timer);
@@ -1026,7 +1069,6 @@
             snapshot.forEach((doc) => {
               const msg = doc.data();
               
-              // Skip message rendering if it has expired past disappearing timer
               if (timer > 0 && msg.createdAt) {
                 const ageSecs = (Date.now() - msg.createdAt.toMillis()) / 1000;
                 if (ageSecs > timer) return;
@@ -1099,7 +1141,9 @@
       if (msg.type === 'text') {
         content = `<span>${escapeHtml(msg.text)}</span>`;
       } else if (msg.type === 'image') {
-        content = `<img src="${msg.mediaUrl}" class="msg-img" loading="lazy" alt="Shared photo" />`;
+        content = `<img src="${msg.mediaUrl}" class="msg-img" loading="lazy" onclick="openMediaLightbox('${msg.mediaUrl}', false)" alt="Shared photo" />`;
+      } else if (msg.type === 'video') {
+        content = `<video class="msg-video" controls src="${msg.mediaUrl}" onclick="openMediaLightbox('${msg.mediaUrl}', true)"></video>`;
       } else if (msg.type === 'voice') {
         content = `<div class="msg-audio-player"><audio controls src="${msg.mediaUrl}"></audio></div>`;
       }
@@ -1138,7 +1182,7 @@
     document.getElementById('send-text-btn').addEventListener('click', sendChatMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
-    // 6. PHOTO PREVIEW MODAL & VOICE RECORDING DOCK
+    // 6. MULTI-MEDIA PICKER (PHOTOS, VIDEOS & CAMERA SNAP)
     async function uploadMessageMedia(mediaData, type) {
       if (!activeChat) return;
       try {
@@ -1152,8 +1196,9 @@
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
+        const lastText = type === 'image' ? '📷 Photo' : (type === 'video' ? '🎥 Video' : '🎤 Voice Message');
         db.collection(collName).doc(activeChat.id).update({
-          lastMessage: type === 'image' ? '📷 Photo' : '🎤 Voice Message',
+          lastMessage: lastText,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
       } catch (err) {
@@ -1161,30 +1206,34 @@
       }
     }
 
-    document.getElementById('image-picker').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      if (!activeChat) {
+    async function handleMediaFileSelect(file) {
+      if (!file || !activeChat) {
         showToast('Select a conversation first!', 'error');
-        e.target.value = '';
         return;
       }
+      if (file.type.startsWith('video/')) {
+        showToast('Processing video upload...');
+        const base64Vid = await blobToBase64(file);
+        await uploadMessageMedia(base64Vid, 'video');
+        showToast('Video posted!');
+      } else {
+        showToast('Processing photo...');
+        const base64Img = await compressImageToBase64(file);
+        await uploadMessageMedia(base64Img, 'image');
+        showToast('Photo posted!');
+      }
+    }
 
-      showToast('Preparing photo preview...');
-      pendingPreviewImageBase64 = await compressImageToBase64(file);
-      document.getElementById('preview-img-el').src = pendingPreviewImageBase64;
-      openModal('image-preview-modal');
+    document.getElementById('media-picker').addEventListener('change', (e) => {
+      handleMediaFileSelect(e.target.files[0]);
+      e.target.value = '';
+    });
+    document.getElementById('camera-picker').addEventListener('change', (e) => {
+      handleMediaFileSelect(e.target.files[0]);
       e.target.value = '';
     });
 
-    document.getElementById('send-preview-img-btn').addEventListener('click', async () => {
-      if (!pendingPreviewImageBase64) return;
-      closeModal('image-preview-modal');
-      showToast('Sending photo...');
-      await uploadMessageMedia(pendingPreviewImageBase64, 'image');
-      pendingPreviewImageBase64 = null;
-    });
-
+    // Voice Recorder
     function startRecordTimer() {
       recordSeconds = 0;
       document.getElementById('record-timer-text').textContent = "00:00";
@@ -1266,7 +1315,7 @@
       }
     });
 
-    // 7. PRECISION PREFIX SEARCH MATCHING ONLY
+    // 7. PRECISION EXACT-PREFIX MATCHING SEARCH ONLY
     function openSearchModal() { openModal('search-modal'); }
 
     async function executeSearch(query) {
@@ -1280,7 +1329,7 @@
       const groupsSnap = await db.collection("groups").get();
       groupsSnap.forEach((doc) => {
         const g = { id: doc.id, ...doc.data() };
-        if (g.isPrivate) return; // Never show Private groups in public search!
+        if (g.isPrivate) return; // Hide Private groups from public search directory
         
         const nameMatch = g.name.toLowerCase().startsWith(cleanQ);
         const handleMatch = g.handle && g.handle.toLowerCase().startsWith(cleanQ);
