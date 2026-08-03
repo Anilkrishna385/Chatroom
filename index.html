@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Pulse Messenger — Ultimate Pinned & Admin Pro</title>
+  <title>Pulse Messenger — Pro Banner & Public Groups</title>
   <style>
     :root {
       --bg-dark: #090D16;
@@ -21,7 +21,7 @@
       --shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
     }
 
-    /* Anti-Screenshot & Selection Protection */
+    /* DRM Anti-Screenshot & Anti-Selection Protection */
     * { 
       box-sizing: border-box; margin: 0; padding: 0; 
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
@@ -86,7 +86,7 @@
       background: var(--bg-card); box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
     .profile-sheet-body { padding: 0 10px 10px 10px; text-align: left; }
-    .profile-sheet-name { font-size: 22px; font-weight: 800; color: #fff; }
+    .profile-sheet-name { font-size: 22px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; }
     .profile-sheet-handle { font-size: 13px; color: var(--accent); font-weight: 600; margin-top: 2px; }
     .profile-sheet-bio { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.4; }
     .profile-menu-list { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
@@ -98,7 +98,7 @@
     }
     .profile-menu-btn:hover { background: var(--bg-card); border-color: var(--primary); }
 
-    /* BANNER & OVERLAPPING AVATAR PROFILE VIEW (Reference Style) */
+    /* BANNER & OVERLAPPING AVATAR PROFILE VIEW */
     .profile-banner-wrap { position: relative; width: 100%; height: 170px; border-radius: 20px 20px 0 0; overflow: visible; background: var(--bg-card); margin-bottom: 50px; }
     .profile-banner-img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px 20px 0 0; border-bottom: 1px solid var(--border); }
     .profile-avatar-overlap {
@@ -110,16 +110,10 @@
     .profile-avatar-overlap:hover { transform: scale(1.03); }
     .profile-body-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 0 10px; margin-bottom: 16px; }
     .profile-info-left { text-align: left; max-width: 65%; }
-    .profile-bold-name { font-size: 24px; font-weight: 800; color: #fff; line-height: 1.1; }
+    .profile-bold-name { font-size: 24px; font-weight: 800; color: #fff; line-height: 1.1; display: flex; align-items: center; gap: 6px; }
     .profile-handle-sub { font-size: 13.5px; color: var(--accent); font-weight: 600; margin-top: 4px; }
     .profile-about-box { font-size: 13.5px; color: var(--text-main); margin-top: 10px; line-height: 1.4; }
     .profile-actions-right { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
-
-    /* Pinned Badge styling for Public Groups */
-    .pinned-badge-tag {
-      background: rgba(99, 102, 241, 0.2); color: var(--accent); font-size: 10px;
-      font-weight: 800; padding: 2px 7px; border-radius: 8px; margin-left: 6px; display: inline-block;
-    }
 
     /* Red Circle Friend Request Badge */
     .red-circle-badge {
@@ -127,13 +121,6 @@
       color: #fff; font-size: 10px; font-weight: 800; width: 18px; height: 18px;
       border-radius: 50%; display: none; align-items: center; justify-content: center;
       border: 2px solid var(--bg-panel);
-    }
-
-    /* Mini Group Sender Popup */
-    #group-sender-popup {
-      position: fixed; z-index: 10000; background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 10px; box-shadow: var(--shadow); display: none;
-      flex-direction: column; gap: 6px; min-width: 160px;
     }
 
     /* Media Preview Modal */
@@ -187,7 +174,7 @@
     .status-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2px solid var(--bg-panel); position: absolute; bottom: 0; right: 0; }
     .item-content { flex: 1; min-width: 0; }
     .item-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-    .item-title { font-size: 15px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
+    .item-title { font-size: 15px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px; }
     .item-time { font-size: 11px; color: var(--text-muted); }
     .item-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .unread-badge { background: var(--success); color: #000; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 12px; display: inline-block; flex-shrink: 0; }
@@ -220,25 +207,11 @@
     .msg-sender-tag { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 6px; display: inline-block; cursor: pointer; padding: 2px 8px; border-radius: 10px; background: rgba(56, 189, 248, 0.12); }
     .msg-sender-tag:hover { background: rgba(56, 189, 248, 0.25); text-decoration: underline; }
 
-    /* Message Ticks / Status Indicators */
     .msg-footer-meta { display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 10px; color: rgba(255,255,255,0.7); margin-top: 4px; float: right; margin-left: 10px; }
     .msg-tick { font-weight: bold; font-size: 11px; }
     .msg-tick.sent { color: #A0AEC0; }
     .msg-tick.delivered { color: #CBD5E0; }
     .msg-tick.read { color: #10B981; }
-
-    /* Video Compression / Link Streaming Card */
-    .video-stream-card {
-      background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 14px;
-      padding: 10px; margin-top: 6px; text-align: left; display: flex; flex-direction: column; gap: 8px;
-    }
-    .video-stream-hint { font-size: 12px; color: var(--accent); font-weight: 600; }
-    .btn-video-stream {
-      background: var(--bg-card); color: #fff; border: 1px solid var(--border);
-      padding: 8px 12px; border-radius: 12px; font-size: 12.5px; font-weight: 700;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
-    .btn-video-stream:hover { background: var(--primary); }
 
     .msg-img { max-width: 100%; max-height: 280px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); object-fit: cover; cursor: pointer; }
     .msg-video { max-width: 100%; max-height: 280px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); outline: none; background: #000; }
@@ -323,9 +296,9 @@
             <div class="field-group" style="flex: 1;">
               <label class="field-label">Gender</label>
               <select id="gender-input" class="input-dark" style="cursor: pointer;">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other / Neutral</option>
+                <option value="male">♂️ Male</option>
+                <option value="female">♀️ Female</option>
+                <option value="other">⚧️ Other</option>
               </select>
             </div>
           </div>
@@ -480,7 +453,7 @@
       </div>
       <div style="font-size: 42px; margin-bottom: 12px;">🔒</div>
       <p style="font-size: 14px; color: var(--text-main); margin-bottom: 20px; line-height: 1.4;">
-        Guest accounts cannot share photos, videos, or voice notes. Please log in or create an account to unlock full media sharing!
+        Guest accounts can only send text messages. To share photos, videos, or voice notes, please log in or create an account!
       </p>
       <button class="btn-primary" style="margin-bottom: 8px;" onclick="handleSignOut()">Log In / Sign Up</button>
       <button class="btn-secondary" onclick="closeModal('guest-restriction-modal')">Continue as Guest</button>
@@ -500,9 +473,9 @@
       <div class="field-group">
         <label class="field-label">Select Gender</label>
         <select id="guest-gender-select" class="input-dark" style="cursor: pointer;">
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other / Neutral</option>
+          <option value="male">♂️ Male</option>
+          <option value="female">♀️ Female</option>
+          <option value="other">⚧️ Other / Neutral</option>
         </select>
       </div>
       <button class="btn-primary" onclick="proceedAsGuest()">Enter Chat as Guest</button>
@@ -518,7 +491,7 @@
       </div>
       <div class="preview-media-box">
         <img id="preview-img-el" src="" alt="Preview" />
-        <video id="preview-video-el" controls></video>
+        <video id="preview-video-el" controls playsinline preload="metadata"></video>
       </div>
       <button id="btn-send-preview-media" class="btn-primary">
         <span>➤</span> Send Media
@@ -536,7 +509,7 @@
     </div>
     <div class="lightbox-content-box">
       <img id="lightbox-img-el" src="" alt="Full Screen Preview" />
-      <video id="lightbox-video-el" controls></video>
+      <video id="lightbox-video-el" controls playsinline></video>
     </div>
   </div>
 
@@ -599,10 +572,117 @@
     </div>
   </div>
 
-  <!-- GROUP SENDER CLICK POPUP -->
-  <div id="group-sender-popup">
-    <button id="popup-visit-profile" class="btn-secondary" style="margin:0; text-align:left; padding:8px 12px; font-size:13px;">👤 Visit Profile</button>
-    <button id="popup-add-friend" class="btn-primary" style="margin:0; text-align:left; padding:8px 12px; font-size:13px;">🤝 Add Friend</button>
+  <!-- EDIT PROFILE MODAL -->
+  <div id="profile-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Edit Profile Settings</span>
+        <button class="btn-close" onclick="closeModal('profile-modal')">✕</button>
+      </div>
+      
+      <div class="field-group">
+        <label class="field-label">Display Name</label>
+        <input type="text" id="edit-name" class="input-dark" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Username</label>
+        <input type="text" id="edit-username" class="input-dark" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Bio / Description</label>
+        <input type="text" id="edit-bio" class="input-dark" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Cover / Banner Photo</label>
+        <input type="file" id="edit-cover-file" accept="image/*" class="input-dark" style="padding: 8px;" />
+      </div>
+      <button class="btn-primary" onclick="saveProfileChanges()">Save Account Info</button>
+      <button class="btn-secondary" style="color: var(--danger); margin-top: 10px;" onclick="handleSignOut()">Log Out</button>
+    </div>
+  </div>
+
+  <!-- CREATE GROUP MODAL -->
+  <div id="create-group-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Create New Group</span>
+        <button class="btn-close" onclick="closeModal('create-group-modal')">✕</button>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Group Name</label>
+        <input type="text" id="new-group-name" class="input-dark" placeholder="Design HQ" />
+      </div>
+      
+      <div class="field-group">
+        <label class="field-label">Group Privacy</label>
+        <div style="display: flex; gap: 8px;">
+          <button id="toggle-privacy-pub" class="btn-primary" style="flex:1; padding:10px;" onclick="setGroupPrivacyMode(false)">🌐 Public</button>
+          <button id="toggle-privacy-priv" class="btn-secondary" style="flex:1; padding:10px; margin:0;" onclick="setGroupPrivacyMode(true)">🔒 Private</button>
+        </div>
+      </div>
+
+      <div class="field-group" id="group-handle-box">
+        <label class="field-label">Public Username Handle</label>
+        <input type="text" id="new-group-handle" class="input-dark" placeholder="@design_hq" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Description</label>
+        <input type="text" id="new-group-desc" class="input-dark" placeholder="Team inspiration & chat" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Group Cover Photo</label>
+        <input type="file" id="new-group-pic" accept="image/*" class="input-dark" style="padding: 8px;" />
+      </div>
+      <button class="btn-primary" onclick="createNewGroup()">Create Group</button>
+    </div>
+  </div>
+
+  <!-- SEARCH MODAL -->
+  <div id="search-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header" style="margin-bottom: 12px;">
+        <span class="modal-title">Discover Directory</span>
+        <button class="btn-close" onclick="closeModal('search-modal')">✕</button>
+      </div>
+      <input type="text" id="search-query" class="input-dark" placeholder="Type exact prefix matching (@name or handle)..." oninput="executeSearch(this.value)" />
+      <ul id="search-results" style="list-style: none; overflow-y: auto; margin-top: 14px;"></ul>
+    </div>
+  </div>
+
+  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL -->
+  <div id="group-about-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Group Settings & Members</span>
+        <button class="btn-close" onclick="closeModal('group-about-modal')">✕</button>
+      </div>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <img id="about-group-avatar" class="avatar-icon" style="width: 74px; height: 74px;" src="" />
+        <h3 id="about-group-name" style="margin-top: 8px;">Group Name</h3>
+        <p id="about-group-desc" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;"></p>
+        <span id="about-group-count" style="background: rgba(99, 102, 241, 0.2); color: var(--accent); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 14px;">0 Members</span>
+      </div>
+
+      <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding-top: 14px; margin-bottom: 14px;">
+        <span class="field-label" style="color: var(--accent);">Admin: Group Settings & Invite Controls</span>
+        
+        <div id="admin-invite-controls" style="margin-bottom: 14px; background: var(--bg-dark); padding: 12px; border-radius: 14px;">
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Private Invite Link Active</div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-primary" style="padding: 8px 12px; font-size: 12px;" onclick="copyGroupInviteLink(event)">📋 Copy Link</button>
+            <button class="btn-secondary" style="margin:0; padding: 8px 12px; font-size: 12px; color: var(--danger);" onclick="adminRevokeAndRegenerateLink()">🔄 Revoke & Regenerate</button>
+          </div>
+        </div>
+
+        <input type="text" id="admin-edit-name" class="input-dark" style="margin-bottom: 8px;" placeholder="Edit Group Name" />
+        <input type="text" id="admin-edit-desc" class="input-dark" style="margin-bottom: 8px;" placeholder="Edit Group Description" />
+        <button class="btn-primary" onclick="adminSaveGroupChanges()">Save Admin Updates</button>
+      </div>
+
+      <span class="field-label">Members Directory</span>
+      <div id="about-members-list" style="max-height: 230px; overflow-y: auto;"></div>
+    </div>
   </div>
 
   <!-- MAIN APP SHELL -->
@@ -718,153 +798,10 @@
     </div>
   </div>
 
-  <!-- DISAPPEARING MESSAGES MODAL -->
-  <div id="disappear-modal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span class="modal-title">Disappearing Messages</span>
-        <button class="btn-close" onclick="closeModal('disappear-modal')">✕</button>
-      </div>
-      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 18px;">
-        When enabled, messages sent in this chat will automatically vanish after the selected duration.
-      </p>
-      <button class="btn-secondary" style="margin-bottom: 8px;" onclick="setDisappearingTimer(0)">Off (Keep Messages)</button>
-      <button class="btn-secondary" style="margin-bottom: 8px;" onclick="setDisappearingTimer(60)">1 Minute (Test Mode)</button>
-      <button class="btn-secondary" style="margin-bottom: 8px;" onclick="setDisappearingTimer(86400)">24 Hours</button>
-      <button class="btn-secondary" style="margin-bottom: 8px;" onclick="setDisappearingTimer(604800)">7 Days</button>
-      <button class="btn-secondary" onclick="setDisappearingTimer(2592000)">30 Days</button>
-    </div>
-  </div>
-
-  <!-- EDIT PROFILE MODAL -->
-  <div id="profile-modal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span class="modal-title">Edit Profile Settings</span>
-        <button class="btn-close" onclick="closeModal('profile-modal')">✕</button>
-      </div>
-      
-      <div class="avatar-studio-wrap">
-        <label class="avatar-upload-ring" title="Tap to change profile picture">
-          <img id="edit-avatar-preview" class="avatar-studio-img" src="" alt="Avatar" />
-          <div class="avatar-camera-badge">📸</div>
-          <input type="file" id="edit-avatar-file" accept="image/*" style="display: none;" onchange="previewStudioAvatar(this, 'edit-avatar-preview')" />
-        </label>
-        <span class="avatar-studio-hint">Tap to change picture</span>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label">Display Name</label>
-        <input type="text" id="edit-name" class="input-dark" />
-      </div>
-      <div class="field-group">
-        <label class="field-label">Username</label>
-        <input type="text" id="edit-username" class="input-dark" />
-      </div>
-      <div class="field-group">
-        <label class="field-label">Bio / Description</label>
-        <input type="text" id="edit-bio" class="input-dark" />
-      </div>
-      <div class="field-group">
-        <label class="field-label">Cover / Banner Photo</label>
-        <input type="file" id="edit-cover-file" accept="image/*" class="input-dark" style="padding: 8px;" />
-      </div>
-      <button class="btn-primary" onclick="saveProfileChanges()">Save Account Info</button>
-      <button class="btn-secondary" style="color: var(--danger); margin-top: 10px;" onclick="handleSignOut()">Log Out</button>
-    </div>
-  </div>
-
-  <!-- CREATE GROUP MODAL -->
-  <div id="create-group-modal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span class="modal-title">Create New Group</span>
-        <button class="btn-close" onclick="closeModal('create-group-modal')">✕</button>
-      </div>
-      <div class="field-group">
-        <label class="field-label">Group Name</label>
-        <input type="text" id="new-group-name" class="input-dark" placeholder="Design HQ" />
-      </div>
-      
-      <div class="field-group">
-        <label class="field-label">Group Privacy</label>
-        <div style="display: flex; gap: 8px;">
-          <button id="toggle-privacy-pub" class="btn-primary" style="flex:1; padding:10px;" onclick="setGroupPrivacyMode(false)">🌐 Public</button>
-          <button id="toggle-privacy-priv" class="btn-secondary" style="flex:1; padding:10px; margin:0;" onclick="setGroupPrivacyMode(true)">🔒 Private</button>
-        </div>
-      </div>
-
-      <div class="field-group" id="group-handle-box">
-        <label class="field-label">Public Username Handle</label>
-        <input type="text" id="new-group-handle" class="input-dark" placeholder="@design_hq" />
-      </div>
-
-      <div class="field-group">
-        <label class="field-label">Description</label>
-        <input type="text" id="new-group-desc" class="input-dark" placeholder="Team inspiration & chat" />
-      </div>
-      <div class="field-group">
-        <label class="field-label">Group Cover Photo</label>
-        <input type="file" id="new-group-pic" accept="image/*" class="input-dark" style="padding: 8px;" />
-      </div>
-      <button class="btn-primary" onclick="createNewGroup()">Create Group</button>
-    </div>
-  </div>
-
-  <!-- SEARCH MODAL -->
-  <div id="search-modal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="sticky-search-header">
-        <div class="modal-header" style="margin-bottom: 12px;">
-          <span class="modal-title">Discover Directory</span>
-          <button class="btn-close" onclick="closeModal('search-modal')">✕</button>
-        </div>
-        <input type="text" id="search-query" class="input-dark" placeholder="Type exact prefix matching (@name or handle)..." oninput="executeSearch(this.value)" />
-      </div>
-      <ul id="search-results" style="list-style: none; overflow-y: auto;"></ul>
-    </div>
-  </div>
-
-  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL -->
-  <div id="group-about-modal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span class="modal-title">Group Settings & Members</span>
-        <button class="btn-close" onclick="closeModal('group-about-modal')">✕</button>
-      </div>
-      <div style="text-align: center; margin-bottom: 16px;">
-        <img id="about-group-avatar" class="avatar-icon" style="width: 74px; height: 74px;" src="" />
-        <h3 id="about-group-name" style="margin-top: 8px;">Group Name</h3>
-        <p id="about-group-desc" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;"></p>
-        <span id="about-group-count" style="background: rgba(99, 102, 241, 0.2); color: var(--accent); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 14px;">0 Members</span>
-      </div>
-
-      <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding-top: 14px; margin-bottom: 14px;">
-        <span class="field-label" style="color: var(--accent);">Admin: Group Settings & Invite Controls</span>
-        
-        <div id="admin-invite-controls" style="margin-bottom: 14px; background: var(--bg-dark); padding: 12px; border-radius: 14px;">
-          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Private Invite Link Active</div>
-          <div style="display: flex; gap: 8px;">
-            <button class="btn-primary" style="padding: 8px 12px; font-size: 12px;" onclick="copyGroupInviteLink(event)">📋 Copy Link</button>
-            <button class="btn-secondary" style="margin:0; padding: 8px 12px; font-size: 12px; color: var(--danger);" onclick="adminRevokeAndRegenerateLink()">🔄 Revoke & Regenerate</button>
-          </div>
-        </div>
-
-        <input type="text" id="admin-edit-name" class="input-dark" style="margin-bottom: 8px;" placeholder="Edit Group Name" />
-        <input type="text" id="admin-edit-desc" class="input-dark" style="margin-bottom: 8px;" placeholder="Edit Group Description" />
-        <button class="btn-primary" onclick="adminSaveGroupChanges()">Save Admin Updates</button>
-      </div>
-
-      <span class="field-label">Members Directory</span>
-      <div id="about-members-list" style="max-height: 230px; overflow-y: auto;"></div>
-    </div>
-  </div>
-
   <!-- Firebase 10.x Compat CDN SDKs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-storage-compat.min.js"></script>
 
   <script>
     // 1. FIREBASE CONFIGURATION (chatapp-8a75f)
@@ -881,7 +818,6 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-    const storage = firebase.storage();
 
     // App State, Cache & Unread Count Tracking
     let currentUser = null;
@@ -894,7 +830,6 @@
     let isCreatingPrivateGroup = false;
     const userCache = new Map();
     const unreadMessageCounts = new Map();
-    const playedSoundMsgIds = new Set();
     let pendingMediaPreview = null;
 
     const ADMIN_EMAIL = "anilkrishna385@gmail.com";
@@ -902,7 +837,6 @@
       return email && email.toLowerCase() === ADMIN_EMAIL;
     }
 
-    // Native Mobile History Back Button & Swipe Back Handling
     window.addEventListener('popstate', (e) => {
       const panel = document.getElementById('room-panel');
       if (panel && panel.classList.contains('mobile-active')) {
@@ -913,10 +847,8 @@
       document.querySelectorAll('.modal-overlay.active').forEach((modal) => {
         modal.classList.remove('active');
       });
-      document.getElementById('group-sender-popup').style.display = 'none';
     });
 
-    // Receiver-Only Mild Water Droplet Chime
     let globalAudioCtx = null;
     function unlockAudio() {
       if (!globalAudioCtx) {
@@ -954,7 +886,6 @@
       } catch (e) {}
     }
 
-    // Security Privacy Shield
     function dismissPrivacyShield() {
       document.getElementById('privacy-shield').classList.remove('active');
     }
@@ -964,12 +895,6 @@
     window.addEventListener('focus', () => {
       document.getElementById('privacy-shield').classList.remove('active');
     });
-    document.addEventListener('keyup', (e) => {
-      if (e.key === 'PrintScreen' || e.keyCode === 44 || (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5'))) {
-        document.getElementById('privacy-shield').classList.add('active');
-        showToast('Screenshots restricted for privacy', 'error');
-      }
-    });
 
     let isRecording = false;
     let mediaRecorder = null;
@@ -978,7 +903,6 @@
     let recordSeconds = 0;
     let discardRecording = false;
 
-    // Base64 Compression Helpers (~80 KB JPEG)
     function compressImageToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1019,19 +943,6 @@
         reader.onloadend = () => resolve(reader.result);
         reader.onerror = (err) => reject(err);
       });
-    }
-
-    function updateDefaultStudioAvatar(gender, imgElementId) {
-      const img = document.getElementById(imgElementId);
-      const seedPrefix = gender === 'male' ? 'boy_' : (gender === 'female' ? 'girl_' : 'neutral_');
-      img.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seedPrefix}${Date.now()}`;
-    }
-
-    async function previewStudioAvatar(inputEl, imgElementId) {
-      const file = inputEl.files[0];
-      if (!file) return;
-      const base64 = await compressImageToBase64(file);
-      document.getElementById(imgElementId).src = base64;
     }
 
     function showToast(msg, type = 'success') {
@@ -1090,7 +1001,6 @@
       window.location.reload();
     }
 
-    // Default Public Groups ("Kerala chat room" & "Friends")
     async function ensureDefaultPublicGroups() {
       const pubGroups = [
         { name: "Kerala chat room", handle: "@kerala_chat", desc: "Official Kerala chat room for everyone" },
@@ -1213,7 +1123,7 @@
         closeModal('forgot-pass-modal');
         showToast('⚡ Password reset link sent to your email!');
       } catch (err) {
-        showToast(mapAuthError(err.code, err.message), 'error');
+        showToast('Error: ' + err.message, 'error');
       }
     }
 
@@ -1252,18 +1162,6 @@
         showToast('Welcome Guest!');
       } catch (err) {
         showToast('Guest login failed: ' + err.message, 'error');
-      }
-    }
-
-    function mapAuthError(errCode, defaultMsg) {
-      switch(errCode) {
-        case 'auth/invalid-email': return 'Invalid email format. Please check your address.';
-        case 'auth/user-not-found': return 'No account found with this email. Please sign up.';
-        case 'auth/wrong-password': return 'Incorrect password. Please try again.';
-        case 'auth/invalid-credential': return 'Invalid email or password.';
-        case 'auth/email-already-in-use': return 'This email is already registered. Please log in.';
-        case 'auth/weak-password': return 'Password is too weak. Minimum 6 characters required.';
-        default: return defaultMsg;
       }
     }
 
@@ -1308,7 +1206,7 @@
           showToast('Logged in successfully!');
         }
       } catch (err) {
-        showToast(mapAuthError(err.code, err.message), 'error');
+        showToast('Error: ' + err.message, 'error');
       }
     }
 
@@ -1316,7 +1214,9 @@
     function openUnifiedAccountSheet() {
       document.getElementById('sheet-cover-img').src = myProfile.coverUrl || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80";
       document.getElementById('sheet-avatar-img').src = myProfile.photoUrl;
-      document.getElementById('sheet-user-name').textContent = myProfile.name;
+      
+      const genderSymbol = myProfile.gender === 'male' ? '♂️' : (myProfile.gender === 'female' ? '♀️' : '⚧️');
+      document.getElementById('sheet-user-name').innerHTML = `${escapeHtml(myProfile.name)} <span>${genderSymbol}</span>`;
       document.getElementById('sheet-user-handle').textContent = myProfile.username;
       document.getElementById('sheet-user-bio').textContent = myProfile.bio || "No bio provided.";
       openModal('unified-profile-sheet');
@@ -1602,8 +1502,9 @@
         document.getElementById('banner-profile-avatar').src = user.photoUrl;
       }
 
+      const genderSymbol = user.gender === 'male' ? '♂️' : (user.gender === 'female' ? '♀️' : '⚧️');
       document.getElementById('banner-profile-cover').src = user.coverUrl || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80";
-      document.getElementById('banner-profile-name').textContent = user.name;
+      document.getElementById('banner-profile-name').innerHTML = `${escapeHtml(user.name)} <span>${genderSymbol}</span>`;
       document.getElementById('banner-profile-handle').textContent = user.username;
       document.getElementById('banner-profile-about').textContent = user.bio || 'No about description provided.';
 
@@ -1620,25 +1521,6 @@
       };
 
       openModal('banner-profile-modal');
-    }
-
-    function showGroupSenderPopup(event, userId) {
-      event.stopPropagation();
-      const popup = document.getElementById('group-sender-popup');
-      popup.style.top = `${event.clientY + 10}px`;
-      popup.style.left = `${event.clientX}px`;
-      popup.style.display = 'flex';
-
-      document.getElementById('popup-visit-profile').onclick = () => {
-        popup.style.display = 'none';
-        showUserProfile(userId);
-      };
-      document.getElementById('popup-add-friend').onclick = () => {
-        popup.style.display = 'none';
-        handleSendFriendRequest(userId);
-      };
-
-      window.addEventListener('click', () => { popup.style.display = 'none'; }, { once: true });
     }
 
     function openEditProfileModal() {
@@ -1688,7 +1570,7 @@
       showToast('Profile updated!');
     }
 
-    // 7. CONVERSATION FEED (Pinned Public Groups on Top!)
+    // 7. CONVERSATION FEED (Public groups visible to everyone!)
     function switchTab(tabName) {
       currentTab = tabName;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1726,20 +1608,17 @@
       const listEl = document.getElementById('chat-list');
       listEl.innerHTML = '';
 
-      // Array sorting buckets: pinned public groups first
-      const pinnedPublicGroups = [];
-      const normalChats = [];
-
       if (currentTab === 'all' || currentTab === 'groups') {
         db.collection("groups")
-          .where("members", "array-contains", currentUser.uid)
           .onSnapshot((snapshot) => {
             snapshot.forEach((doc) => {
               const grp = { id: doc.id, ...doc.data() };
-              const unread = unreadMessageCounts.get(doc.id) || 0;
-              const isPinnedDefault = grp.handle === "@kerala_chat" || grp.handle === "@friends_group";
+              
+              // Only show Public groups OR Private groups where user is already a member
+              if (grp.isPrivate && !grp.members.includes(currentUser.uid)) return;
 
-              const itemObj = {
+              const unread = unreadMessageCounts.get(doc.id) || 0;
+              renderListItem({
                 type: 'group',
                 id: grp.id,
                 name: grp.name,
@@ -1749,15 +1628,8 @@
                 isActive: false,
                 unreadCount: unread,
                 typingStatus: null,
-                isPinned: isPinnedDefault,
                 groupData: grp
-              };
-
-              if (isPinnedDefault) {
-                renderListItem(itemObj, true);
-              } else {
-                renderListItem(itemObj, false);
-              }
+              });
               updateTopTabBadges();
             });
           });
@@ -1792,16 +1664,15 @@
                 time: data.updatedAt ? new Date(data.updatedAt.toMillis()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '',
                 isActive: isActive,
                 unreadCount: unread,
-                typingStatus: data.typing ? data.typing[peer.uid] : null,
-                isPinned: false
-              }, false);
+                typingStatus: data.typing ? data.typing[peer.uid] : null
+              });
               updateTopTabBadges();
             });
           });
       }
     }
 
-    function renderListItem(item, appendToTop = false) {
+    function renderListItem(item) {
       const listEl = document.getElementById('chat-list');
       const existing = document.getElementById(`item-${item.id}`);
       if (existing) existing.remove();
@@ -1823,9 +1694,7 @@
         </div>
         <div class="item-content">
           <div class="item-top">
-            <span class="item-title">
-              ${item.name} ${item.isPinned ? '<span class="pinned-badge-tag">📌 Pinned</span>' : ''}
-            </span>
+            <span class="item-title">${item.name}</span>
             <span class="item-time">${item.time}</span>
           </div>
           <div class="item-preview">
@@ -1835,15 +1704,10 @@
         </div>
       `;
       li.onclick = () => selectConversation(item);
-      
-      if (appendToTop && listEl.firstChild) {
-        listEl.insertBefore(li, listEl.firstChild);
-      } else {
-        listEl.appendChild(li);
-      }
+      listEl.appendChild(li);
     }
 
-    // 8. MESSAGING, SOUND TONE & DISAPPEARING MESSAGES CLOCK
+    // 8. MESSAGING, SOUND TONE & DISAPPEARING CLOCK
     function selectConversation(item) {
       activeChat = item;
       unreadMessageCounts.set(item.id, 0);
@@ -1912,9 +1776,7 @@
 
               renderMessageBubble(msg);
               
-              // 🔕 STRICT RECEIVER-ONLY GUARANTEE
-              if (!isInitialLoad && msg.senderId !== currentUser.uid && !playedSoundMsgIds.has(msgId)) {
-                playedSoundMsgIds.add(msgId);
+              if (!isInitialLoad && msg.senderId !== currentUser.uid) {
                 playDropletTone();
                 if (!activeChat || activeChat.id !== item.id) {
                   const currentUnread = unreadMessageCounts.get(item.id) || 0;
@@ -1974,7 +1836,7 @@
 
       let senderTag = '';
       if (activeChat.type === 'group' && !isMe) {
-        senderTag = `<span class="msg-sender-tag" onclick="showGroupSenderPopup(event, '${msg.senderId}')">${msg.senderName} (${msg.senderHandle || '@user'})</span><br>`;
+        senderTag = `<span class="msg-sender-tag" onclick="showUserProfile('${msg.senderId}')">${msg.senderName} (${msg.senderHandle || '@user'})</span><br>`;
       }
 
       let content = '';
@@ -1983,14 +1845,7 @@
       } else if (msg.type === 'image') {
         content = `<img src="${msg.mediaUrl}" class="msg-img" loading="lazy" onclick="openMediaLightbox('${msg.mediaUrl}', false)" alt="Shared photo" />`;
       } else if (msg.type === 'video') {
-        // Video Stream Card with Link Button
-        content = `
-          <video class="msg-video" controls src="${msg.mediaUrl}" onclick="openMediaLightbox('${msg.mediaUrl}', true)"></video>
-          <div class="video-stream-card">
-            <span class="video-stream-hint">🎥 This video was compressed for instant streaming</span>
-            <button class="btn-video-stream" onclick="window.open('${msg.mediaUrl}', '_blank')">▶ Open in New Tab / Download</button>
-          </div>
-        `;
+        content = `<video class="msg-video" controls src="${msg.mediaUrl}" onclick="openMediaLightbox('${msg.mediaUrl}', true)"></video>`;
       } else if (msg.type === 'voice') {
         content = `<div class="msg-audio-player"><audio controls src="${msg.mediaUrl}"></audio></div>`;
       }
@@ -2038,7 +1893,7 @@
     document.getElementById('send-text-btn').addEventListener('click', sendChatMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
-    // 9. MEDIA UPLOAD ENGINE (UP TO 50 MB VIDEO VIA STORAGE WITH AUTO-COMPRESSION HINT)
+    // 9. MEDIA UPLOAD ENGINE WITH PREVIEW MODAL
     async function uploadMessageMedia(mediaData, type) {
       if (!activeChat) return;
       try {
@@ -2053,7 +1908,7 @@
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        const lastText = type === 'image' ? '📷 Photo' : (type === 'video' ? '🎥 Compressed Video' : '🎤 Voice Message');
+        const lastText = type === 'image' ? '📷 Photo' : (type === 'video' ? '🎥 Video' : '🎤 Voice Message');
         db.collection(collName).doc(activeChat.id).update({
           lastMessage: lastText,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -2081,30 +1936,19 @@
       if (checkGuestMediaRestriction()) return;
 
       if (file.type.startsWith('video/')) {
-        if (file.size > 50 * 1024 * 1024) {
-          return showToast('⚠️ Video exceeds the maximum 50 MB size limit!', 'error');
+        if (file.size > 15 * 1024 * 1024) {
+          return showToast('⚠️ Video is too large for instant send. Please select a short clip under 15 MB', 'error');
         }
 
-        showToast('Compressing and optimizing video stream...');
-        try {
-          const fileRef = storage.ref().child(`chat_videos/${Date.now()}_${file.name}`);
-          const task = fileRef.put(file);
-          
-          task.on('state_changed', 
-            (snapshot) => {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              if (Math.round(progress) % 25 === 0) showToast(`Uploading video stream: ${Math.round(progress)}%`);
-            }, 
-            (err) => showToast('Video upload failed: ' + err.message, 'error'), 
-            async () => {
-              const downloadUrl = await task.snapshot.ref.getDownloadURL();
-              await uploadMessageMedia(downloadUrl, 'video');
-              showToast('Video stream posted!');
-            }
-          );
-        } catch (err) {
-          showToast('Video error: ' + err.message, 'error');
-        }
+        showToast('Preparing video preview...');
+        const base64Vid = await blobToBase64(file);
+        pendingMediaPreview = { data: base64Vid, type: 'video' };
+        
+        document.getElementById('preview-img-el').style.display = 'none';
+        const vidEl = document.getElementById('preview-video-el');
+        vidEl.src = base64Vid;
+        vidEl.style.display = 'block';
+        openModal('media-preview-modal');
       } else {
         showToast('Preparing photo preview...');
         const base64Img = await compressImageToBase64(file);
@@ -2219,7 +2063,7 @@
       }
     });
 
-    // 10. DIRECTORY SEARCH & EXACT-PREFIX MATCHING
+    // 10. DIRECTORY SEARCH
     function openSearchModal() { openModal('search-modal'); }
 
     async function executeSearch(query) {
@@ -2274,7 +2118,7 @@
       });
     }
 
-    // 11. PUBLIC VS PRIVATE GROUP CREATION & REVOKABLE LINKS
+    // 11. PUBLIC VS PRIVATE GROUP CREATION
     function openCreateGroupModal() {
       setGroupPrivacyMode(false);
       openModal('create-group-modal');
@@ -2368,7 +2212,6 @@
       showToast('Old link revoked! New invite link generated.');
     }
 
-    // Group Member Directory with Last Seen Timestamps
     async function handleHeaderClick() {
       if (!activeChat) return;
       if (activeChat.type === 'dm') {
