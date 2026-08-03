@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Huddle — Pro & Admin Command Center</title>
+  <title>Huddle — Pro & Stealth Admin Command Center</title>
   <!-- Zero-Dependency Stylized H Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='26' fill='%236366F1'/><text x='50%' y='70%' font-size='66' font-weight='900' fill='white' text-anchor='middle' font-family='sans-serif'>H</text></svg>" />
   <style>
@@ -575,7 +575,7 @@
         <li>✨ <strong>Add Friends</strong></li>
         <li>✨ <strong>Receive Friend Requests</strong></li>
       </ul>
-      <button class="btn-primary" style="margin-bottom: 8px;" onclick="handleSignOut()">Login / Create Account</button>
+      <button class="btn-primary" style="margin-bottom: 8px;" onclick="upgradeGuestAccount()">Login / Create Account</button>
       <button class="btn-secondary" onclick="closeModal('guest-restriction-modal')">Continue as Guest</button>
     </div>
   </div>
@@ -784,7 +784,7 @@
     </div>
   </div>
 
-  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL (With Banner Cover & Overlapping Avatar) -->
+  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL -->
   <div id="group-about-modal" class="modal-overlay">
     <div class="modal-card" style="padding: 0 0 24px 0; max-width: 480px; overflow: hidden;">
       <div class="profile-banner-wrap" style="margin-bottom: 54px;">
@@ -798,7 +798,7 @@
         <span id="about-group-count" style="background: rgba(99, 102, 241, 0.2); color: var(--accent); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 14px;">0 Members</span>
       </div>
 
-      <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding: 16px 20px; margin-bottom: 14px; text-align: left;">
+      <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding-top: 14px; margin-bottom: 14px; text-align: left;">
         <span class="field-label" style="color: var(--accent); margin-bottom: 10px;">Admin: Group Settings & Editing Studio</span>
         
         <div id="admin-invite-controls" style="margin-bottom: 14px; background: var(--bg-dark); padding: 12px; border-radius: 14px;">
@@ -1006,6 +1006,22 @@
       return false;
     }
 
+    // REAL-TIME USER DIRECTORY OBSERVER
+    db.collection("users").onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        const u = change.doc.data();
+        if (u && u.uid) {
+          userCache.set(u.uid, u);
+          if (activeChat && activeChat.type === 'dm' && activeChat.peerId === u.uid) {
+            const nameEl = document.getElementById('room-peer-name');
+            const avatarEl = document.getElementById('room-peer-avatar');
+            if (nameEl) nameEl.textContent = u.name;
+            if (avatarEl) avatarEl.src = u.photoUrl;
+          }
+        }
+      });
+    });
+
     window.addEventListener('popstate', (e) => {
       const panel = document.getElementById('room-panel');
       if (panel && panel.classList.contains('mobile-active')) {
@@ -1135,23 +1151,6 @@
       if (img) img.src = base64;
     }
 
-    // Live previews for Group Studio in #group-about-modal
-    async function previewGroupStudioCover(inputEl) {
-      const file = inputEl.files[0];
-      if (!file) return;
-      const base64 = await compressImageToBase64(file);
-      const img = document.getElementById('about-group-cover');
-      if (img) img.src = base64;
-    }
-
-    async function previewGroupStudioAvatar(inputEl) {
-      const file = inputEl.files[0];
-      if (!file) return;
-      const base64 = await compressImageToBase64(file);
-      const img = document.getElementById('about-group-avatar');
-      if (img) img.src = base64;
-    }
-
     function showToast(msg, type = 'success') {
       const container = document.getElementById('toast-container');
       if (!container) return;
@@ -1223,7 +1222,65 @@
       window.location.reload();
     }
 
-    // Default Public Groups ("Kerala chat room" & "Friends")
+    function upgradeGuestAccount() {
+      if (currentUser && isGuestUser()) {
+        sessionStorage.setItem("huddle_migrating_guest_uid", currentUser.uid);
+      }
+      closeModal('guest-restriction-modal');
+      document.getElementById('auth-screen').style.display = 'block';
+      document.getElementById('app-shell').style.display = 'none';
+    }
+
+    async function migrateGuestChatHistory(oldUid, newUid, newName, newHandle, newAvatar) {
+      try {
+        const dmsSnap = await db.collection("dms").where("participants", "array-contains", oldUid).get();
+        for (let doc of dmsSnap.docs) {
+          const dmRef = db.collection("dms").doc(doc.id);
+          await dmRef.update({
+            participants: firebase.firestore.FieldValue.arrayRemove(oldUid)
+          });
+          await dmRef.update({
+            participants: firebase.firestore.FieldValue.arrayUnion(newUid)
+          });
+          const msgsSnap = await dmRef.collection("messages").where("senderId", "==", oldUid).get();
+          const batch = db.batch();
+          msgsSnap.forEach((mDoc) => {
+            batch.update(mDoc.ref, {
+              senderId: newUid,
+              senderName: newName,
+              senderHandle: newHandle
+            });
+          });
+          await batch.commit();
+        }
+
+        const groupsSnap = await db.collection("groups").where("members", "array-contains", oldUid).get();
+        for (let doc of groupsSnap.docs) {
+          const groupRef = db.collection("groups").doc(doc.id);
+          await groupRef.update({
+            members: firebase.firestore.FieldValue.arrayRemove(oldUid)
+          });
+          await groupRef.update({
+            members: firebase.firestore.FieldValue.arrayUnion(newUid)
+          });
+          const msgsSnap = await groupRef.collection("messages").where("senderId", "==", oldUid).get();
+          const batch = db.batch();
+          msgsSnap.forEach((mDoc) => {
+            batch.update(mDoc.ref, {
+              senderId: newUid,
+              senderName: newName,
+              senderHandle: newHandle
+            });
+          });
+          await batch.commit();
+        }
+
+        await db.collection("users").doc(oldUid).delete();
+      } catch (err) {
+        console.error("Migration error:", err);
+      }
+    }
+
     async function ensureDefaultPublicGroups() {
       const pubGroups = [
         { name: "Kerala chat room", handle: "@kerala_chat", desc: "Official Kerala chat room for everyone" },
@@ -1249,12 +1306,11 @@
       }
     }
 
-    // 2. AUTH & ACTIVE PRESENCE MONITOR WITH GLOBAL VIDEO SETTING
+    // 2. AUTH & ACTIVE PRESENCE MONITOR
     let myProfileUnsubscribe = null;
     auth.onAuthStateChanged(async (user) => {
       currentUser = user;
       if (user) {
-        // Listen to global app settings (Video Sharing ON/OFF)
         db.collection("app_settings").doc("global").onSnapshot((docSnap) => {
           if (docSnap.exists) {
             globalVideoEnabled = docSnap.data().videoSharingEnabled !== false;
@@ -1316,6 +1372,17 @@
             lastSeen: firebase.firestore.FieldValue.serverTimestamp()
           };
           await userRef.set(initProfile);
+          myProfile = initProfile;
+        } else {
+          myProfile = checkSnap.data();
+        }
+
+        const migratingGuestUid = sessionStorage.getItem("huddle_migrating_guest_uid");
+        if (migratingGuestUid && migratingGuestUid !== user.uid) {
+          showToast("⚡ Upgrading your guest messages to your account...");
+          await migrateGuestChatHistory(migratingGuestUid, user.uid, myProfile.name, myProfile.username, myProfile.photoUrl);
+          sessionStorage.removeItem("huddle_migrating_guest_uid");
+          showToast("⚡ Guest messages successfully migrated!");
         }
 
         userRef.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
@@ -2298,7 +2365,10 @@
 
       let senderTag = '';
       if (activeChat.type === 'group' && !isMe) {
-        senderTag = `<span class="msg-sender-tag" onclick="showGroupSenderPopup(event, '${msg.senderId}')">${msg.senderName} (${msg.senderHandle || '@user'})</span><br>`;
+        const cachedUser = userCache.get(msg.senderId);
+        const displayName = cachedUser ? cachedUser.name : (msg.senderName || 'User');
+        const displayHandle = cachedUser ? cachedUser.username : (msg.senderHandle || '@user');
+        senderTag = `<span class="msg-sender-tag" onclick="showGroupSenderPopup(event, '${msg.senderId}')">${escapeHtml(displayName)} (${escapeHtml(displayHandle)})</span><br>`;
       }
 
       let content = '';
@@ -2363,7 +2433,7 @@
     document.getElementById('send-text-btn').addEventListener('click', sendChatMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
-    // 9. MEDIA UPLOAD ENGINE WITH GLOBAL ADMIN LOCK
+    // 9. MEDIA UPLOAD ENGINE (UP TO 50 MB VIDEO VIA STORAGE)
     async function uploadMessageMedia(mediaData, type) {
       if (!activeChat) return;
       try {
@@ -2388,25 +2458,15 @@
       }
     }
 
-    function checkGuestMediaRestriction(event) {
-      if (isGuestUser()) {
-        if (event && event.preventDefault) event.preventDefault();
-        openModal('guest-restriction-modal');
-        return true;
-      }
-      return false;
-    }
-
     async function handleMediaFileSelect(file) {
       if (!file || !activeChat) {
         showToast('Select a conversation first!', 'error');
         return;
       }
 
-      if (checkGuestMediaRestriction()) return;
+      if (checkGuestRestriction()) return;
 
       if (file.type.startsWith('video/')) {
-        // LIVE GLOBAL VIDEO SHARING ADMIN LOCK CHECK
         if (!globalVideoEnabled) {
           return showToast('⚠️ Video sharing is temporarily disabled by Huddle Admin.', 'error');
         }
@@ -2485,7 +2545,7 @@
 
     document.getElementById('record-btn').addEventListener('click', async () => {
       if (!activeChat) return showToast('Select a conversation first!', 'error');
-      if (checkGuestMediaRestriction()) return;
+      if (checkGuestRestriction()) return;
 
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -2708,6 +2768,7 @@
       const grp = activeChat.groupData;
       document.getElementById('about-group-name').textContent = grp.name;
       document.getElementById('about-group-desc').textContent = grp.description || 'No description.';
+      document.getElementById('about-group-cover').src = grp.coverUrl || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80";
       document.getElementById('about-group-avatar').src = grp.photoUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=" + grp.id;
       document.getElementById('about-group-count').textContent = `${grp.members.length} Members`;
 
@@ -2763,12 +2824,25 @@
     async function adminSaveGroupChanges() {
       const name = document.getElementById('admin-edit-name').value.trim();
       const desc = document.getElementById('admin-edit-desc').value.trim();
-      await db.collection("groups").doc(activeChat.id).update({ name: name, description: desc });
+      const coverUrl = document.getElementById('about-group-cover').src;
+      const photoUrl = document.getElementById('about-group-avatar').src;
+
+      await db.collection("groups").doc(activeChat.id).update({
+        name: name,
+        description: desc,
+        coverUrl: coverUrl,
+        photoUrl: photoUrl
+      });
       activeChat.groupData.name = name;
       activeChat.groupData.description = desc;
+      activeChat.groupData.coverUrl = coverUrl;
+      activeChat.groupData.photoUrl = photoUrl;
+      activeChat.name = name;
+      activeChat.avatar = photoUrl;
       document.getElementById('room-peer-name').textContent = name;
+      document.getElementById('room-peer-avatar').src = photoUrl;
       closeModal('group-about-modal');
-      showToast('Admin updated group settings!');
+      showToast('Admin updated group settings, icon & banner!');
     }
 
     async function startDirectChat(peerId, peerName, peerAvatar) {
