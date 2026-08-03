@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Pulse Messenger — Telegram Edition</title>
+  <style>
+    :root {
+      --bg-dark: #0B1120;
+      --bg-panel: #151D30;
+      --bg-card: #1E293B;
+      --primary: #6366F1;
+      --primary-hover: #4F46E5;
+      --accent: #38BDF8;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border: rgba(255, 255, 255, 0.08);
+      --success: #10B981;
+      --danger: #EF4444;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg-dark); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+
+    /* Toast System */
+    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { background: rgba(21, 29, 48, 0.95); color: #fff; padding: 12px 22px; border-radius: 30px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); backdrop-filter: blur(12px); animation: toastIn 0.25s ease; }
+    .toast.success { border-left: 4px solid var(--success); }
+    .toast.error { border-left: 4px solid var(--danger); }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Modal Overlay & Telegram Profile Card */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 17, 32, 0.82); backdrop-filter: blur(10px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.2s ease; }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-card { background: var(--bg-panel); width: 100%; max-width: 420px; border-radius: 28px; padding: 24px; border: 1px solid var(--border); box-shadow: var(--shadow); transform: scale(0.95); transition: transform 0.2s ease; max-height: 88vh; overflow-y: auto; }
+    .modal-overlay.active .modal-card { transform: scale(1); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
+    .btn-close { background: var(--bg-card); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-weight: bold; }
+
+    /* Telegram Profile Card Specific Styling */
+    .telegram-profile-card { text-align: center; }
+    .telegram-avatar-lg { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 12px; background: var(--bg-card); }
+    .telegram-name { font-size: 22px; font-weight: 700; color: var(--text-main); }
+    .telegram-status { font-size: 13px; margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; }
+    .telegram-status.active { color: var(--success); }
+    .telegram-status.offline { color: var(--text-muted); }
+    .telegram-handle { color: var(--accent); font-size: 14px; font-weight: 600; margin-top: 4px; }
+    .telegram-bio-box { background: var(--bg-dark); padding: 14px; border-radius: 16px; border: 1px solid var(--border); text-align: left; margin: 18px 0; font-size: 13.5px; color: var(--text-main); }
+
+    /* Inputs & Buttons */
+    .field-group { margin-bottom: 16px; text-align: left; }
+    .field-label { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+    .input-dark { width: 100%; padding: 12px 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 14px; font-size: 14px; color: #fff; outline: none; transition: border 0.15s; }
+    .input-dark:focus { border-color: var(--primary); }
+    .btn-primary { width: 100%; padding: 13px; background: var(--primary); color: #fff; border: none; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.15s ease; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-secondary { width: 100%; padding: 12px; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); border-radius: 14px; font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 8px; }
+
+    /* App Frame */
+    #app-shell { width: 100%; max-width: 1180px; height: 93vh; background: var(--bg-panel); border-radius: 28px; border: 1px solid var(--border); box-shadow: var(--shadow); display: flex; overflow: hidden; position: relative; }
+    
+    /* Left Panel */
+    #sidebar-panel { width: 380px; height: 100%; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: var(--bg-panel); z-index: 10; }
+    .nav-header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+    .user-badge { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 6px 10px; border-radius: 16px; transition: background 0.15s; }
+    .user-badge:hover { background: var(--bg-card); }
+    .avatar-icon { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #1E293B; flex-shrink: 0; }
+    .header-actions { display: flex; gap: 8px; }
+    .icon-btn-round { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-main); font-size: 16px; }
+
+    /* Segmented Tabs */
+    #tabs-bar { display: flex; padding: 10px 16px; border-bottom: 1px solid var(--border); gap: 8px; background: rgba(11, 17, 32, 0.4); }
+    .tab-btn { flex: 1; padding: 10px 0; border: none; background: transparent; font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-radius: 12px; }
+    .tab-btn.active { background: var(--primary); color: #fff; }
+
+    /* Conversation List */
+    #chat-list { flex: 1; overflow-y: auto; list-style: none; }
+    .list-item { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; gap: 14px; }
+    .list-item:hover { background: rgba(255, 255, 255, 0.04); }
+    .list-item.active { background: rgba(99, 102, 241, 0.18); border-left: 4px solid var(--primary); }
+    .avatar-wrap { position: relative; flex-shrink: 0; }
+    .status-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2px solid var(--bg-panel); position: absolute; bottom: 0; right: 0; }
+    .item-content { flex: 1; min-width: 0; }
+    .item-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+    .item-title { font-size: 15px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-time { font-size: 11px; color: var(--text-muted); }
+    .item-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Right Main Room */
+    #room-panel { flex: 1; display: flex; flex-direction: column; background: var(--bg-dark); height: 100%; position: relative; }
+    #room-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); }
+    .peer-info { display: flex; align-items: center; gap: 14px; cursor: pointer; }
+    .peer-name { font-size: 16px; font-weight: 700; color: var(--text-main); }
+    .peer-sub { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    #back-btn { display: none; background: none; border: none; font-size: 24px; color: var(--accent); margin-right: 8px; cursor: pointer; }
+
+    /* Messages Stream */
+    #messages-feed { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 14px; background: radial-gradient(circle at top right, rgba(30,41,59,0.3) 0%, rgba(11,17,32,1) 100%); }
+    .msg-bubble { max-width: 68%; padding: 12px 16px; border-radius: 20px; font-size: 14px; line-height: 1.45; position: relative; word-break: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.3); animation: bubbleIn 0.15s ease; }
+    @keyframes bubbleIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .msg-me { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+    .msg-other { align-self: flex-start; background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    
+    .msg-sender-tag { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 6px; display: inline-block; cursor: pointer; padding: 2px 8px; border-radius: 10px; background: rgba(56, 189, 248, 0.12); }
+    .msg-sender-tag:hover { background: rgba(56, 189, 248, 0.25); text-decoration: underline; }
+
+    /* Rendered Media Display */
+    .msg-img { max-width: 100%; max-height: 320px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); object-fit: cover; }
+    .msg-audio-player { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 16px; margin-top: 6px; min-width: 230px; }
+    .msg-audio-player audio { width: 100%; height: 32px; border-radius: 8px; outline: none; }
+
+    /* Input Dock */
+    #room-footer { padding: 16px 24px; border-top: 1px solid var(--border); background: var(--bg-panel); display: flex; align-items: center; gap: 10px; }
+    #message-input { flex: 1; padding: 13px 18px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 24px; font-size: 14px; color: #fff; outline: none; }
+    #message-input:focus { border-color: var(--primary); }
+    .dock-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-main); transition: all 0.15s; }
+    .dock-btn:hover { background: var(--primary); }
+    .recording-pulse { background: var(--danger) !important; color: #fff !important; animation: pulse 0.8s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.12); } 100% { transform: scale(1); } }
+
+    /* Member List Item */
+    .member-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .member-row:hover { opacity: 0.85; }
+    .status-badge { font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; }
+    .status-badge.active { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .status-badge.inactive { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
+
+    @media (max-width: 768px) {
+      body { padding: 0; }
+      #app-shell { height: 100vh; border-radius: 0; border: none; }
+      #sidebar-panel { width: 100%; }
+      #room-panel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+      #room-panel.mobile-active { transform: translateX(0); }
+      #back-btn { display: inline-block; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- AUTH FORM -->
+  <div id="auth-screen" style="width: 100%; max-width: 420px; padding: 20px;">
+    <div class="modal-card" style="margin: 0 auto;">
+      <h2 id="auth-title" style="text-align: center; margin-bottom: 24px; font-size: 24px; color: var(--accent);">Pulse Messenger</h2>
+      
+      <div id="signup-extra-fields" style="display: none;">
+        <div class="field-group">
+          <label class="field-label">Full Name</label>
+          <input type="text" id="name-input" class="input-dark" placeholder="Anil Krishna" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Username</label>
+          <input type="text" id="username-input" class="input-dark" placeholder="@anil_creator" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Bio / Status</label>
+          <input type="text" id="bio-input" class="input-dark" placeholder="Interior Designer & Visual Creator" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Profile Avatar</label>
+          <input type="file" id="avatar-input" accept="image/*" class="input-dark" style="padding: 8px;" />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Email Address</label>
+        <input type="email" id="email-input" class="input-dark" placeholder="user@pulse.com" required />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Password</label>
+        <input type="password" id="password-input" class="input-dark" placeholder="••••••••" required />
+      </div>
+      <button id="auth-submit-btn" class="btn-primary">Log In</button>
+      <button id="toggle-auth-btn" class="btn-secondary">New here? Create Account</button>
+    </div>
+  </div>
+
+  <!-- MAIN APP SHELL -->
+  <div id="app-shell" style="display: none;">
+    
+    <!-- LEFT PANEL -->
+    <div id="sidebar-panel">
+      <div class="nav-header">
+        <div class="user-badge" onclick="showUserProfile(currentUser.uid)">
+          <img id="my-avatar-top" class="avatar-icon" src="" alt="Me" />
+          <div>
+            <strong id="my-name-top" style="font-size: 14px; display: block;">Account</strong>
+            <small id="my-handle-top" style="font-size: 11px; color: var(--accent);">@username</small>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn-round" onclick="openSearchModal()" title="Search">🔍</button>
+          <button class="icon-btn-round" onclick="openCreateGroupModal()" title="Create Group">➕</button>
+        </div>
+      </div>
+
+      <div id="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('all')">All</button>
+        <button class="tab-btn" onclick="switchTab('chats')">Direct</button>
+        <button class="tab-btn" onclick="switchTab('groups')">Groups</button>
+      </div>
+
+      <ul id="chat-list"></ul>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div id="room-panel">
+      <header id="room-header">
+        <div class="peer-info" onclick="handleHeaderClick()">
+          <button id="back-btn" onclick="closeMobileRoom(event)">‹</button>
+          <img id="room-peer-avatar" class="avatar-icon" src="" />
+          <div>
+            <div id="room-peer-name" class="peer-name">Select a Chat</div>
+            <div id="room-peer-status" class="peer-sub">Tap a conversation from the sidebar</div>
+          </div>
+        </div>
+        <div>
+          <button id="invite-btn" class="btn-secondary" style="padding: 6px 14px; margin: 0; display: none;" onclick="copyGroupInviteLink(event)">🔗 Invite Link</button>
+        </div>
+      </header>
+      
+      <div id="messages-feed"></div>
+
+      <div id="room-footer">
+        <input type="text" id="message-input" placeholder="Type a message..." />
+        <label class="dock-btn" title="Send Photo">
+          📷
+          <input type="file" id="image-picker" accept="image/*" style="display: none;" />
+        </label>
+        <button id="record-btn" class="dock-btn" title="Voice Note">🎤</button>
+        <button id="send-text-btn" class="dock-btn" style="background: var(--primary); color: #fff;" title="Send">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELEGRAM FULL USER PROFILE CARD MODAL -->
+  <div id="telegram-profile-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">User Info</span>
+        <button class="btn-close" onclick="closeModal('telegram-profile-modal')">✕</button>
+      </div>
+      <div class="telegram-profile-card">
+        <img id="tg-card-avatar" class="telegram-avatar-lg" src="" />
+        <h2 id="tg-card-name" class="telegram-name">User Name</h2>
+        <div id="tg-card-handle" class="telegram-handle">@username</div>
+        <div id="tg-card-status" class="telegram-status">● Active Now</div>
+        
+        <div class="telegram-bio-box">
+          <span class="field-label" style="margin-bottom: 4px;">About / Bio</span>
+          <div id="tg-card-bio">No bio provided.</div>
+        </div>
+
+        <div id="tg-card-actions">
+          <button id="tg-action-dm-btn" class="btn-primary" style="margin-bottom: 8px;">💬 Send Direct Message</button>
+          <button id="tg-action-edit-btn" class="btn-secondary" style="margin-bottom: 8px; display: none;" onclick="openEditProfileModal()">✏️ Edit My Profile</button>
+          <button id="tg-action-copy-btn" class="btn-secondary" onclick="copyUserHandle()">📋 Copy Username</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT PROFILE MODAL -->
+  <div id="profile-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Edit Profile Settings</span>
+        <button class="btn-close" onclick="closeModal('profile-modal')">✕</button>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Display Name</label>
+        <input type="text" id="edit-name" class="input-dark" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Username</label>
+        <input type="text" id="edit-username" class="input-dark" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Bio / Description</label>
+        <input type="text" id="edit-bio" class="input-dark" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Change Profile Picture</label>
+        <input type="file" id="edit-avatar-file" accept="image/*" class="input-dark" style="padding: 8px;" />
+      </div>
+      <button class="btn-primary" onclick="saveProfileChanges()">Save Account Info</button>
+      <button class="btn-secondary" style="color: var(--danger); margin-top: 10px;" onclick="auth.signOut()">Log Out</button>
+    </div>
+  </div>
+
+  <!-- CREATE GROUP MODAL -->
+  <div id="create-group-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Create New Group</span>
+        <button class="btn-close" onclick="closeModal('create-group-modal')">✕</button>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Group Name</label>
+        <input type="text" id="new-group-name" class="input-dark" placeholder="Design Studio HQ" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Group Handle (For Search & Link)</label>
+        <input type="text" id="new-group-handle" class="input-dark" placeholder="@design_hq" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Description</label>
+        <input type="text" id="new-group-desc" class="input-dark" placeholder="Official group collaboration" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Group Cover Photo</label>
+        <input type="file" id="new-group-pic" accept="image/*" class="input-dark" style="padding: 8px;" />
+      </div>
+      <button class="btn-primary" onclick="createNewGroup()">Create Group</button>
+    </div>
+  </div>
+
+  <!-- SEARCH MODAL -->
+  <div id="search-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Discover Directory</span>
+        <button class="btn-close" onclick="closeModal('search-modal')">✕</button>
+      </div>
+      <input type="text" id="search-query" class="input-dark" placeholder="Search by name or @username..." style="margin-bottom: 16px;" oninput="executeSearch(this.value)" />
+      <ul id="search-results" style="list-style: none; max-height: 300px; overflow-y: auto;"></ul>
+    </div>
+  </div>
+
+  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL -->
+  <div id="group-about-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Group Settings & Members</span>
+        <button class="btn-close" onclick="closeModal('group-about-modal')">✕</button>
+      </div>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <img id="about-group-avatar" class="avatar-icon" style="width: 74px; height: 74px;" src="" />
+        <h3 id="about-group-name" style="margin-top: 8px;">Group Name</h3>
+        <p id="about-group-desc" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;"></p>
+        <span id="about-group-count" style="background: rgba(99, 102, 241, 0.2); color: var(--accent); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 14px;">0 Members</span>
+      </div>
+
+      <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding-top: 14px; margin-bottom: 14px;">
+        <span class="field-label">Admin Settings: Modify Group</span>
+        <input type="text" id="admin-edit-name" class="input-dark" style="margin-bottom: 8px;" placeholder="Edit Group Name" />
+        <input type="text" id="admin-edit-desc" class="input-dark" style="margin-bottom: 8px;" placeholder="Edit Group Description" />
+        <button class="btn-primary" onclick="adminSaveGroupChanges()">Save Admin Updates</button>
+      </div>
+
+      <span class="field-label">Members Directory</span>
+      <div id="about-members-list" style="max-height: 230px; overflow-y: auto;"></div>
+    </div>
+  </div>
+
+  <!-- Firebase 10.x Compat CDN SDKs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.min.js"></script>
+
+  <script>
+    // 1. FIREBASE CONFIGURATION (chatapp-8a75f)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCtxjJoqR1EpFlCpFiwma0JOrtV-sB5fM",
+      authDomain: "chatapp-8a75f.firebaseapp.com",
+      projectId: "chatapp-8a75f",
+      storageBucket: "chatapp-8a75f.firebasestorage.app",
+      messagingSenderId: "965477273106",
+      appId: "1:965477273106:web:9ceaaed0017c8a06e492cb",
+      measurementId: "G-49Z2TG37JW"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // App State & Performance Memory Cache
+    let currentUser = null;
+    let myProfile = null;
+    let currentTab = 'all';
+    let activeChat = null;
+    let unsubscribeMessages = null;
+    let isRegistering = false;
+    let isRecording = false;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let viewingProfileUser = null;
+    const userCache = new Map();
+
+    // Base64 Image Compression Engine (~80 KB JPEG)
+    function compressImageToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const maxDim = 800;
+            let width = img.width;
+            let height = img.height;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL("image/jpeg", 0.75));
+          };
+          img.onerror = (err) => reject(err);
+        };
+        reader.onerror = (err) => reject(err);
+      });
+    }
+
+    // Base64 Audio Helper
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = (err) => reject(err);
+      });
+    }
+
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<span>${type === 'success' ? '⚡' : '⚠️'}</span><span>${msg}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 250);
+      }, 3000);
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    // 2. AUTH & ACTIVE PRESENCE MONITOR
+    auth.onAuthStateChanged(async (user) => {
+      currentUser = user;
+      if (user) {
+        const userRef = db.collection("users").doc(user.uid);
+        const docSnap = await userRef.get();
+
+        if (docSnap.exists) {
+          myProfile = docSnap.data();
+        } else {
+          myProfile = {
+            uid: user.uid,
+            email: user.email,
+            name: user.email.split('@')[0],
+            username: '@' + user.email.split('@')[0],
+            bio: "Pulse Messenger User",
+            photoUrl: "https://api.dicebear.com/7.x/bottts/svg?seed=" + user.uid,
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+          };
+          await userRef.set(myProfile);
+        }
+
+        userCache.set(user.uid, myProfile);
+        userRef.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
+        setInterval(() => {
+          userRef.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
+        }, 60000);
+
+        document.getElementById('my-name-top').textContent = myProfile.name;
+        document.getElementById('my-handle-top').textContent = myProfile.username;
+        document.getElementById('my-avatar-top').src = myProfile.photoUrl;
+
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('app-shell').style.display = 'flex';
+
+        const params = new URLSearchParams(window.location.search);
+        const joinId = params.get('join');
+        if (joinId) {
+          await joinGroupById(joinId);
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        loadConversationList();
+      } else {
+        document.getElementById('auth-screen').style.display = 'block';
+        document.getElementById('app-shell').style.display = 'none';
+      }
+    });
+
+    document.getElementById('toggle-auth-btn').addEventListener('click', () => {
+      isRegistering = !isRegistering;
+      document.getElementById('signup-extra-fields').style.display = isRegistering ? 'block' : 'none';
+      document.getElementById('auth-title').textContent = isRegistering ? 'Create Account' : 'Pulse Messenger';
+      document.getElementById('auth-submit-btn').textContent = isRegistering ? 'Sign Up' : 'Log In';
+      document.getElementById('toggle-auth-btn').textContent = isRegistering ? 'Already have an account? Log In' : 'New here? Create Account';
+    });
+
+    document.getElementById('auth-submit-btn').addEventListener('click', async () => {
+      const email = document.getElementById('email-input').value.trim();
+      const password = document.getElementById('password-input').value.trim();
+      if (!email || !password) return showToast('Email and password required!', 'error');
+
+      try {
+        if (isRegistering) {
+          const name = document.getElementById('name-input').value.trim() || "User";
+          const username = document.getElementById('username-input').value.trim() || "@user_" + Date.now();
+          const bio = document.getElementById('bio-input').value.trim() || "Pulse Creator";
+          const avatarFile = document.getElementById('avatar-input').files[0];
+
+          let photoUrl = "https://api.dicebear.com/7.x/bottts/svg?seed=" + Date.now();
+          if (avatarFile) {
+            photoUrl = await compressImageToBase64(avatarFile);
+          }
+
+          const credential = await auth.createUserWithEmailAndPassword(email, password);
+          await db.collection("users").doc(credential.user.uid).set({
+            uid: credential.user.uid,
+            email: email,
+            name: name,
+            username: username.startsWith('@') ? username : '@' + username,
+            bio: bio,
+            photoUrl: photoUrl,
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          showToast('Account created!');
+        } else {
+          await auth.signInWithEmailAndPassword(email, password);
+          showToast('Logged in successfully!');
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    });
+
+    // 3. TELEGRAM USER PROFILE CARD SYSTEM
+    async function showUserProfile(userId) {
+      let user = userCache.get(userId);
+      if (!user) {
+        const doc = await db.collection("users").doc(userId).get();
+        if (!doc.exists) return;
+        user = doc.data();
+        userCache.set(userId, user);
+      }
+      viewingProfileUser = user;
+
+      document.getElementById('tg-card-avatar').src = user.photoUrl;
+      document.getElementById('tg-card-name').textContent = user.name;
+      document.getElementById('tg-card-handle').textContent = user.username;
+      document.getElementById('tg-card-bio').textContent = user.bio || 'No bio provided.';
+      
+      const isActive = (Date.now() - (user.lastSeen?.toMillis() || 0)) < 300000;
+      const statusEl = document.getElementById('tg-card-status');
+      statusEl.className = `telegram-status ${isActive ? 'active' : 'offline'}`;
+      statusEl.textContent = isActive ? '● Active Now' : '○ Last seen recently';
+
+      const isMe = userId === currentUser.uid;
+      document.getElementById('tg-action-dm-btn').style.display = isMe ? 'none' : 'block';
+      document.getElementById('tg-action-edit-btn').style.display = isMe ? 'block' : 'none';
+
+      document.getElementById('tg-action-dm-btn').onclick = () => {
+        closeModal('telegram-profile-modal');
+        startDirectChat(user.uid, user.name, user.photoUrl);
+      };
+
+      openModal('telegram-profile-modal');
+    }
+
+    function copyUserHandle() {
+      if (!viewingProfileUser) return;
+      navigator.clipboard.writeText(viewingProfileUser.username);
+      showToast('Username copied: ' + viewingProfileUser.username);
+    }
+
+    function openEditProfileModal() {
+      closeModal('telegram-profile-modal');
+      document.getElementById('edit-name').value = myProfile.name || '';
+      document.getElementById('edit-username').value = myProfile.username || '';
+      document.getElementById('edit-bio').value = myProfile.bio || '';
+      openModal('profile-modal');
+    }
+
+    async function saveProfileChanges() {
+      const name = document.getElementById('edit-name').value.trim();
+      const username = document.getElementById('edit-username').value.trim();
+      const bio = document.getElementById('edit-bio').value.trim();
+      const avatarFile = document.getElementById('edit-avatar-file').files[0];
+
+      let photoUrl = myProfile.photoUrl;
+      if (avatarFile) {
+        showToast('Saving new avatar...');
+        photoUrl = await compressImageToBase64(avatarFile);
+      }
+
+      await db.collection('users').doc(currentUser.uid).update({
+        name: name,
+        username: username.startsWith('@') ? username : '@' + username,
+        bio: bio,
+        photoUrl: photoUrl
+      });
+
+      myProfile.name = name;
+      myProfile.username = username;
+      myProfile.bio = bio;
+      myProfile.photoUrl = photoUrl;
+      userCache.set(currentUser.uid, myProfile);
+
+      document.getElementById('my-name-top').textContent = name;
+      document.getElementById('my-handle-top').textContent = username;
+      document.getElementById('my-avatar-top').src = photoUrl;
+      closeModal('profile-modal');
+      showToast('Profile updated!');
+    }
+
+    // 4. CONVERSATION FEED
+    function switchTab(tabName) {
+      currentTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      loadConversationList();
+    }
+
+    function loadConversationList() {
+      const listEl = document.getElementById('chat-list');
+      listEl.innerHTML = '';
+
+      if (currentTab === 'all' || currentTab === 'chats') {
+        db.collection("dms")
+          .where("participants", "array-contains", currentUser.uid)
+          .onSnapshot((snapshot) => {
+            snapshot.forEach(async (doc) => {
+              const data = doc.data();
+              const peerId = data.participants.find(id => id !== currentUser.uid);
+              
+              let peer = userCache.get(peerId);
+              if (!peer) {
+                const peerDoc = await db.collection("users").doc(peerId).get();
+                if (!peerDoc.exists) return;
+                peer = peerDoc.data();
+                userCache.set(peerId, peer);
+              }
+
+              const isActive = (Date.now() - (peer.lastSeen?.toMillis() || 0)) < 300000;
+              renderListItem({
+                type: 'dm',
+                id: doc.id,
+                peerId: peer.uid,
+                name: peer.name,
+                avatar: peer.photoUrl,
+                preview: data.lastMessage || 'Personal conversation',
+                time: data.updatedAt ? new Date(data.updatedAt.toMillis()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '',
+                isActive: isActive,
+                peerData: peer
+              });
+            });
+          });
+      }
+
+      if (currentTab === 'all' || currentTab === 'groups') {
+        db.collection("groups")
+          .where("members", "array-contains", currentUser.uid)
+          .onSnapshot((snapshot) => {
+            snapshot.forEach((doc) => {
+              const grp = { id: doc.id, ...doc.data() };
+              renderListItem({
+                type: 'group',
+                id: grp.id,
+                name: grp.name,
+                avatar: grp.photoUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=" + grp.id,
+                preview: grp.description || 'Group conversation',
+                time: '',
+                isActive: false,
+                groupData: grp
+              });
+            });
+          });
+      }
+    }
+
+    function renderListItem(item) {
+      const listEl = document.getElementById('chat-list');
+      const existing = document.getElementById(`item-${item.id}`);
+      if (existing) existing.remove();
+
+      const li = document.createElement('li');
+      li.id = `item-${item.id}`;
+      li.className = `list-item ${activeChat && activeChat.id === item.id ? 'active' : ''}`;
+      li.innerHTML = `
+        <div class="avatar-wrap">
+          <img src="${item.avatar}" class="avatar-icon" onclick="event.stopPropagation(); ${item.type === 'dm' ? `showUserProfile('${item.peerId}')` : `handleHeaderClick()`}" />
+          ${item.isActive ? '<span class="status-dot"></span>' : ''}
+        </div>
+        <div class="item-content">
+          <div class="item-top">
+            <span class="item-title">${item.name}</span>
+            <span class="item-time">${item.time}</span>
+          </div>
+          <div class="item-preview">${item.preview}</div>
+        </div>
+      `;
+      li.onclick = () => selectConversation(item);
+      listEl.appendChild(li);
+    }
+
+    // 5. MESSAGING & CHAT ROOM
+    function selectConversation(item) {
+      activeChat = item;
+      document.querySelectorAll('.list-item').forEach(el => el.classList.remove('active'));
+      const activeEl = document.getElementById(`item-${item.id}`);
+      if (activeEl) activeEl.classList.add('active');
+
+      document.getElementById('room-peer-name').textContent = item.name;
+      document.getElementById('room-peer-avatar').src = item.avatar;
+      
+      if (item.type === 'group') {
+        document.getElementById('room-peer-status').textContent = '👥 Tap for Group Info';
+        document.getElementById('invite-btn').style.display = 'inline-block';
+      } else {
+        document.getElementById('room-peer-status').textContent = item.isActive ? '● Active Now' : 'Offline';
+        document.getElementById('invite-btn').style.display = 'none';
+      }
+
+      document.getElementById('room-panel').classList.add('mobile-active');
+
+      if (unsubscribeMessages) unsubscribeMessages();
+
+      const collName = item.type === 'group' ? 'groups' : 'dms';
+      unsubscribeMessages = db.collection(collName).doc(item.id).collection('messages')
+        .orderBy('createdAt', 'asc')
+        .onSnapshot((snapshot) => {
+          const feed = document.getElementById('messages-feed');
+          feed.innerHTML = '';
+          snapshot.forEach((doc) => renderMessageBubble(doc.data()));
+          feed.scrollTop = feed.scrollHeight;
+        });
+    }
+
+    function closeMobileRoom(e) {
+      e.stopPropagation();
+      document.getElementById('room-panel').classList.remove('mobile-active');
+    }
+
+    function renderMessageBubble(msg) {
+      const isMe = msg.senderId === currentUser.uid;
+      const feed = document.getElementById('messages-feed');
+      const div = document.createElement('div');
+      div.className = `msg-bubble ${isMe ? 'msg-me' : 'msg-other'}`;
+
+      let senderTag = '';
+      if (activeChat.type === 'group' && !isMe) {
+        senderTag = `<span class="msg-sender-tag" onclick="showUserProfile('${msg.senderId}')">${msg.senderName} (${msg.senderHandle || '@user'})</span><br>`;
+      }
+
+      let content = '';
+      if (msg.type === 'text') {
+        content = `<span>${escapeHtml(msg.text)}</span>`;
+      } else if (msg.type === 'image') {
+        content = `<img src="${msg.mediaUrl}" class="msg-img" loading="lazy" alt="Shared photo" />`;
+      } else if (msg.type === 'voice') {
+        content = `<div class="msg-audio-player"><audio controls src="${msg.mediaUrl}"></audio></div>`;
+      }
+
+      div.innerHTML = senderTag + content;
+      feed.appendChild(div);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t));
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('message-input');
+      const text = input.value.trim();
+      if (!text || !activeChat) return;
+
+      const collName = activeChat.type === 'group' ? 'groups' : 'dms';
+      db.collection(collName).doc(activeChat.id).collection('messages').add({
+        text: text,
+        type: 'text',
+        senderId: currentUser.uid,
+        senderName: myProfile.name,
+        senderHandle: myProfile.username,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      db.collection(collName).doc(activeChat.id).update({
+        lastMessage: text,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      input.value = '';
+    }
+
+    document.getElementById('send-text-btn').addEventListener('click', sendChatMessage);
+    document.getElementById('message-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
+
+    // 6. INSTANT BASE64 MEDIA ENGINE (ZERO STORAGE BUCKET REQUIRED)
+    async function uploadMessageMedia(file, type) {
+      if (!activeChat) return;
+      try {
+        showToast(`Sending ${type}...`);
+        const collName = activeChat.type === 'group' ? 'groups' : 'dms';
+        
+        let mediaUrl = "";
+        if (type === 'image') {
+          mediaUrl = await compressImageToBase64(file);
+        } else if (type === 'voice') {
+          mediaUrl = await blobToBase64(file);
+        }
+
+        await db.collection(collName).doc(activeChat.id).collection('messages').add({
+          mediaUrl: mediaUrl,
+          type: type,
+          senderId: currentUser.uid,
+          senderName: myProfile.name,
+          senderHandle: myProfile.username,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        db.collection(collName).doc(activeChat.id).update({
+          lastMessage: type === 'image' ? '📷 Photo' : '🎤 Voice Message',
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showToast('Sent immediately!');
+      } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+      }
+    }
+
+    document.getElementById('image-picker').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        uploadMessageMedia(file, 'image');
+        e.target.value = '';
+      }
+    });
+
+    // Voice Recorder (Base64 conversion)
+    const recordBtn = document.getElementById('record-btn');
+    recordBtn.addEventListener('click', async () => {
+      if (!isRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          
+          let options = {};
+          if (MediaRecorder.isTypeSupported('audio/webm')) options = { mimeType: 'audio/webm' };
+          else if (MediaRecorder.isTypeSupported('audio/mp4')) options = { mimeType: 'audio/mp4' };
+
+          mediaRecorder = new MediaRecorder(stream, options);
+          audioChunks = [];
+
+          mediaRecorder.ondataavailable = (e) => {
+            if (e.data && e.data.size > 0) audioChunks.push(e.data);
+          };
+
+          mediaRecorder.onstop = async () => {
+            const mimeType = mediaRecorder.mimeType || 'audio/webm';
+            const audioBlob = new Blob(audioChunks, { type: mimeType });
+            await uploadMessageMedia(audioBlob, 'voice');
+            stream.getTracks().forEach(t => t.stop());
+          };
+
+          mediaRecorder.start(100);
+          isRecording = true;
+          recordBtn.classList.add('recording-pulse');
+          showToast('Recording... Tap 🎤 again to send');
+        } catch (err) {
+          showToast('Microphone access denied', 'error');
+        }
+      } else {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+        }
+        isRecording = false;
+        recordBtn.classList.remove('recording-pulse');
+      }
+    });
+
+    // 7. DIRECTORY SEARCH & GROUP CREATION
+    function openSearchModal() { openModal('search-modal'); }
+
+    async function executeSearch(query) {
+      const resultsEl = document.getElementById('search-results');
+      resultsEl.innerHTML = '';
+      if (!query.trim()) return;
+
+      const groupsSnap = await db.collection("groups").get();
+      groupsSnap.forEach((doc) => {
+        const g = { id: doc.id, ...doc.data() };
+        if (g.name.toLowerCase().includes(query.toLowerCase()) || (g.handle && g.handle.toLowerCase().includes(query.toLowerCase()))) {
+          const li = document.createElement('li');
+          li.className = 'member-row';
+          li.innerHTML = `
+            <div style="display:flex; align-items:center; gap:10px;">
+              <img src="${g.photoUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + g.id}" class="avatar-icon" />
+              <div><strong># ${g.name}</strong><br><small style="color:var(--text-muted);">${g.handle || ''}</small></div>
+            </div>
+            <button class="btn-primary" style="width:auto; padding:6px 14px;" onclick="joinGroupById('${g.id}')">Join</button>
+          `;
+          resultsEl.appendChild(li);
+        }
+      });
+
+      const usersSnap = await db.collection("users").get();
+      usersSnap.forEach((doc) => {
+        const u = doc.data();
+        if (u.uid === currentUser.uid) return;
+        if (u.name.toLowerCase().includes(query.toLowerCase()) || (u.username && u.username.toLowerCase().includes(query.toLowerCase()))) {
+          const li = document.createElement('li');
+          li.className = 'member-row';
+          li.innerHTML = `
+            <div style="display:flex; align-items:center; gap:10px;">
+              <img src="${u.photoUrl}" class="avatar-icon" onclick="showUserProfile('${u.uid}')" />
+              <div><strong>${u.name}</strong><br><small style="color:var(--text-muted);">${u.username}</small></div>
+            </div>
+            <button class="btn-secondary" style="width:auto; padding:6px 14px; margin:0;" onclick="startDirectChat('${u.uid}', '${u.name}', '${u.photoUrl}')">Chat</button>
+          `;
+          resultsEl.appendChild(li);
+        }
+      });
+    }
+
+    async function joinGroupById(groupId) {
+      const groupRef = db.collection("groups").doc(groupId);
+      const docSnap = await groupRef.get();
+      if (!docSnap.exists) return showToast('Group does not exist!', 'error');
+
+      await groupRef.update({
+        members: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
+      });
+      showToast('Joined group: #' + docSnap.data().name);
+      closeModal('search-modal');
+      switchTab('groups');
+    }
+
+    function copyGroupInviteLink(e) {
+      e.stopPropagation();
+      if (!activeChat || activeChat.type !== 'group') return;
+      const url = `${window.location.origin}${window.location.pathname}?join=${activeChat.id}`;
+      navigator.clipboard.writeText(url);
+      showToast('Invite link copied to clipboard!');
+    }
+
+    function openCreateGroupModal() { openModal('create-group-modal'); }
+
+    async function createNewGroup() {
+      const name = document.getElementById('new-group-name').value.trim();
+      const handle = document.getElementById('new-group-handle').value.trim();
+      const desc = document.getElementById('new-group-desc').value.trim();
+      const picFile = document.getElementById('new-group-pic').files[0];
+
+      if (!name) return showToast('Group Name is required!', 'error');
+
+      let photoUrl = "https://api.dicebear.com/7.x/shapes/svg?seed=" + Date.now();
+      if (picFile) {
+        showToast('Processing group photo...');
+        photoUrl = await compressImageToBase64(picFile);
+      }
+
+      await db.collection("groups").add({
+        name: name,
+        handle: handle.startsWith('@') ? handle : '@' + handle,
+        description: desc,
+        photoUrl: photoUrl,
+        adminId: currentUser.uid,
+        members: [currentUser.uid],
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      closeModal('create-group-modal');
+      showToast('Group created!');
+      switchTab('groups');
+    }
+
+    async function handleHeaderClick() {
+      if (!activeChat) return;
+      if (activeChat.type === 'dm') {
+        showUserProfile(activeChat.peerId);
+        return;
+      }
+
+      const grp = activeChat.groupData;
+      document.getElementById('about-group-name').textContent = grp.name;
+      document.getElementById('about-group-desc').textContent = grp.description || 'No description.';
+      document.getElementById('about-group-avatar').src = grp.photoUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=" + grp.id;
+      document.getElementById('about-group-count').textContent = `${grp.members.length} Members`;
+
+      const adminSection = document.getElementById('admin-edit-section');
+      if (grp.adminId === currentUser.uid) {
+        adminSection.style.display = 'block';
+        document.getElementById('admin-edit-name').value = grp.name;
+        document.getElementById('admin-edit-desc').value = grp.description || '';
+      } else {
+        adminSection.style.display = 'none';
+      }
+
+      const membersContainer = document.getElementById('about-members-list');
+      membersContainer.innerHTML = '';
+
+      for (let memberId of grp.members) {
+        let u = userCache.get(memberId);
+        if (!u) {
+          const uDoc = await db.collection("users").doc(memberId).get();
+          if (!uDoc.exists) continue;
+          u = uDoc.data();
+          userCache.set(memberId, u);
+        }
+
+        const isActive = (Date.now() - (u.lastSeen?.toMillis() || 0)) < 300000;
+        const isAdmin = memberId === grp.adminId;
+
+        const div = document.createElement('div');
+        div.className = 'member-row';
+        div.innerHTML = `
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img src="${u.photoUrl}" class="avatar-icon" style="width:38px; height:38px;" />
+            <div>
+              <strong>${u.name} ${isAdmin ? '<span style="color:var(--accent); font-size:11px;">(Admin)</span>' : ''}</strong>
+              <br><small style="color:var(--text-muted);">${u.username}</small>
+            </div>
+          </div>
+          <div>
+            <span class="status-badge ${isActive ? 'active' : 'inactive'}">${isActive ? '● Active' : '○ Offline'}</span>
+          </div>
+        `;
+        div.onclick = () => {
+          closeModal('group-about-modal');
+          showUserProfile(u.uid);
+        };
+        membersContainer.appendChild(div);
+      }
+
+      openModal('group-about-modal');
+    }
+
+    async function adminSaveGroupChanges() {
+      const name = document.getElementById('admin-edit-name').value.trim();
+      const desc = document.getElementById('admin-edit-desc').value.trim();
+      await db.collection("groups").doc(activeChat.id).update({ name: name, description: desc });
+      activeChat.groupData.name = name;
+      activeChat.groupData.description = desc;
+      document.getElementById('room-peer-name').textContent = name;
+      closeModal('group-about-modal');
+      showToast('Admin updated group settings!');
+    }
+
+    async function startDirectChat(peerId, peerName, peerAvatar) {
+      const dmId = [currentUser.uid, peerId].sort().join('_');
+      const dmRef = db.collection("dms").doc(dmId);
+      const snap = await dmRef.get();
+
+      if (!snap.exists) {
+        await dmRef.set({
+          participants: [currentUser.uid, peerId],
+          lastMessage: "Direct chat initiated",
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      closeModal('search-modal');
+      selectConversation({ type: 'dm', id: dmId, peerId: peerId, name: peerName, avatar: peerAvatar, isActive: true });
+    }
+  </script>
+</body>
+</html>
