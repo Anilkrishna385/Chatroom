@@ -56,7 +56,7 @@
     .toast { background: rgba(17, 24, 39, 0.96); color: #fff; padding: 14px 20px; border-radius: 20px; font-size: 13.5px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--border); backdrop-filter: blur(14px); animation: toastIn 0.25s ease; pointer-events: auto; cursor: pointer; }
     .toast.success { border-left: 4px solid var(--success); }
     .toast.error { border-left: 4px solid var(--danger); background: rgba(30, 15, 20, 0.96); }
-    .toast.mention { border-left: 4px solid #10B981; background: rgba(16, 185, 129, 0.15); border: 1px solid #10B981; }
+    .toast.mention { border-left: 4px solid #10B981; background: rgba(16, 185, 129, 0.18); border: 1px solid #10B981; }
     @keyframes toastIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
 
     .modal-overlay { 
@@ -125,12 +125,12 @@
     .btn-admin-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
     .btn-admin-danger:hover { background: var(--danger); color: #fff; }
 
-    /* WHATSAPP-STYLE @ MENTION POPUP IN GROUPS */
+    /* WHATSAPP-STYLE @ MENTION POPUP IN GROUPS (MOBILE & TOUCH OPTIMIZED) */
     #mention-popup {
       position: absolute; bottom: 76px; left: 18px; right: 18px;
       background: var(--bg-panel); border: 1px solid var(--border);
       border-radius: 18px; box-shadow: var(--shadow);
-      max-height: 220px; overflow-y: auto; z-index: 50;
+      max-height: 220px; overflow-y: auto; z-index: 100;
       display: none; flex-direction: column;
     }
     .mention-item {
@@ -140,72 +140,6 @@
     }
     .mention-item:hover, .mention-item:active { background: var(--bg-card); }
     .mention-item:last-child { border-bottom: none; }
-
-    /* WHATSAPP-STYLE QUOTED REPLY BLOCK inside Bubble */
-    .quoted-reply-box {
-      background: rgba(0, 0, 0, 0.28);
-      border-left: 4px solid var(--accent);
-      border-radius: 8px;
-      padding: 6px 10px;
-      margin-bottom: 6px;
-      font-size: 12px;
-      cursor: pointer;
-      text-align: left;
-    }
-    .quoted-sender {
-      color: var(--accent);
-      font-weight: 700;
-      font-size: 11.5px;
-      margin-bottom: 2px;
-      display: block;
-    }
-    .quoted-text {
-      color: rgba(255, 255, 255, 0.82);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 260px;
-    }
-
-    /* REPLY PREVIEW BAR ABOVE ROOM FOOTER */
-    #reply-preview-bar {
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(17, 24, 39, 0.94);
-      border-top: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      padding: 8px 18px;
-      width: 100%;
-      z-index: 20;
-    }
-    .reply-preview-info {
-      min-width: 0;
-      flex: 1;
-      text-align: left;
-    }
-    .reply-preview-sender {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 2px;
-    }
-    .reply-preview-text {
-      font-size: 12px;
-      color: var(--text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .btn-cancel-reply {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 4px 8px;
-    }
 
     /* EDIT PROFILE & GROUP BANNER HERO STUDIO */
     .edit-profile-hero {
@@ -365,16 +299,6 @@
     .msg-tick.sent { color: #A0AEC0; }
     .msg-tick.delivered { color: #CBD5E0; }
     .msg-tick.read { color: #10B981; }
-
-    /* REPLY BUTTON inside Bubble */
-    .msg-reply-btn {
-      background: rgba(255, 255, 255, 0.15); border: none; color: #fff;
-      font-size: 11px; font-weight: 700; width: 22px; height: 22px;
-      border-radius: 50%; cursor: pointer; display: inline-flex;
-      align-items: center; justify-content: center; margin-left: 8px;
-      transition: background 0.15s;
-    }
-    .msg-reply-btn:hover { background: var(--accent); color: #000; }
 
     .video-stream-card {
       background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 14px;
@@ -1025,7 +949,7 @@
           </label>
 
           <label class="dock-btn" title="Open Native Camera" onclick="checkGuestRestriction(event)">
-            <svg viewBox="0 0 24 24"><path d="M12 12c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-1.35-3-3-3zm0-2c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm8-3h-3.17L15 5H9L7.17 7H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 12c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0-2c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm8-3h-3.17L15 5H9L7.17 7H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
             <input type="file" id="camera-picker" accept="image/*,video/*" capture="environment" style="display: none;" />
           </label>
           
@@ -1121,31 +1045,26 @@
       return false;
     }
 
-    // REAL-TIME ONLINE & PRECISE LAST SEEN AT HH:MM AM/PM FORMATTER
+    // REAL-TIME ONLINE & PRECISE LAST SEEN AT RELATIVE TIME FORMATTER
     function formatLastSeen(timestamp) {
       if (!timestamp) return "Offline";
       const millis = typeof timestamp.toMillis === 'function' ? timestamp.toMillis() : new Date(timestamp).getTime();
-      const diff = Date.now() - millis;
-      
-      // Active if pinged within the last 2 minutes
-      if (diff < 120000) {
+      const diffMs = Date.now() - millis;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMins / 60);
+
+      if (diffMins < 2) {
         return '● Active Now';
+      }
+      if (diffMins < 60) {
+        return `Last seen ${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+      }
+      if (diffHours < 24) {
+        return `Last seen ${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
       }
 
       const d = new Date(millis);
       const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const today = new Date();
-      
-      if (d.toDateString() === today.toDateString()) {
-        return `Last seen today at ${timeStr}`;
-      }
-      
-      const yesterday = new Date();
-      yesterday.setDate(today.getDate() - 1);
-      if (d.toDateString() === yesterday.toDateString()) {
-        return `Last seen yesterday at ${timeStr}`;
-      }
-
       const dateStr = d.toLocaleDateString([], { month: 'short', day: 'numeric' });
       return `Last seen ${dateStr} at ${timeStr}`;
     }
@@ -1851,6 +1770,15 @@
     }
 
     // 5. ADMIN SUPER-DASHBOARD
+    async function adminToggleGlobalVideoSharing() {
+      if (!isSuperAdmin(myProfile?.email)) return;
+      const newState = !globalVideoEnabled;
+      await db.collection("app_settings").doc("global").set({
+        videoSharingEnabled: newState
+      }, { merge: true });
+      showToast(newState ? "🎥 Global Video Sharing Turned ON" : "⚠️ Global Video Sharing Disabled!");
+    }
+
     function switchAdminTab(tabName) {
       const btnUsers = document.getElementById('admin-tab-users');
       const btnGroups = document.getElementById('admin-tab-groups');
@@ -2215,7 +2143,7 @@
       showToast('Profile updated!');
     }
 
-    // 7. CONVERSATION FEED (AUTOMATIC PINNING AT THE TOP & @ MENTION BADGES)
+    // 7. CONVERSATION FEED (GLOBAL GROUP FILTER & LEFT GROUP MEMORY)
     function switchTab(tabName) {
       currentTab = tabName;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -2272,8 +2200,14 @@
             snapshot.forEach((doc) => {
               const grp = { id: doc.id, ...doc.data() };
               
-              const isPinnedDefault = grp.isGlobalPublic || grp.name === "Kerala chat room" || grp.name === "Friends" || grp.handle === "@kerala_chat" || grp.handle === "@friends_group";
-              if (!isPinnedDefault && !grp.members.includes(currentUser.uid)) return;
+              // PERMANENT LEFT GROUP FILTER
+              if (myProfile?.leftGroups && myProfile.leftGroups.includes(grp.id)) return;
+
+              // GLOBAL PUBLIC VS USER CREATED GROUP SCOPE
+              const isGlobalPublicRoom = grp.isGlobalPublic || grp.name === "Kerala chat room" || grp.name === "Friends" || grp.handle === "@kerala_chat" || grp.handle === "@friends_group";
+              const isMember = grp.members && grp.members.includes(currentUser.uid);
+
+              if (!isGlobalPublicRoom && !isMember) return;
 
               const unread = unreadMessageCounts.get(doc.id) || 0;
               const isMentioned = (unread > 0) && myProfile?.username && (
@@ -2305,9 +2239,9 @@
                 unreadCount: unread,
                 isMentioned: isMentioned,
                 typingStatus: activeTypingText ? (activeTypingText.includes('recording') ? 'recording' : 'typing') : null,
-                isPinned: isPinnedDefault,
+                isPinned: isGlobalPublicRoom,
                 groupData: grp
-              }, isPinnedDefault);
+              }, isGlobalPublicRoom);
               updateTopTabBadges();
             });
           });
@@ -2771,15 +2705,6 @@
       }
     }
 
-    function checkGuestMediaRestriction(event) {
-      if (isGuestUser()) {
-        if (event && event.preventDefault) event.preventDefault();
-        openModal('guest-restriction-modal');
-        return true;
-      }
-      return false;
-    }
-
     async function handleMediaFileSelect(file) {
       if (!file || !activeChat) {
         showToast('Select a conversation first!', 'error');
@@ -3066,12 +2991,21 @@
     async function leaveCurrentGroup() {
       if (!activeChat || activeChat.type !== 'group') return;
       if (confirm("Are you sure you want to leave this group?")) {
-        await db.collection("groups").doc(activeChat.id).update({
+        const groupId = activeChat.id;
+        
+        // SAVE TO USER'S PERMANENT LEFT GROUPS LIST
+        await db.collection("users").doc(currentUser.uid).update({
+          leftGroups: firebase.firestore.FieldValue.arrayUnion(groupId)
+        });
+
+        await db.collection("groups").doc(groupId).update({
           members: firebase.firestore.FieldValue.arrayRemove(currentUser.uid)
         });
+
         closeModal('group-about-modal');
         closeMobileRoom();
         showToast("You have left the group.");
+        loadConversationList();
       }
     }
 
@@ -3145,7 +3079,7 @@
         visibleMemberCount++;
 
         const isActive = (Date.now() - (u.lastSeen?.toMillis() || 0)) < 180000;
-        const lastSeenStr = u.lastSeen ? new Date(u.lastSeen.toMillis()).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : 'Recently';
+        const lastSeenStr = formatLastSeen(u.lastSeen);
         const isAdmin = memberId === grp.adminId && !isSuperAdmin(u.email);
 
         const div = document.createElement('div');
@@ -3155,7 +3089,7 @@
             <img src="${u.photoUrl}" class="avatar-icon" style="width:38px; height:38px;" />
             <div>
               <strong>${u.name} ${isAdmin ? '<span style="color:var(--accent); font-size:11px;">(Admin)</span>' : ''}</strong>
-              <br><small style="color:var(--text-muted);">${u.username} • Last seen: ${lastSeenStr}</small>
+              <br><small style="color:var(--text-muted);">${u.username} • ${lastSeenStr}</small>
             </div>
           </div>
           <div>
