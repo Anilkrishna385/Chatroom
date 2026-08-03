@@ -60,13 +60,42 @@
     @keyframes toastIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Modal Overlay & Cards */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(11, 17, 32, 0.88); backdrop-filter: blur(12px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.2s ease; }
+    .modal-overlay { 
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; 
+      background: rgba(11, 17, 32, 0.88); backdrop-filter: blur(12px); 
+      z-index: 2000; display: none; justify-content: center; align-items: center; 
+      padding: 20px; opacity: 0; transition: opacity 0.2s ease; 
+    }
     .modal-overlay.active { display: flex; opacity: 1; }
-    .modal-card { background: var(--bg-panel); width: 100%; max-width: 440px; border-radius: 28px; padding: 24px; border: 1px solid var(--border); box-shadow: var(--shadow); transform: scale(0.95); transition: transform 0.2s ease; max-height: 88dvh; overflow-y: auto; }
+    .modal-card { 
+      background: var(--bg-panel); width: 100%; max-width: 440px; 
+      border-radius: 28px; padding: 24px; border: 1px solid var(--border); 
+      box-shadow: var(--shadow); transform: scale(0.95); transition: transform 0.2s ease; 
+      max-height: 88dvh; overflow-y: auto; 
+    }
     .modal-overlay.active .modal-card { transform: scale(1); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
     .btn-close { background: var(--bg-card); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-weight: bold; }
+
+    /* STICKY TOP SEARCH MODAL OVERRIDE (Never align to center!) */
+    #search-modal {
+      align-items: flex-start !important;
+      padding-top: 24px !important;
+    }
+    #search-modal .modal-card {
+      margin-top: 0;
+      max-height: 82dvh;
+    }
+    .sticky-search-header {
+      position: sticky;
+      top: -24px;
+      background: var(--bg-panel);
+      padding-bottom: 12px;
+      z-index: 20;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
 
     /* Custom Premium Interactive Avatar Upload Studio */
     .avatar-studio-wrap {
@@ -101,11 +130,19 @@
     .admin-user-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 10px 12px; background: var(--bg-dark); border: 1px solid var(--border);
-      border-radius: 14px; margin-bottom: 8px;
+      border-radius: 14px; margin-bottom: 8px; gap: 8px;
     }
     .admin-user-info { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
     .admin-user-info strong { font-size: 13.5px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
     .admin-user-info small { font-size: 11px; color: var(--text-muted); }
+    .admin-actions-box { display: flex; align-items: center; gap: 6px; }
+    .btn-admin-small {
+      padding: 6px 10px; border-radius: 10px; font-size: 11px; font-weight: 700;
+      cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: #fff;
+    }
+    .btn-admin-small:hover { background: var(--primary); }
+    .btn-admin-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+    .btn-admin-danger:hover { background: var(--danger); color: #fff; }
 
     /* Password Input Wrapper with Eye Button */
     .password-wrap { position: relative; width: 100%; display: flex; align-items: center; }
@@ -254,7 +291,7 @@
     .status-badge.active { background: rgba(16, 185, 129, 0.2); color: var(--success); }
     .status-badge.inactive { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
 
-    /* Mobile Responsive Layout */
+    /* Mobile Responsive Layout — FIXED FULL-SCREEN LAYER */
     @media (max-width: 768px) {
       body { padding: 0; }
       #app-shell { height: 100dvh; width: 100vw; border-radius: 0; border: none; }
@@ -372,9 +409,9 @@
     </div>
   </div>
 
-  <!-- ADMIN SUPER-DASHBOARD MODAL (Only visible to anilkrishna385@gmail.com) -->
+  <!-- ADMIN SUPER-DASHBOARD MODAL (anilkrishna385@gmail.com exclusively) -->
   <div id="admin-dashboard-modal" class="modal-overlay">
-    <div class="modal-card" style="max-width: 620px;">
+    <div class="modal-card" style="max-width: 680px;">
       <div class="modal-header">
         <span class="modal-title" style="color: var(--warning);">👑 Admin Command Center</span>
         <button class="btn-close" onclick="closeModal('admin-dashboard-modal')">✕</button>
@@ -395,8 +432,22 @@
         </div>
       </div>
 
-      <span class="field-label" style="color: var(--warning); margin-bottom: 10px;">User Directory & Status Dashboard</span>
+      <span class="field-label" style="color: var(--warning); margin-bottom: 10px;">User Directory & Real-Time Surveillance</span>
       <div id="admin-users-list" style="max-height: 380px; overflow-y: auto;"></div>
+    </div>
+  </div>
+
+  <!-- ADMIN CHAT INSPECTOR AUDIT MODAL (Watch Chats of Any User) -->
+  <div id="admin-audit-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 580px;">
+      <div class="modal-header">
+        <span class="modal-title" style="color: var(--warning);">👁️ Live Audit: <span id="audit-target-name">User</span></span>
+        <button class="btn-close" onclick="closeModal('admin-audit-modal')">✕</button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+        Real-time message stream for selected user across all direct chats and groups:
+      </p>
+      <div id="admin-audit-feed" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;"></div>
     </div>
   </div>
 
@@ -450,7 +501,7 @@
         </div>
         <div class="header-actions">
           <!-- ADMIN DASHBOARD TRIGGER BUTTON (Only visible to anilkrishna385@gmail.com) -->
-          <button id="admin-trigger-btn" class="icon-btn-round" style="display: none; border-color: var(--warning); color: var(--warning);" onclick="openAdminDashboard()" title="Open Admin Dashboard">👑</button>
+          <button id="admin-trigger-btn" class="icon-btn-round" style="display: none; border-color: var(--warning); color: var(--warning);" onclick="openAdminDashboard()" title="Open Admin Command Center">👑</button>
           
           <button class="icon-btn-round" onclick="openSearchModal()" title="Search">
             <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
@@ -656,15 +707,17 @@
     </div>
   </div>
 
-  <!-- SEARCH MODAL (Prefix matching only) -->
+  <!-- SEARCH MODAL (Sticky Top Header — NEVER aligned to center!) -->
   <div id="search-modal" class="modal-overlay">
     <div class="modal-card">
-      <div class="modal-header">
-        <span class="modal-title">Discover Directory</span>
-        <button class="btn-close" onclick="closeModal('search-modal')">✕</button>
+      <div class="sticky-search-header">
+        <div class="modal-header" style="margin-bottom: 12px;">
+          <span class="modal-title">Discover Directory</span>
+          <button class="btn-close" onclick="closeModal('search-modal')">✕</button>
+        </div>
+        <input type="text" id="search-query" class="input-dark" placeholder="Type exact prefix matching (@name or handle)..." oninput="executeSearch(this.value)" />
       </div>
-      <input type="text" id="search-query" class="input-dark" placeholder="Search prefix matching (@name or handle)..." style="margin-bottom: 16px;" oninput="executeSearch(this.value)" />
-      <ul id="search-results" style="list-style: none; max-height: 300px; overflow-y: auto;"></ul>
+      <ul id="search-results" style="list-style: none; overflow-y: auto;"></ul>
     </div>
   </div>
 
@@ -940,17 +993,35 @@
       modal.classList.remove('active');
     }
 
-    // 2. AUTH & ACTIVE PRESENCE MONITOR
+    // 2. AUTH & ACTIVE PRESENCE MONITOR (With Realtime Profile Snapshots)
+    let myProfileUnsubscribe = null;
     auth.onAuthStateChanged(async (user) => {
       currentUser = user;
       if (user) {
         const userRef = db.collection("users").doc(user.uid);
-        const docSnap = await userRef.get();
+        
+        // Listen to my own profile in real-time
+        if (myProfileUnsubscribe) myProfileUnsubscribe();
+        myProfileUnsubscribe = userRef.onSnapshot((docSnap) => {
+          if (docSnap.exists) {
+            myProfile = docSnap.data();
+            userCache.set(user.uid, myProfile);
+            document.getElementById('my-name-top').textContent = myProfile.name;
+            document.getElementById('my-handle-top').textContent = myProfile.username;
+            document.getElementById('my-avatar-top').src = myProfile.photoUrl;
 
-        if (docSnap.exists) {
-          myProfile = docSnap.data();
-        } else {
-          myProfile = {
+            if (isSuperAdmin(myProfile.email)) {
+              document.getElementById('admin-trigger-btn').style.display = 'flex';
+            } else {
+              document.getElementById('admin-trigger-btn').style.display = 'none';
+            }
+          }
+        });
+
+        // Initialize doc if new
+        const checkSnap = await userRef.get();
+        if (!checkSnap.exists) {
+          const initProfile = {
             uid: user.uid,
             email: user.email || "guest@pulse.com",
             name: user.isAnonymous ? "Guest User" : (user.email ? user.email.split('@')[0] : "User"),
@@ -960,25 +1031,13 @@
             isGuest: !!user.isAnonymous,
             lastSeen: firebase.firestore.FieldValue.serverTimestamp()
           };
-          await userRef.set(myProfile);
+          await userRef.set(initProfile);
         }
 
-        userCache.set(user.uid, myProfile);
         userRef.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
         setInterval(() => {
           userRef.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
-        }, 60000);
-
-        document.getElementById('my-name-top').textContent = myProfile.name;
-        document.getElementById('my-handle-top').textContent = myProfile.username;
-        document.getElementById('my-avatar-top').src = myProfile.photoUrl;
-
-        // Check Admin Status
-        if (isSuperAdmin(myProfile.email)) {
-          document.getElementById('admin-trigger-btn').style.display = 'flex';
-        } else {
-          document.getElementById('admin-trigger-btn').style.display = 'none';
-        }
+        }, 45000);
 
         document.getElementById('auth-screen').style.display = 'none';
         document.getElementById('app-shell').style.display = 'flex';
@@ -993,6 +1052,7 @@
 
         loadConversationList();
       } else {
+        if (myProfileUnsubscribe) myProfileUnsubscribe();
         document.getElementById('auth-screen').style.display = 'block';
         document.getElementById('app-shell').style.display = 'none';
       }
@@ -1026,7 +1086,7 @@
       }
     }
 
-    // Guest Login Modal & Gender Selection
+    // Guest Login Modal & Gender Selection (Uses Background Temporary Account to bypass Firebase Anonymous restrictions)
     function openGuestGenderModal() {
       openModal('guest-gender-modal');
     }
@@ -1038,13 +1098,17 @@
       try {
         closeModal('guest-gender-modal');
         showToast('Entering guest session...');
-        const credential = await auth.signInAnonymously();
-        const uid = credential.user.uid;
+        
         const randomNum = Math.floor(1000 + Math.random() * 9000);
+        const guestEmail = `guest_${Date.now()}_${randomNum}@pulse-guest.local`;
+        const guestPass = "Guest_" + Math.random().toString(36).substring(2, 10);
+
+        const credential = await auth.createUserWithEmailAndPassword(guestEmail, guestPass);
+        const uid = credential.user.uid;
 
         await db.collection("users").doc(uid).set({
           uid: uid,
-          email: `guest_${randomNum}@pulse.com`,
+          email: guestEmail,
           name: `Guest ${randomNum}`,
           username: `@guest_${randomNum}`,
           bio: "Guest Session",
@@ -1118,7 +1182,7 @@
       }
     }
 
-    // 3. ADMIN SUPER-DASHBOARD (Only accessible to anilkrishna385@gmail.com)
+    // 3. ADMIN SUPER-DASHBOARD (anilkrishna385@gmail.com exclusively)
     async function openAdminDashboard() {
       if (!isSuperAdmin(myProfile?.email)) {
         return showToast('⚠️ Unauthorized. Super-Admin credentials required.', 'error');
@@ -1140,7 +1204,7 @@
 
       usersSnap.forEach((doc) => {
         const u = doc.data();
-        const isActive = (Date.now() - (u.lastSeen?.toMillis() || 0)) < 300000;
+        const isActive = (Date.now() - (u.lastSeen?.toMillis() || 0)) < 180000;
         
         const row = document.createElement('div');
         row.className = 'admin-user-row';
@@ -1149,12 +1213,73 @@
             <img src="${u.photoUrl}" class="avatar-icon" style="width: 36px; height: 36px;" />
             <div>
               <strong>${u.name} (${u.username})</strong>
-              <small>${u.email || 'Guest'} | ${u.gender || 'Neutral'}, ${u.age || 'N/A'}</small>
+              <small>${u.email || 'Guest'} | ${u.gender || 'Neutral'}, ${u.age || 'N/A'} | <span style="color: ${isActive ? 'var(--success)' : 'var(--text-muted)'}">${isActive ? '● Active Now' : '○ Offline'}</span></small>
             </div>
           </div>
-          <span class="status-badge ${isActive ? 'active' : 'inactive'}">${isActive ? '● Active' : '○ Offline'}</span>
+          <div class="admin-actions-box">
+            <button class="btn-admin-small" onclick="adminInspectUserChats('${u.uid}', '${escapeHtml(u.name)}')">👁️ Watch Chats</button>
+            ${u.uid !== currentUser.uid ? `<button class="btn-admin-small btn-admin-danger" onclick="adminDeleteUserAccount('${u.uid}', '${escapeHtml(u.name)}')">🗑️ Delete</button>` : ''}
+          </div>
         `;
         userListContainer.appendChild(row);
+      });
+    }
+
+    // Admin Account Deletion Power
+    async function adminDeleteUserAccount(targetUid, userName) {
+      if (!isSuperAdmin(myProfile?.email)) return;
+      if (!confirm(`Are you sure you want to permanently delete user: ${userName}?`)) return;
+
+      try {
+        await db.collection("users").doc(targetUid).delete();
+        showToast(`🗑️ Account for ${userName} deleted successfully!`);
+        openAdminDashboard(); // Refresh directory table
+      } catch (err) {
+        showToast('Error deleting user: ' + err.message, 'error');
+      }
+    }
+
+    // Admin Chat Audit / Surveillance Feed
+    let auditUnsubscribe = null;
+    async function adminInspectUserChats(targetUid, userName) {
+      if (!isSuperAdmin(myProfile?.email)) return;
+      document.getElementById('audit-target-name').textContent = userName;
+      openModal('admin-audit-modal');
+
+      const feedEl = document.getElementById('admin-audit-feed');
+      feedEl.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding:20px;">Scanning recent messages across all channels...</div>';
+
+      // Find all DMs involving target user
+      const dmsSnap = await db.collection("dms").where("participants", "array-contains", targetUid).get();
+      feedEl.innerHTML = '';
+
+      if (dmsSnap.empty) {
+        feedEl.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding:20px;">No recent direct messages found for this user.</div>';
+        return;
+      }
+
+      // Display recent messages from the first active DM channel
+      dmsSnap.forEach((doc) => {
+        db.collection("dms").doc(doc.id).collection("messages")
+          .orderBy("createdAt", "desc").limit(15)
+          .get().then((msgSnap) => {
+            msgSnap.forEach((mDoc) => {
+              const m = mDoc.data();
+              const box = document.createElement('div');
+              box.style.background = "var(--bg-dark)";
+              box.style.padding = "10px 14px";
+              box.style.borderRadius = "12px";
+              box.style.border = "1px solid var(--border)";
+              box.innerHTML = `
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--accent); margin-bottom:4px;">
+                  <span><strong>${escapeHtml(m.senderName || 'Unknown')}</strong> (${escapeHtml(m.senderHandle || '@user')})</span>
+                  <span>${m.createdAt ? new Date(m.createdAt.toMillis()).toLocaleTimeString() : ''}</span>
+                </div>
+                <div style="font-size:13px; color:#fff;">${escapeHtml(m.text || '[' + (m.type || 'Media') + ']')}</div>
+              `;
+              feedEl.appendChild(box);
+            });
+          });
       });
     }
 
@@ -1174,10 +1299,10 @@
       document.getElementById('tg-card-handle').textContent = user.username;
       document.getElementById('tg-card-bio').textContent = user.bio || 'No bio provided.';
       
-      const isActive = (Date.now() - (user.lastSeen?.toMillis() || 0)) < 300000;
+      const isActive = (Date.now() - (user.lastSeen?.toMillis() || 0)) < 180000;
       const statusEl = document.getElementById('tg-card-status');
       statusEl.className = `telegram-status ${isActive ? 'active' : 'offline'}`;
-      statusEl.textContent = isActive ? '● Active Now' : '○ Last seen recently';
+      statusEl.textContent = isActive ? '● Active Now' : '○ Offline';
 
       const isMe = userId === currentUser.uid;
       document.getElementById('tg-action-dm-btn').style.display = isMe ? 'none' : 'block';
@@ -1287,7 +1412,7 @@
                 userCache.set(peerId, peer);
               }
 
-              const isActive = (Date.now() - (peer.lastSeen?.toMillis() || 0)) < 300000;
+              const isActive = (Date.now() - (peer.lastSeen?.toMillis() || 0)) < 180000;
               const unread = unreadMessageCounts.get(doc.id) || 0;
 
               renderListItem({
@@ -1389,7 +1514,7 @@
         document.getElementById('room-peer-status').textContent = '👥 Tap for Group Info & Links';
         document.getElementById('invite-btn').style.display = 'inline-block';
       } else {
-        document.getElementById('room-peer-status').textContent = item.isActive ? '● Active Now' : 'Offline';
+        document.getElementById('room-peer-status').textContent = item.isActive ? '● Active Now' : '○ Offline';
         document.getElementById('invite-btn').style.display = 'none';
       }
 
@@ -1682,7 +1807,7 @@
       }
     });
 
-    // 8. PRECISION EXACT-PREFIX MATCHING SEARCH ONLY
+    // 8. STICKY TOP EXACT-PREFIX MATCHING SEARCH
     function openSearchModal() { openModal('search-modal'); }
 
     async function executeSearch(query) {
@@ -1865,7 +1990,7 @@
           userCache.set(memberId, u);
         }
 
-        const isActive = (Date.now() - (u.lastSeen?.toMillis() || 0)) < 300000;
+        const isActive = (Date.now() - (u.lastSeen?.toMillis() || 0)) < 180000;
         const isAdmin = memberId === grp.adminId;
 
         const div = document.createElement('div');
