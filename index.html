@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Pulse Messenger — Pro & Admin Surveillance</title>
+  <title>Pulse Messenger — Ultimate Pinned & Admin Pro</title>
   <style>
     :root {
       --bg-dark: #090D16;
@@ -21,7 +21,7 @@
       --shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
     }
 
-    /* DRM Anti-Screenshot & Anti-Selection Protection */
+    /* Anti-Screenshot & Selection Protection */
     * { 
       box-sizing: border-box; margin: 0; padding: 0; 
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
@@ -42,7 +42,6 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
 
-    /* Security Privacy Shield (Blacks out screen on screenshot attempt / blur) */
     #privacy-shield {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
       background: rgba(9, 13, 22, 0.98); backdrop-filter: blur(30px);
@@ -75,15 +74,33 @@
     .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
     .btn-close { background: var(--bg-card); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-weight: bold; }
 
-    /* BANNER & OVERLAPPING AVATAR PROFILE PAGE */
-    .profile-banner-wrap {
-      position: relative; width: 100%; height: 170px; border-radius: 20px 20px 0 0;
-      overflow: visible; background: var(--bg-card); margin-bottom: 50px;
+    /* UNIFIED TOP-LEFT ACCOUNT SHEET */
+    .profile-sheet-banner {
+      position: relative; width: 100%; height: 160px; border-radius: 20px 20px 0 0;
+      overflow: visible; background: var(--bg-card); margin-bottom: 46px;
     }
-    .profile-banner-img {
-      width: 100%; height: 100%; object-fit: cover; border-radius: 20px 20px 0 0;
-      border-bottom: 1px solid var(--border);
+    .profile-sheet-cover { width: 100%; height: 100%; object-fit: cover; border-radius: 20px 20px 0 0; border-bottom: 1px solid var(--border); }
+    .profile-sheet-avatar {
+      position: absolute; bottom: -36px; left: 20px; width: 92px; height: 92px;
+      border-radius: 50%; border: 4px solid var(--bg-panel); object-fit: cover;
+      background: var(--bg-card); box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
+    .profile-sheet-body { padding: 0 10px 10px 10px; text-align: left; }
+    .profile-sheet-name { font-size: 22px; font-weight: 800; color: #fff; }
+    .profile-sheet-handle { font-size: 13px; color: var(--accent); font-weight: 600; margin-top: 2px; }
+    .profile-sheet-bio { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.4; }
+    .profile-menu-list { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+    .profile-menu-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 14px 16px; background: var(--bg-dark); border: 1px solid var(--border);
+      border-radius: 16px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .profile-menu-btn:hover { background: var(--bg-card); border-color: var(--primary); }
+
+    /* BANNER & OVERLAPPING AVATAR PROFILE VIEW (Reference Style) */
+    .profile-banner-wrap { position: relative; width: 100%; height: 170px; border-radius: 20px 20px 0 0; overflow: visible; background: var(--bg-card); margin-bottom: 50px; }
+    .profile-banner-img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px 20px 0 0; border-bottom: 1px solid var(--border); }
     .profile-avatar-overlap {
       position: absolute; bottom: -40px; left: 24px; width: 100px; height: 100px;
       border-radius: 50%; border: 4px solid var(--bg-panel); object-fit: cover;
@@ -91,15 +108,18 @@
       cursor: pointer; transition: transform 0.2s;
     }
     .profile-avatar-overlap:hover { transform: scale(1.03); }
-    .profile-body-row {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      padding: 0 10px; margin-bottom: 16px;
-    }
+    .profile-body-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 0 10px; margin-bottom: 16px; }
     .profile-info-left { text-align: left; max-width: 65%; }
     .profile-bold-name { font-size: 24px; font-weight: 800; color: #fff; line-height: 1.1; }
     .profile-handle-sub { font-size: 13.5px; color: var(--accent); font-weight: 600; margin-top: 4px; }
     .profile-about-box { font-size: 13.5px; color: var(--text-main); margin-top: 10px; line-height: 1.4; }
     .profile-actions-right { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+
+    /* Pinned Badge styling for Public Groups */
+    .pinned-badge-tag {
+      background: rgba(99, 102, 241, 0.2); color: var(--accent); font-size: 10px;
+      font-weight: 800; padding: 2px 7px; border-radius: 8px; margin-left: 6px; display: inline-block;
+    }
 
     /* Red Circle Friend Request Badge */
     .red-circle-badge {
@@ -167,7 +187,7 @@
     .status-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2px solid var(--bg-panel); position: absolute; bottom: 0; right: 0; }
     .item-content { flex: 1; min-width: 0; }
     .item-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-    .item-title { font-size: 15px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-title { font-size: 15px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
     .item-time { font-size: 11px; color: var(--text-muted); }
     .item-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .unread-badge { background: var(--success); color: #000; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 12px; display: inline-block; flex-shrink: 0; }
@@ -200,11 +220,25 @@
     .msg-sender-tag { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 6px; display: inline-block; cursor: pointer; padding: 2px 8px; border-radius: 10px; background: rgba(56, 189, 248, 0.12); }
     .msg-sender-tag:hover { background: rgba(56, 189, 248, 0.25); text-decoration: underline; }
 
+    /* Message Ticks / Status Indicators */
     .msg-footer-meta { display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 10px; color: rgba(255,255,255,0.7); margin-top: 4px; float: right; margin-left: 10px; }
     .msg-tick { font-weight: bold; font-size: 11px; }
     .msg-tick.sent { color: #A0AEC0; }
     .msg-tick.delivered { color: #CBD5E0; }
     .msg-tick.read { color: #10B981; }
+
+    /* Video Compression / Link Streaming Card */
+    .video-stream-card {
+      background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 14px;
+      padding: 10px; margin-top: 6px; text-align: left; display: flex; flex-direction: column; gap: 8px;
+    }
+    .video-stream-hint { font-size: 12px; color: var(--accent); font-weight: 600; }
+    .btn-video-stream {
+      background: var(--bg-card); color: #fff; border: 1px solid var(--border);
+      padding: 8px 12px; border-radius: 12px; font-size: 12.5px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-video-stream:hover { background: var(--primary); }
 
     .msg-img { max-width: 100%; max-height: 280px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); object-fit: cover; cursor: pointer; }
     .msg-video { max-width: 100%; max-height: 280px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); outline: none; background: #000; }
@@ -412,7 +446,7 @@
     </div>
   </div>
 
-  <!-- ADMIN USER CHANNELS DIRECTORY MODAL (Select DM or Group to Inspect) -->
+  <!-- ADMIN USER CHANNELS DIRECTORY MODAL -->
   <div id="admin-user-channels-modal" class="modal-overlay">
     <div class="modal-card" style="max-width: 520px;">
       <div class="modal-header">
@@ -426,7 +460,7 @@
     </div>
   </div>
 
-  <!-- ADMIN CHAT INSPECTOR AUDIT MODAL (Chronological chat view) -->
+  <!-- ADMIN CHAT INSPECTOR AUDIT MODAL -->
   <div id="admin-audit-modal" class="modal-overlay">
     <div class="modal-card" style="max-width: 580px;">
       <div class="modal-header">
@@ -506,6 +540,40 @@
     </div>
   </div>
 
+  <!-- UNIFIED TOP-LEFT ACCOUNT SHEET -->
+  <div id="unified-profile-sheet" class="modal-overlay">
+    <div class="modal-card" style="padding: 0 0 20px 0; max-width: 420px; overflow: hidden;">
+      <div class="profile-sheet-banner">
+        <img id="sheet-cover-img" class="profile-sheet-cover" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80" alt="Cover" />
+        <img id="sheet-avatar-img" class="profile-sheet-avatar" src="" onclick="openMediaLightbox(this.src, false)" alt="Avatar" />
+      </div>
+      
+      <div class="profile-sheet-body">
+        <div id="sheet-user-name" class="profile-sheet-name">User Name</div>
+        <div id="sheet-user-handle" class="profile-sheet-handle">@username</div>
+        <div id="sheet-user-bio" class="profile-sheet-bio">No bio description provided.</div>
+
+        <div class="profile-menu-list">
+          <button class="profile-menu-btn" onclick="openEditProfileModal()">
+            <span>✏️ Edit Profile & Avatars</span>
+            <span>›</span>
+          </button>
+          <button class="profile-menu-btn" onclick="openPrivacySettingsModal()">
+            <span>⚙️ Privacy Settings</span>
+            <span>›</span>
+          </button>
+          <button class="profile-menu-btn" style="border-color: rgba(239,68,68,0.3); color: var(--danger);" onclick="handleSignOut()">
+            <span>🚪 Sign Out</span>
+            <span>›</span>
+          </button>
+        </div>
+      </div>
+      <div style="padding: 0 16px;">
+        <button class="btn-secondary" style="width: 100%; margin-top: 10px;" onclick="closeModal('unified-profile-sheet')">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- FULL-SCREEN BANNER & AVATAR PROFILE PAGE -->
   <div id="banner-profile-modal" class="modal-overlay">
     <div class="modal-card" style="padding: 0 0 24px 0; max-width: 480px; overflow: hidden;">
@@ -543,7 +611,7 @@
     <!-- LEFT PANEL -->
     <div id="sidebar-panel">
       <div class="nav-header">
-        <div class="user-badge" onclick="showUserProfile(currentUser.uid)">
+        <div class="user-badge" onclick="openUnifiedAccountSheet()">
           <img id="my-avatar-top" class="avatar-icon" src="" alt="Me" />
           <div>
             <strong id="my-name-top" style="font-size: 14px; display: block;">Account</strong>
@@ -557,8 +625,6 @@
             🤝
             <span id="friend-request-red-badge" class="red-circle-badge">0</span>
           </button>
-
-          <button class="icon-btn-round" onclick="openPrivacySettingsModal()" title="Privacy Settings">⚙️</button>
           
           <button class="icon-btn-round" onclick="openSearchModal()" title="Search">
             <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
@@ -745,7 +811,7 @@
     </div>
   </div>
 
-  <!-- SEARCH MODAL (Sticky Top Header) -->
+  <!-- SEARCH MODAL -->
   <div id="search-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="sticky-search-header">
@@ -828,6 +894,7 @@
     let isCreatingPrivateGroup = false;
     const userCache = new Map();
     const unreadMessageCounts = new Map();
+    const playedSoundMsgIds = new Set();
     let pendingMediaPreview = null;
 
     const ADMIN_EMAIL = "anilkrishna385@gmail.com";
@@ -849,7 +916,7 @@
       document.getElementById('group-sender-popup').style.display = 'none';
     });
 
-    // Strictly Receiver-Only Water Droplet Chime
+    // Receiver-Only Mild Water Droplet Chime
     let globalAudioCtx = null;
     function unlockAudio() {
       if (!globalAudioCtx) {
@@ -1245,8 +1312,19 @@
       }
     }
 
-    // 3. FRIEND REQUEST SYSTEM & PRIVACY
+    // 3. TOP-LEFT UNIFIED ACCOUNT SHEET
+    function openUnifiedAccountSheet() {
+      document.getElementById('sheet-cover-img').src = myProfile.coverUrl || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80";
+      document.getElementById('sheet-avatar-img').src = myProfile.photoUrl;
+      document.getElementById('sheet-user-name').textContent = myProfile.name;
+      document.getElementById('sheet-user-handle').textContent = myProfile.username;
+      document.getElementById('sheet-user-bio').textContent = myProfile.bio || "No bio provided.";
+      openModal('unified-profile-sheet');
+    }
+
+    // 4. FRIEND REQUEST SYSTEM & PRIVACY
     function openPrivacySettingsModal() {
+      closeModal('unified-profile-sheet');
       const p = myProfile?.privacy || { whoCanMessage: 'anyone', avatarVisibility: 'everyone', lastSeenVisibility: 'everyone' };
       document.getElementById('privacy-msg-select').value = p.whoCanMessage || 'anyone';
       document.getElementById('privacy-avatar-select').value = p.avatarVisibility || 'everyone';
@@ -1348,7 +1426,7 @@
       renderFriendRequests();
     }
 
-    // 4. ADMIN SUPER-DASHBOARD & HIERARCHICAL SURVEILLANCE
+    // 5. ADMIN SUPER-DASHBOARD (anilkrishna385@gmail.com)
     async function openAdminDashboard() {
       if (!isSuperAdmin(myProfile?.email)) {
         return showToast('⚠️ Unauthorized. Super-Admin credentials required.', 'error');
@@ -1404,7 +1482,6 @@
       }
     }
 
-    // Step 1: Open Hierarchical Channel Directory for Selected User
     async function adminOpenUserChannels(targetUid, userName) {
       if (!isSuperAdmin(myProfile?.email)) return;
       document.getElementById('admin-channel-user-name').textContent = userName;
@@ -1423,7 +1500,6 @@
         return;
       }
 
-      // Render DMs
       for (let doc of dmsSnap.docs) {
         const data = doc.data();
         const peerId = data.participants.find(id => id !== targetUid);
@@ -1445,7 +1521,6 @@
         listEl.appendChild(row);
       }
 
-      // Render Groups
       groupsSnap.forEach((doc) => {
         const grp = doc.data();
         const row = document.createElement('div');
@@ -1464,7 +1539,6 @@
       });
     }
 
-    // Step 2: Render Specific DM or Group Chat Chronologically
     async function adminInspectChatRoom(type, roomId, titleName) {
       if (!isSuperAdmin(myProfile?.email)) return;
       document.getElementById('audit-target-name').textContent = titleName;
@@ -1507,7 +1581,7 @@
       });
     }
 
-    // 5. BANNER & OVERLAPPING AVATAR PROFILE PAGE
+    // 6. BANNER & OVERLAPPING AVATAR PROFILE VIEW
     async function showUserProfile(userId) {
       let user = userCache.get(userId);
       if (!user) {
@@ -1570,6 +1644,7 @@
     function openEditProfileModal() {
       closeModal('telegram-profile-modal');
       closeModal('banner-profile-modal');
+      closeModal('unified-profile-sheet');
       document.getElementById('edit-name').value = myProfile.name || '';
       document.getElementById('edit-username').value = myProfile.username || '';
       document.getElementById('edit-bio').value = myProfile.bio || '';
@@ -1613,7 +1688,7 @@
       showToast('Profile updated!');
     }
 
-    // 6. CONVERSATION FEED & UNREAD BADGES
+    // 7. CONVERSATION FEED (Pinned Public Groups on Top!)
     function switchTab(tabName) {
       currentTab = tabName;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1651,6 +1726,43 @@
       const listEl = document.getElementById('chat-list');
       listEl.innerHTML = '';
 
+      // Array sorting buckets: pinned public groups first
+      const pinnedPublicGroups = [];
+      const normalChats = [];
+
+      if (currentTab === 'all' || currentTab === 'groups') {
+        db.collection("groups")
+          .where("members", "array-contains", currentUser.uid)
+          .onSnapshot((snapshot) => {
+            snapshot.forEach((doc) => {
+              const grp = { id: doc.id, ...doc.data() };
+              const unread = unreadMessageCounts.get(doc.id) || 0;
+              const isPinnedDefault = grp.handle === "@kerala_chat" || grp.handle === "@friends_group";
+
+              const itemObj = {
+                type: 'group',
+                id: grp.id,
+                name: grp.name,
+                avatar: grp.photoUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=" + grp.id,
+                preview: grp.description || 'Group conversation',
+                time: '',
+                isActive: false,
+                unreadCount: unread,
+                typingStatus: null,
+                isPinned: isPinnedDefault,
+                groupData: grp
+              };
+
+              if (isPinnedDefault) {
+                renderListItem(itemObj, true);
+              } else {
+                renderListItem(itemObj, false);
+              }
+              updateTopTabBadges();
+            });
+          });
+      }
+
       if (currentTab === 'all' || currentTab === 'chats') {
         db.collection("dms")
           .where("participants", "array-contains", currentUser.uid)
@@ -1680,40 +1792,16 @@
                 time: data.updatedAt ? new Date(data.updatedAt.toMillis()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '',
                 isActive: isActive,
                 unreadCount: unread,
-                typingStatus: data.typing ? data.typing[peer.uid] : null
-              });
-              updateTopTabBadges();
-            });
-          });
-      }
-
-      if (currentTab === 'all' || currentTab === 'groups') {
-        db.collection("groups")
-          .where("members", "array-contains", currentUser.uid)
-          .onSnapshot((snapshot) => {
-            snapshot.forEach((doc) => {
-              const grp = { id: doc.id, ...doc.data() };
-              const unread = unreadMessageCounts.get(doc.id) || 0;
-              
-              renderListItem({
-                type: 'group',
-                id: grp.id,
-                name: grp.name,
-                avatar: grp.photoUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=" + grp.id,
-                preview: grp.description || 'Group conversation',
-                time: '',
-                isActive: false,
-                unreadCount: unread,
-                typingStatus: null,
-                groupData: grp
-              });
+                typingStatus: data.typing ? data.typing[peer.uid] : null,
+                isPinned: false
+              }, false);
               updateTopTabBadges();
             });
           });
       }
     }
 
-    function renderListItem(item) {
+    function renderListItem(item, appendToTop = false) {
       const listEl = document.getElementById('chat-list');
       const existing = document.getElementById(`item-${item.id}`);
       if (existing) existing.remove();
@@ -1735,7 +1823,9 @@
         </div>
         <div class="item-content">
           <div class="item-top">
-            <span class="item-title">${item.name}</span>
+            <span class="item-title">
+              ${item.name} ${item.isPinned ? '<span class="pinned-badge-tag">📌 Pinned</span>' : ''}
+            </span>
             <span class="item-time">${item.time}</span>
           </div>
           <div class="item-preview">
@@ -1745,10 +1835,15 @@
         </div>
       `;
       li.onclick = () => selectConversation(item);
-      listEl.appendChild(li);
+      
+      if (appendToTop && listEl.firstChild) {
+        listEl.insertBefore(li, listEl.firstChild);
+      } else {
+        listEl.appendChild(li);
+      }
     }
 
-    // 7. MESSAGING & MESSAGE RECEIPT TICKS
+    // 8. MESSAGING, SOUND TONE & DISAPPEARING MESSAGES CLOCK
     function selectConversation(item) {
       activeChat = item;
       unreadMessageCounts.set(item.id, 0);
@@ -1817,7 +1912,9 @@
 
               renderMessageBubble(msg);
               
-              if (!isInitialLoad && msg.senderId !== currentUser.uid) {
+              // 🔕 STRICT RECEIVER-ONLY GUARANTEE
+              if (!isInitialLoad && msg.senderId !== currentUser.uid && !playedSoundMsgIds.has(msgId)) {
+                playedSoundMsgIds.add(msgId);
                 playDropletTone();
                 if (!activeChat || activeChat.id !== item.id) {
                   const currentUnread = unreadMessageCounts.get(item.id) || 0;
@@ -1886,7 +1983,14 @@
       } else if (msg.type === 'image') {
         content = `<img src="${msg.mediaUrl}" class="msg-img" loading="lazy" onclick="openMediaLightbox('${msg.mediaUrl}', false)" alt="Shared photo" />`;
       } else if (msg.type === 'video') {
-        content = `<video class="msg-video" controls src="${msg.mediaUrl}" onclick="openMediaLightbox('${msg.mediaUrl}', true)"></video>`;
+        // Video Stream Card with Link Button
+        content = `
+          <video class="msg-video" controls src="${msg.mediaUrl}" onclick="openMediaLightbox('${msg.mediaUrl}', true)"></video>
+          <div class="video-stream-card">
+            <span class="video-stream-hint">🎥 This video was compressed for instant streaming</span>
+            <button class="btn-video-stream" onclick="window.open('${msg.mediaUrl}', '_blank')">▶ Open in New Tab / Download</button>
+          </div>
+        `;
       } else if (msg.type === 'voice') {
         content = `<div class="msg-audio-player"><audio controls src="${msg.mediaUrl}"></audio></div>`;
       }
@@ -1934,7 +2038,7 @@
     document.getElementById('send-text-btn').addEventListener('click', sendChatMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
-    // 8. MEDIA UPLOAD ENGINE (Direct Data URL support up to 15 MB)
+    // 9. MEDIA UPLOAD ENGINE (UP TO 50 MB VIDEO VIA STORAGE WITH AUTO-COMPRESSION HINT)
     async function uploadMessageMedia(mediaData, type) {
       if (!activeChat) return;
       try {
@@ -1949,7 +2053,7 @@
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        const lastText = type === 'image' ? '📷 Photo' : (type === 'video' ? '🎥 Video' : '🎤 Voice Message');
+        const lastText = type === 'image' ? '📷 Photo' : (type === 'video' ? '🎥 Compressed Video' : '🎤 Voice Message');
         db.collection(collName).doc(activeChat.id).update({
           lastMessage: lastText,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1977,19 +2081,30 @@
       if (checkGuestMediaRestriction()) return;
 
       if (file.type.startsWith('video/')) {
-        if (file.size > 15 * 1024 * 1024) {
-          return showToast('⚠️ Video is too large for instant send. Please select a short clip under 15 MB', 'error');
+        if (file.size > 50 * 1024 * 1024) {
+          return showToast('⚠️ Video exceeds the maximum 50 MB size limit!', 'error');
         }
 
-        showToast('Processing video clip...');
-        const base64Vid = await blobToBase64(file);
-        pendingMediaPreview = { data: base64Vid, type: 'video' };
-        
-        document.getElementById('preview-img-el').style.display = 'none';
-        const vidEl = document.getElementById('preview-video-el');
-        vidEl.src = base64Vid;
-        vidEl.style.display = 'block';
-        openModal('media-preview-modal');
+        showToast('Compressing and optimizing video stream...');
+        try {
+          const fileRef = storage.ref().child(`chat_videos/${Date.now()}_${file.name}`);
+          const task = fileRef.put(file);
+          
+          task.on('state_changed', 
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              if (Math.round(progress) % 25 === 0) showToast(`Uploading video stream: ${Math.round(progress)}%`);
+            }, 
+            (err) => showToast('Video upload failed: ' + err.message, 'error'), 
+            async () => {
+              const downloadUrl = await task.snapshot.ref.getDownloadURL();
+              await uploadMessageMedia(downloadUrl, 'video');
+              showToast('Video stream posted!');
+            }
+          );
+        } catch (err) {
+          showToast('Video error: ' + err.message, 'error');
+        }
       } else {
         showToast('Preparing photo preview...');
         const base64Img = await compressImageToBase64(file);
@@ -2104,7 +2219,7 @@
       }
     });
 
-    // 9. DIRECTORY SEARCH & EXACT-PREFIX MATCHING
+    // 10. DIRECTORY SEARCH & EXACT-PREFIX MATCHING
     function openSearchModal() { openModal('search-modal'); }
 
     async function executeSearch(query) {
@@ -2159,7 +2274,7 @@
       });
     }
 
-    // 10. PUBLIC VS PRIVATE GROUP CREATION & REVOKABLE LINKS
+    // 11. PUBLIC VS PRIVATE GROUP CREATION & REVOKABLE LINKS
     function openCreateGroupModal() {
       setGroupPrivacyMode(false);
       openModal('create-group-modal');
@@ -2327,7 +2442,6 @@
       showToast('Admin updated group settings!');
     }
 
-    // DM Initiation with Privacy Check ("Only Friends")
     async function startDirectChat(peerId, peerName, peerAvatar) {
       let peerUser = userCache.get(peerId);
       if (!peerUser) {
