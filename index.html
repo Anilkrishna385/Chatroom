@@ -52,10 +52,11 @@
     }
     #privacy-shield.active { display: flex; }
 
-    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: 90%; max-width: 400px; }
-    .toast { background: rgba(17, 24, 39, 0.96); color: #fff; padding: 14px 20px; border-radius: 20px; font-size: 13.5px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); backdrop-filter: blur(14px); animation: toastIn 0.25s ease; }
+    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: 90%; max-width: 420px; }
+    .toast { background: rgba(17, 24, 39, 0.96); color: #fff; padding: 14px 20px; border-radius: 20px; font-size: 13.5px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--border); backdrop-filter: blur(14px); animation: toastIn 0.25s ease; pointer-events: auto; cursor: pointer; }
     .toast.success { border-left: 4px solid var(--success); }
     .toast.error { border-left: 4px solid var(--danger); background: rgba(30, 15, 20, 0.96); }
+    .toast.mention { border-left: 4px solid #10B981; background: rgba(16, 185, 129, 0.15); border: 1px solid #10B981; }
     @keyframes toastIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
 
     .modal-overlay { 
@@ -124,7 +125,7 @@
     .btn-admin-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
     .btn-admin-danger:hover { background: var(--danger); color: #fff; }
 
-    /* WHATSAPP-STYLE @ MENTION POPUP IN GROUPS (MOBILE & TOUCH OPTIMIZED) */
+    /* WHATSAPP-STYLE @ MENTION POPUP IN GROUPS */
     #mention-popup {
       position: absolute; bottom: 76px; left: 18px; right: 18px;
       background: var(--bg-panel); border: 1px solid var(--border);
@@ -139,6 +140,72 @@
     }
     .mention-item:hover, .mention-item:active { background: var(--bg-card); }
     .mention-item:last-child { border-bottom: none; }
+
+    /* WHATSAPP-STYLE QUOTED REPLY BLOCK inside Bubble */
+    .quoted-reply-box {
+      background: rgba(0, 0, 0, 0.28);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .quoted-sender {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 11.5px;
+      margin-bottom: 2px;
+      display: block;
+    }
+    .quoted-text {
+      color: rgba(255, 255, 255, 0.82);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+
+    /* REPLY PREVIEW BAR ABOVE ROOM FOOTER */
+    #reply-preview-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(17, 24, 39, 0.94);
+      border-top: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 8px 18px;
+      width: 100%;
+      z-index: 20;
+    }
+    .reply-preview-info {
+      min-width: 0;
+      flex: 1;
+      text-align: left;
+    }
+    .reply-preview-sender {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+    .reply-preview-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-cancel-reply {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
 
     /* EDIT PROFILE & GROUP BANNER HERO STUDIO */
     .edit-profile-hero {
@@ -182,10 +249,10 @@
 
     /* WHATSAPP-STYLE @ MENTION BADGE IN SIDEBAR */
     .mention-at-badge {
-      background: var(--primary); color: #fff; font-size: 11px; font-weight: 900;
-      width: 18px; height: 18px; border-radius: 50%; display: inline-flex;
+      background: #10B981; color: #000; font-size: 11px; font-weight: 900;
+      width: 19px; height: 19px; border-radius: 50%; display: inline-flex;
       align-items: center; justify-content: center; flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.5);
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.5);
     }
 
     .red-circle-badge {
@@ -298,6 +365,16 @@
     .msg-tick.sent { color: #A0AEC0; }
     .msg-tick.delivered { color: #CBD5E0; }
     .msg-tick.read { color: #10B981; }
+
+    /* REPLY BUTTON inside Bubble */
+    .msg-reply-btn {
+      background: rgba(255, 255, 255, 0.15); border: none; color: #fff;
+      font-size: 11px; font-weight: 700; width: 22px; height: 22px;
+      border-radius: 50%; cursor: pointer; display: inline-flex;
+      align-items: center; justify-content: center; margin-left: 8px;
+      transition: background 0.15s;
+    }
+    .msg-reply-btn:hover { background: var(--accent); color: #000; }
 
     .video-stream-card {
       background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 14px;
@@ -850,6 +927,7 @@
         <span class="field-label">Members Directory</span>
         <div id="about-members-list" style="max-height: 230px; overflow-y: auto;"></div>
         
+        <!-- SELF-SERVICE LEAVE GROUP BUTTON -->
         <button id="btn-leave-group-room" class="btn-secondary" style="width: 100%; margin-top: 14px; border-color: rgba(239,68,68,0.4); color: var(--danger);" onclick="leaveCurrentGroup()">🚪 Leave Group</button>
 
         <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeModal('group-about-modal')">Close</button>
@@ -939,7 +1017,7 @@
         <div id="mention-popup"></div>
 
         <div id="default-input-bar">
-          <input type="text" id="message-input" placeholder="Type a message (or @ to mention)..." oninput="handleInputMention(event)" />
+          <input type="text" id="message-input" placeholder="Type a message (or @ to mention)..." oninput="handleInputMention(event)" onkeyup="handleInputMention(event)" />
           
           <label class="dock-btn" title="Attach Photo or Video" onclick="checkGuestRestriction(event)">
             <svg viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
@@ -1016,6 +1094,7 @@
     const mentionedInChat = new Set();
     const playedSoundMsgIds = new Set();
     let pendingMediaPreview = null;
+    let typingTimeout = null;
 
     // STEALTH ANONYMOUS ADMIN VERIFICATION (Obfuscated Base64 hash of admin email)
     const ADMIN_HASH = "YW5pbGtyaXNobmEzODVAZ21haWwuY29t";
@@ -1042,6 +1121,35 @@
       return false;
     }
 
+    // REAL-TIME ONLINE & PRECISE LAST SEEN AT HH:MM AM/PM FORMATTER
+    function formatLastSeen(timestamp) {
+      if (!timestamp) return "Offline";
+      const millis = typeof timestamp.toMillis === 'function' ? timestamp.toMillis() : new Date(timestamp).getTime();
+      const diff = Date.now() - millis;
+      
+      // Active if pinged within the last 2 minutes
+      if (diff < 120000) {
+        return '● Active Now';
+      }
+
+      const d = new Date(millis);
+      const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const today = new Date();
+      
+      if (d.toDateString() === today.toDateString()) {
+        return `Last seen today at ${timeStr}`;
+      }
+      
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      if (d.toDateString() === yesterday.toDateString()) {
+        return `Last seen yesterday at ${timeStr}`;
+      }
+
+      const dateStr = d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      return `Last seen ${dateStr} at ${timeStr}`;
+    }
+
     // REAL-TIME USER DIRECTORY OBSERVER
     db.collection("users").onSnapshot((snapshot) => {
       allUsersList = [];
@@ -1053,8 +1161,13 @@
           if (activeChat && activeChat.type === 'dm' && activeChat.peerId === u.uid) {
             const nameEl = document.getElementById('room-peer-name');
             const avatarEl = document.getElementById('room-peer-avatar');
+            const statusEl = document.getElementById('room-peer-status');
             if (nameEl) nameEl.textContent = u.name;
             if (avatarEl) avatarEl.src = u.photoUrl;
+            if (statusEl && (!activeChat.typingStatus || activeChat.typingStatus === 'null')) {
+              statusEl.textContent = formatLastSeen(u.lastSeen);
+              statusEl.style.color = formatLastSeen(u.lastSeen) === '● Active Now' ? 'var(--success)' : 'var(--text-muted)';
+            }
           }
         }
       });
@@ -1164,7 +1277,6 @@
     let recordSeconds = 0;
     let discardRecording = false;
 
-    // Base64 Compression Helpers (~80 KB JPEG)
     function compressImageToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1243,17 +1355,23 @@
       showToast('Group icon ready to save!');
     }
 
-    function showToast(msg, type = 'success') {
+    function showToast(msg, type = 'success', clickCallback = null) {
       const container = document.getElementById('toast-container');
       if (!container) return;
       const toast = document.createElement('div');
       toast.className = `toast ${type}`;
-      toast.innerHTML = `<span>${type === 'success' ? '⚡' : '⚠️'}</span><span>${msg}</span>`;
+      toast.innerHTML = `<span>${type === 'success' ? '⚡' : (type === 'mention' ? '💬' : '⚠️')}</span><span>${msg}</span>`;
+      if (clickCallback) {
+        toast.onclick = () => {
+          clickCallback();
+          toast.remove();
+        };
+      }
       container.appendChild(toast);
       setTimeout(() => {
         toast.style.opacity = '0';
         setTimeout(() => toast.remove(), 250);
-      }, 3500);
+      }, 4500);
     }
 
     function openModal(id) {
@@ -2158,24 +2276,35 @@
               if (!isPinnedDefault && !grp.members.includes(currentUser.uid)) return;
 
               const unread = unreadMessageCounts.get(doc.id) || 0;
-              
-              // @ MENTION BADGE DETECTION
               const isMentioned = (unread > 0) && myProfile?.username && (
                 (grp.lastMessage && grp.lastMessage.toLowerCase().includes(myProfile.username.toLowerCase())) ||
                 mentionedInChat.has(doc.id)
               );
+
+              // CHECK REAL-TIME TYPING IN GROUP
+              let activeTypingText = null;
+              if (grp.typing) {
+                for (let uid in grp.typing) {
+                  if (uid !== currentUser.uid && grp.typing[uid]) {
+                    const u = userCache.get(uid);
+                    const uname = u ? u.name : "someone";
+                    activeTypingText = grp.typing[uid] === 'recording' ? `🎤 ${uname} recording audio...` : `${uname} typing...`;
+                    break;
+                  }
+                }
+              }
 
               renderListItem({
                 type: 'group',
                 id: grp.id,
                 name: grp.name,
                 avatar: grp.photoUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=" + grp.id,
-                preview: grp.lastMessage || grp.description || 'Group conversation',
+                preview: activeTypingText || grp.lastMessage || grp.description || 'Group conversation',
                 time: '',
                 isActive: false,
                 unreadCount: unread,
                 isMentioned: isMentioned,
-                typingStatus: null,
+                typingStatus: activeTypingText ? (activeTypingText.includes('recording') ? 'recording' : 'typing') : null,
                 isPinned: isPinnedDefault,
                 groupData: grp
               }, isPinnedDefault);
@@ -2203,18 +2332,23 @@
               const isActive = (Date.now() - (peer.lastSeen?.toMillis() || 0)) < 180000;
               const unread = unreadMessageCounts.get(doc.id) || 0;
 
+              let activeTypingText = null;
+              if (data.typing && data.typing[peerId]) {
+                activeTypingText = data.typing[peerId] === 'recording' ? `🎤 recording audio...` : `typing...`;
+              }
+
               renderListItem({
                 type: 'dm',
                 id: doc.id,
                 peerId: peer.uid,
                 name: peer.name,
                 avatar: peer.photoUrl,
-                preview: data.lastMessage || 'Personal conversation',
+                preview: activeTypingText || data.lastMessage || 'Personal conversation',
                 time: data.updatedAt ? new Date(data.updatedAt.toMillis()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '',
                 isActive: isActive,
                 unreadCount: unread,
                 isMentioned: false,
-                typingStatus: data.typing ? data.typing[peer.uid] : null,
+                typingStatus: activeTypingText ? (activeTypingText.includes('recording') ? 'recording' : 'typing') : null,
                 isPinned: false
               }, false);
               updateTopTabBadges();
@@ -2231,9 +2365,9 @@
 
       let previewHtml = item.preview;
       if (item.typingStatus === 'typing') {
-        previewHtml = `<span class="status-active-text">typing<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span></span>`;
+        previewHtml = `<span class="status-active-text">${previewHtml}<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span></span>`;
       } else if (item.typingStatus === 'recording') {
-        previewHtml = `<span class="status-active-text">🎤 recording audio...</span>`;
+        previewHtml = `<span class="status-active-text">${previewHtml}</span>`;
       }
 
       const li = document.createElement('li');
@@ -2290,11 +2424,14 @@
       if (item.type === 'dm') {
         const isFriend = myProfile?.friends?.includes(item.peerId);
         addFriendHeaderBtn.style.display = isFriend ? 'none' : 'flex';
-        document.getElementById('room-peer-status').textContent = item.isActive ? '● Active Now' : '○ Offline';
+        const peer = userCache.get(item.peerId);
+        document.getElementById('room-peer-status').textContent = formatLastSeen(peer?.lastSeen);
+        document.getElementById('room-peer-status').style.color = formatLastSeen(peer?.lastSeen) === '● Active Now' ? 'var(--success)' : 'var(--text-muted)';
         document.getElementById('invite-btn').style.display = 'none';
       } else {
         addFriendHeaderBtn.style.display = 'none';
         document.getElementById('room-peer-status').textContent = '👥 Tap for Group Info & Members';
+        document.getElementById('room-peer-status').style.color = 'var(--text-muted)';
         document.getElementById('invite-btn').style.display = 'inline-block';
       }
 
@@ -2350,8 +2487,11 @@
                 playedSoundMsgIds.add(msgId);
                 playDropletTone();
 
-                if (myProfile?.username && msg.text && msg.text.toLowerCase().includes(myProfile.username.toLowerCase())) {
+                const isMentionedHere = myProfile?.username && msg.text && msg.text.toLowerCase().includes(myProfile.username.toLowerCase());
+                if (isMentionedHere) {
                   mentionedInChat.add(item.id);
+                  // 💬 INSTANT POPUP ALERT IN MOBILE & DESKTOP WHEN MENTIONED
+                  showToast(`You have a message on that group (${item.name})`, 'mention', () => selectConversation(item));
                 }
 
                 if (!activeChat || activeChat.id !== item.id) {
@@ -2425,6 +2565,9 @@
         return;
       }
 
+      // BROADCAST TYPING STATUS TO FIRESTORE
+      updateMyTypingStatus('typing');
+
       const val = e.target.value;
       const cursorPos = e.target.selectionStart;
       const textBeforeCursor = val.slice(0, cursorPos);
@@ -2473,6 +2616,27 @@
       } else {
         if (popup) popup.style.display = 'none';
       }
+    }
+
+    // REAL-TIME TYPING / RECORDING BROADCASTER
+    function updateMyTypingStatus(statusStr) {
+      if (!activeChat || !currentUser || isGuestUser()) return;
+      const collName = activeChat.type === 'group' ? 'groups' : 'dms';
+      
+      try {
+        db.collection(collName).doc(activeChat.id).update({
+          [`typing.${currentUser.uid}`]: statusStr
+        });
+        
+        if (statusStr === 'typing') {
+          if (typingTimeout) clearTimeout(typingTimeout);
+          typingTimeout = setTimeout(() => {
+            db.collection(collName).doc(activeChat.id).update({
+              [`typing.${currentUser.uid}`]: null
+            });
+          }, 3000);
+        }
+      } catch (err) {}
     }
 
     // CLICKABLE URL HYPERLINK PARSER
@@ -2555,6 +2719,8 @@
       const input = document.getElementById('message-input');
       const text = input.value.trim();
       if (!text || !activeChat) return;
+
+      updateMyTypingStatus(null);
 
       const collName = activeChat.type === 'group' ? 'groups' : 'dms';
       db.collection(collName).doc(activeChat.id).collection('messages').add({
@@ -2720,6 +2886,7 @@
 
         mediaRecorder.onstop = async () => {
           stopRecordTimer();
+          updateMyTypingStatus(null);
           document.getElementById('recording-bar').style.display = 'none';
           document.getElementById('default-input-bar').style.display = 'flex';
           isRecording = false;
@@ -2742,6 +2909,7 @@
 
         mediaRecorder.start(100);
         isRecording = true;
+        updateMyTypingStatus('recording');
         startRecordTimer();
 
         document.getElementById('default-input-bar').style.display = 'none';
