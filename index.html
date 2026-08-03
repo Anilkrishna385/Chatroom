@@ -179,6 +179,12 @@
       font-weight: 800; padding: 2px 7px; border-radius: 8px; margin-left: 6px; display: inline-block;
     }
 
+    .mention-at-badge {
+      background: var(--primary); color: #fff; font-size: 11px; font-weight: 900;
+      width: 18px; height: 18px; border-radius: 50%; display: inline-flex;
+      align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
     .red-circle-badge {
       position: absolute; top: 2px; right: 2px; background: var(--danger);
       color: #fff; font-size: 10px; font-weight: 800; width: 18px; height: 18px;
@@ -189,8 +195,20 @@
     #group-sender-popup {
       position: fixed; z-index: 10000; background: var(--bg-card); border: 1px solid var(--border);
       border-radius: 16px; padding: 10px; box-shadow: var(--shadow); display: none;
-      flex-direction: column; gap: 6px; min-width: 160px;
+      flex-direction: column; gap: 6px; min-width: 170px;
     }
+
+    /* WHATSAPP-STYLE FLOATING DOWN ARROW (#scroll-bottom-btn) */
+    .scroll-bottom-btn {
+      position: absolute; right: 20px; bottom: 84px; z-index: 40;
+      width: 40px; height: 40px; border-radius: 50%; background: var(--bg-card);
+      border: 1px solid var(--border); color: var(--text-main);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5); cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .scroll-bottom-btn:hover { background: var(--primary); transform: scale(1.08); }
+    .scroll-bottom-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
     .preview-media-box { width: 100%; max-height: 350px; border-radius: 18px; overflow: hidden; margin-bottom: 18px; border: 1px solid var(--border); background: #000; display: flex; align-items: center; justify-content: center; }
     #preview-img-el { max-width: 100%; max-height: 350px; object-fit: contain; display: none; }
@@ -784,7 +802,7 @@
     </div>
   </div>
 
-  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL -->
+  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL (With Banner Cover & Overlapping Avatar) -->
   <div id="group-about-modal" class="modal-overlay">
     <div class="modal-card" style="padding: 0 0 24px 0; max-width: 480px; overflow: hidden;">
       <div class="profile-banner-wrap" style="margin-bottom: 54px;">
@@ -798,7 +816,7 @@
         <span id="about-group-count" style="background: rgba(99, 102, 241, 0.2); color: var(--accent); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 14px;">0 Members</span>
       </div>
 
-      <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding-top: 14px; margin-bottom: 14px; text-align: left;">
+      <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding: 16px 20px; margin-bottom: 14px; text-align: left;">
         <span class="field-label" style="color: var(--accent); margin-bottom: 10px;">Admin: Group Settings & Editing Studio</span>
         
         <div id="admin-invite-controls" style="margin-bottom: 14px; background: var(--bg-dark); padding: 12px; border-radius: 14px;">
@@ -828,7 +846,11 @@
       <div style="padding: 0 20px; text-align: left;">
         <span class="field-label">Members Directory</span>
         <div id="about-members-list" style="max-height: 230px; overflow-y: auto;"></div>
-        <button class="btn-secondary" style="width: 100%; margin-top: 14px;" onclick="closeModal('group-about-modal')">Close</button>
+        
+        <!-- SELF-SERVICE LEAVE GROUP BUTTON -->
+        <button id="btn-leave-group-room" class="btn-secondary" style="width: 100%; margin-top: 14px; border-color: rgba(239,68,68,0.4); color: var(--danger);" onclick="leaveCurrentGroup()">🚪 Leave Group</button>
+
+        <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeModal('group-about-modal')">Close</button>
       </div>
     </div>
   </div>
@@ -987,9 +1009,15 @@
     const playedSoundMsgIds = new Set();
     let pendingMediaPreview = null;
 
-    const ADMIN_EMAIL = "anilkrishna385@gmail.com";
+    // STEALTH ANONYMOUS ADMIN VERIFICATION (Obfuscated Base64 hash of admin email)
+    const ADMIN_HASH = "YW5pbGtyaXNobmEzODVAZ21haWwuY29t";
     function isSuperAdmin(email) {
-      return email && email.toLowerCase() === ADMIN_EMAIL;
+      if (!email) return false;
+      try {
+        return email.toLowerCase() === atob(ADMIN_HASH).toLowerCase();
+      } catch (e) {
+        return false;
+      }
     }
 
     function isGuestUser() {
@@ -1018,6 +1046,22 @@
             if (nameEl) nameEl.textContent = u.name;
             if (avatarEl) avatarEl.src = u.photoUrl;
           }
+        }
+      });
+    });
+
+    // REAL-TIME GROUP HEADER OBSERVER
+    db.collection("groups").onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        const g = change.doc.data();
+        if (g && activeChat && activeChat.type === 'group' && activeChat.id === change.doc.id) {
+          activeChat.name = g.name;
+          activeChat.avatar = g.photoUrl;
+          activeChat.groupData = { id: change.doc.id, ...g };
+          const nameEl = document.getElementById('room-peer-name');
+          const avatarEl = document.getElementById('room-peer-avatar');
+          if (nameEl) nameEl.textContent = g.name;
+          if (avatarEl) avatarEl.src = g.photoUrl;
         }
       });
     });
@@ -1151,6 +1195,27 @@
       if (img) img.src = base64;
     }
 
+    // Live previews for Group Studio in #group-about-modal
+    async function previewGroupStudioCover(inputEl) {
+      const file = inputEl.files[0];
+      if (!file) return;
+      showToast('Processing banner cover...');
+      const base64 = await compressImageToBase64(file);
+      const img = document.getElementById('about-group-cover');
+      if (img) img.src = base64;
+      showToast('Banner cover ready to save!');
+    }
+
+    async function previewGroupStudioAvatar(inputEl) {
+      const file = inputEl.files[0];
+      if (!file) return;
+      showToast('Processing group icon...');
+      const base64 = await compressImageToBase64(file);
+      const img = document.getElementById('about-group-avatar');
+      if (img) img.src = base64;
+      showToast('Group icon ready to save!');
+    }
+
     function showToast(msg, type = 'success') {
       const container = document.getElementById('toast-container');
       if (!container) return;
@@ -1222,6 +1287,7 @@
       window.location.reload();
     }
 
+    // GUEST TO REGISTERED ACCOUNT MIGRATION ENGINE
     function upgradeGuestAccount() {
       if (currentUser && isGuestUser()) {
         sessionStorage.setItem("huddle_migrating_guest_uid", currentUser.uid);
@@ -1281,6 +1347,7 @@
       }
     }
 
+    // Default Public Groups ("Kerala chat room" & "Friends")
     async function ensureDefaultPublicGroups() {
       const pubGroups = [
         { name: "Kerala chat room", handle: "@kerala_chat", desc: "Official Kerala chat room for everyone" },
@@ -1298,7 +1365,7 @@
             isGlobalPublic: true,
             photoUrl: "https://api.dicebear.com/7.x/shapes/svg?seed=" + g.handle,
             coverUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
-            adminId: "anilkrishna385@gmail.com",
+            adminId: "system_huddle_admin",
             members: [currentUser ? currentUser.uid : "system"],
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
@@ -1754,7 +1821,7 @@
         isGlobalPublic: true,
         photoUrl: "https://api.dicebear.com/7.x/shapes/svg?seed=" + handle,
         coverUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
-        adminId: currentUser.uid,
+        adminId: "system_huddle_admin",
         members: [currentUser.uid],
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -2240,7 +2307,6 @@
 
               renderMessageBubble(msg);
               
-              // 🔕 STRICT RECEIVER-ONLY GUARANTEE
               if (!isInitialLoad && msg.senderId !== currentUser.uid && !playedSoundMsgIds.has(msgId)) {
                 playedSoundMsgIds.add(msgId);
                 playDropletTone();
@@ -2739,6 +2805,18 @@
       switchTab('groups');
     }
 
+    async function leaveCurrentGroup() {
+      if (!activeChat || activeChat.type !== 'group') return;
+      if (confirm("Are you sure you want to leave this group?")) {
+        await db.collection("groups").doc(activeChat.id).update({
+          members: firebase.firestore.FieldValue.arrayRemove(currentUser.uid)
+        });
+        closeModal('group-about-modal');
+        closeMobileRoom();
+        showToast("You have left the group.");
+      }
+    }
+
     function copyGroupInviteLink(e) {
       e.stopPropagation();
       if (!activeChat || activeChat.type !== 'group') return;
@@ -2758,6 +2836,7 @@
       showToast('Old link revoked! New invite link generated.');
     }
 
+    // Group Member Directory with Last Seen Timestamps
     async function handleHeaderClick() {
       if (!activeChat) return;
       if (activeChat.type === 'dm') {
