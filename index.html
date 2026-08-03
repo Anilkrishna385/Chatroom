@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Pulse Messenger — Pinned Public & Admin Pro</title>
+  <title>Huddle — Pro & Admin Command Center</title>
+  <!-- Zero-Dependency Stylized H Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='26' fill='%236366F1'/><text x='50%' y='70%' font-size='66' font-weight='900' fill='white' text-anchor='middle' font-family='sans-serif'>H</text></svg>" />
   <style>
     :root {
       --bg-dark: #090D16;
@@ -74,8 +76,9 @@
     .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
     .btn-close { background: var(--bg-card); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-weight: bold; }
 
-    /* EDIT PROFILE MODAL HIGH PRIORITY OVERRIDE */
+    /* HIGH PRIORITY OVERRIDES */
     #profile-modal { z-index: 3000 !important; }
+    #guest-restriction-modal { z-index: 9999 !important; }
 
     /* UNIFIED TOP-LEFT ACCOUNT SHEET */
     .profile-sheet-banner {
@@ -101,7 +104,42 @@
     }
     .profile-menu-btn:hover { background: var(--bg-card); border-color: var(--primary); }
 
-    /* EDIT PROFILE LIVE BANNER & AVATAR STUDIO */
+    /* ADMIN DASHBOARD SPECIAL STYLING */
+    .admin-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+    .stat-card { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 14px; padding: 12px 6px; text-align: center; }
+    .stat-val { font-size: 18px; font-weight: 800; color: var(--accent); margin-bottom: 2px; }
+    .stat-label { font-size: 9.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+    
+    .admin-tab-bar { display: flex; gap: 8px; margin-bottom: 14px; }
+    .admin-tab-btn { flex: 1; padding: 10px; border-radius: 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: var(--bg-dark); color: var(--text-muted); }
+    .admin-tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .admin-user-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 8px; gap: 8px; }
+    .admin-user-info { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+    .admin-user-info strong { font-size: 13.5px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+    .admin-user-info small { font-size: 11px; color: var(--text-muted); }
+    .admin-actions-box { display: flex; align-items: center; gap: 6px; }
+    .btn-admin-small { padding: 6px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: #fff; }
+    .btn-admin-small:hover { background: var(--primary); }
+    .btn-admin-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+    .btn-admin-danger:hover { background: var(--danger); color: #fff; }
+
+    /* WHATSAPP-STYLE @ MENTION POPUP IN GROUPS */
+    #mention-popup {
+      position: absolute; bottom: 76px; left: 18px; right: 18px;
+      background: var(--bg-panel); border: 1px solid var(--border);
+      border-radius: 18px; box-shadow: var(--shadow);
+      max-height: 200px; overflow-y: auto; z-index: 50;
+      display: none; flex-direction: column;
+    }
+    .mention-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      cursor: pointer; border-bottom: 1px solid var(--border);
+    }
+    .mention-item:hover { background: var(--bg-card); }
+    .mention-item:last-child { border-bottom: none; }
+
+    /* EDIT PROFILE & GROUP BANNER HERO STUDIO */
     .edit-profile-hero {
       position: relative; width: 100%; height: 140px; border-radius: 16px;
       background: var(--bg-card); margin-bottom: 50px; border: 1px solid var(--border);
@@ -260,7 +298,7 @@
     #room-footer { 
       padding: 12px 18px; border-top: 1px solid var(--border); background: var(--bg-panel); 
       display: flex; align-items: center; gap: 8px; min-height: 68px; flex-shrink: 0; width: 100%; 
-      z-index: 10; padding-bottom: max(12px, env(safe-area-inset-bottom));
+      z-index: 10; padding-bottom: max(12px, env(safe-area-inset-bottom)); position: relative;
     }
     #default-input-bar { display: flex; align-items: center; gap: 8px; width: 100%; }
     #message-input { flex: 1; padding: 12px 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 24px; font-size: 14px; color: #fff; outline: none; }
@@ -304,9 +342,9 @@
     <div style="font-size: 52px; margin-bottom: 16px;">🛡️</div>
     <h2 style="font-size: 22px; margin-bottom: 8px;">Security Protection Active</h2>
     <p style="color: var(--text-muted); max-width: 320px; margin-bottom: 20px; font-size: 14px;">
-      Screen recording and screenshots are restricted on Pulse Messenger to protect conversation privacy.
+      Screen recording and screenshots are restricted on Huddle to protect conversation privacy.
     </p>
-    <button class="btn-primary" style="width: auto; padding: 10px 24px;" onclick="dismissPrivacyShield()">Return to Chat</button>
+    <button class="btn-primary" style="width: auto; padding: 10px 24px;" onclick="dismissPrivacyShield()">Return to Huddle</button>
   </div>
 
   <!-- TOAST CONTAINER -->
@@ -315,10 +353,19 @@
   <!-- AUTH FORM -->
   <div id="auth-screen">
     <div class="modal-card" style="margin: 0 auto;">
-      <h2 id="auth-title" style="text-align: center; margin-bottom: 20px; font-size: 24px; color: var(--accent);">Pulse Messenger</h2>
+      <h2 id="auth-title" style="text-align: center; margin-bottom: 20px; font-size: 24px; color: var(--accent);">Huddle</h2>
       
       <form id="auth-form" onsubmit="handleAuthSubmit(event)">
         <div id="signup-extra-fields" style="display: none;">
+          <div class="avatar-studio-wrap">
+            <label class="avatar-upload-ring" title="Tap to select profile picture">
+              <img id="signup-avatar-preview" class="avatar-studio-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=neutral_default" alt="Avatar" />
+              <div class="avatar-camera-badge">📸</div>
+              <input type="file" id="avatar-input" accept="image/*" style="display: none;" onchange="previewStudioAvatar(this, 'signup-avatar-preview')" />
+            </label>
+            <span class="avatar-studio-hint">Tap to change picture</span>
+          </div>
+
           <div class="field-group">
             <label class="field-label">Full Name</label>
             <input type="text" id="name-input" class="input-dark" placeholder="Anil Krishna" autocomplete="name" />
@@ -334,7 +381,7 @@
             </div>
             <div class="field-group" style="flex: 1;">
               <label class="field-label">Gender</label>
-              <select id="gender-input" class="input-dark" style="cursor: pointer;">
+              <select id="gender-input" class="input-dark" style="cursor: pointer;" onchange="updateDefaultStudioAvatar(this.value, 'signup-avatar-preview')">
                 <option value="male">♂️ Male</option>
                 <option value="female">♀️ Female</option>
                 <option value="other">⚧️ Other</option>
@@ -349,13 +396,13 @@
 
         <div class="field-group">
           <label class="field-label">Email Address</label>
-          <input type="email" id="email-input" class="input-dark" placeholder="user@pulse.com" required autocomplete="email" />
+          <input type="email" id="email-input" class="input-dark" placeholder="user@huddle.com" required autocomplete="email" />
         </div>
         <div class="field-group">
           <label class="field-label">Password</label>
           <input type="password" id="password-input" class="input-dark" placeholder="•••••••• (min 6 chars)" required autocomplete="current-password" />
         </div>
-        <button type="submit" id="auth-submit-btn" class="btn-primary">Log In</button>
+        <button type="submit" id="auth-submit-btn" class="btn-primary">Log In to Huddle</button>
       </form>
 
       <div style="text-align: center; margin-top: 12px;">
@@ -379,7 +426,7 @@
       </p>
       <div class="field-group">
         <label class="field-label">Email Address</label>
-        <input type="email" id="reset-email-input" class="input-dark" placeholder="user@pulse.com" />
+        <input type="email" id="reset-email-input" class="input-dark" placeholder="user@huddle.com" />
       </div>
       <button class="btn-primary" onclick="sendPasswordResetLink()">Send Reset Link</button>
     </div>
@@ -438,10 +485,23 @@
         <button class="btn-close" onclick="closeModal('admin-dashboard-modal')">✕</button>
       </div>
       
+      <!-- REAL-TIME VIDEO SHARING TOGGLE BUTTON -->
+      <div style="background: var(--bg-dark); padding: 14px 18px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <strong style="font-size: 14px; color: #fff;">🎥 Global Video Sharing</strong><br />
+          <small style="color: var(--text-muted);">Real-time toggle for all Huddle accounts</small>
+        </div>
+        <button id="btn-admin-video-toggle" class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px;" onclick="adminToggleGlobalVideoSharing()">ON</button>
+      </div>
+
       <div class="admin-stats-grid">
         <div class="stat-card">
           <div id="admin-total-users" class="stat-val">0</div>
           <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div id="admin-active-users" class="stat-val">0</div>
+          <div class="stat-label">Active Now</div>
         </div>
         <div class="stat-card">
           <div id="admin-total-groups" class="stat-val">0</div>
@@ -453,8 +513,23 @@
         </div>
       </div>
 
-      <span class="field-label" style="color: var(--warning); margin-bottom: 10px;">User Directory & Real-Time Surveillance</span>
-      <div id="admin-users-list" style="max-height: 380px; overflow-y: auto;"></div>
+      <div class="admin-tab-bar">
+        <button id="admin-tab-users" class="admin-tab-btn active" onclick="switchAdminTab('users')">👥 Manage Users</button>
+        <button id="admin-tab-groups" class="admin-tab-btn" onclick="switchAdminTab('groups')">🌐 Manage Groups</button>
+      </div>
+
+      <div id="admin-view-users">
+        <span class="field-label" style="color: var(--warning); margin-bottom: 10px;">Registered User Directory & Surveillance</span>
+        <div id="admin-users-list" style="max-height: 380px; overflow-y: auto;"></div>
+      </div>
+
+      <div id="admin-view-groups" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span class="field-label" style="color: var(--warning); margin: 0;">Global Groups Directory</span>
+          <button class="btn-primary" style="width: auto; padding: 6px 12px; font-size: 12px;" onclick="adminCreateGlobalPublicGroup()">+ Create Global Public Group</button>
+        </div>
+        <div id="admin-groups-list" style="max-height: 380px; overflow-y: auto;"></div>
+      </div>
     </div>
   </div>
 
@@ -487,14 +562,20 @@
   <div id="guest-restriction-modal" class="modal-overlay">
     <div class="modal-card" style="text-align: center; max-width: 380px;">
       <div class="modal-header">
-        <span class="modal-title" style="color: var(--accent);">Unlock Media Sharing</span>
+        <span class="modal-title" style="color: var(--accent);">Login Required</span>
         <button class="btn-close" onclick="closeModal('guest-restriction-modal')">✕</button>
       </div>
       <div style="font-size: 42px; margin-bottom: 12px;">🔒</div>
-      <p style="font-size: 14px; color: var(--text-main); margin-bottom: 20px; line-height: 1.4;">
-        Guest accounts can only send text messages. To share photos, videos, or voice notes, please log in or create an account!
+      <p style="font-size: 14px; color: var(--text-main); margin-bottom: 14px; font-weight: 600;">
+        Create an account or log in to:
       </p>
-      <button class="btn-primary" style="margin-bottom: 8px;" onclick="handleSignOut()">Log In / Sign Up</button>
+      <ul style="list-style: none; text-align: left; background: var(--bg-dark); padding: 14px 18px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; font-size: 13px; color: var(--text-muted); display: flex; flex-direction: column; gap: 8px;">
+        <li>✨ <strong>Share Images & Videos</strong></li>
+        <li>✨ <strong>Send Voice Notes</strong></li>
+        <li>✨ <strong>Add Friends</strong></li>
+        <li>✨ <strong>Receive Friend Requests</strong></li>
+      </ul>
+      <button class="btn-primary" style="margin-bottom: 8px;" onclick="handleSignOut()">Login / Create Account</button>
       <button class="btn-secondary" onclick="closeModal('guest-restriction-modal')">Continue as Guest</button>
     </div>
   </div>
@@ -517,7 +598,7 @@
           <option value="other">⚧️ Other / Neutral</option>
         </select>
       </div>
-      <button class="btn-primary" onclick="proceedAsGuest()">Enter Chat as Guest</button>
+      <button class="btn-primary" onclick="proceedAsGuest()">Enter Huddle as Guest</button>
     </div>
   </div>
 
@@ -611,15 +692,14 @@
     </div>
   </div>
 
-  <!-- EDIT PROFILE MODAL (HIGH PRIORITY Z-INDEX OVERRIDE) -->
-  <div id="profile-modal" class="modal-overlay" style="z-index: 3000 !important;">
+  <!-- EDIT PROFILE MODAL -->
+  <div id="profile-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
         <span class="modal-title">Edit Profile Settings</span>
         <button class="btn-close" onclick="closeModal('profile-modal')">✕</button>
       </div>
       
-      <!-- Live Cover Banner & Circular Profile Avatar Studio -->
       <div class="edit-profile-hero">
         <img id="edit-cover-preview" class="edit-cover-img" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80" alt="Cover" />
         <img id="edit-avatar-preview" class="edit-avatar-overlap" src="" alt="Avatar" />
@@ -704,22 +784,22 @@
     </div>
   </div>
 
-  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL -->
+  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL (With Banner Cover & Overlapping Avatar) -->
   <div id="group-about-modal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span class="modal-title">Group Settings & Members</span>
-        <button class="btn-close" onclick="closeModal('group-about-modal')">✕</button>
+    <div class="modal-card" style="padding: 0 0 24px 0; max-width: 480px; overflow: hidden;">
+      <div class="profile-banner-wrap" style="margin-bottom: 54px;">
+        <img id="about-group-cover" class="profile-banner-img" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80" alt="Group Banner" />
+        <img id="about-group-avatar" class="profile-avatar-overlap" src="" alt="Group Avatar" />
       </div>
-      <div style="text-align: center; margin-bottom: 16px;">
-        <img id="about-group-avatar" class="avatar-icon" style="width: 74px; height: 74px;" src="" />
-        <h3 id="about-group-name" style="margin-top: 8px;">Group Name</h3>
-        <p id="about-group-desc" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;"></p>
+
+      <div style="padding: 0 20px; text-align: center; margin-bottom: 16px;">
+        <h3 id="about-group-name" style="font-size: 22px; font-weight: 800; color: #fff;">Group Name</h3>
+        <p id="about-group-desc" style="font-size: 13.5px; color: var(--text-muted); margin: 6px 0 12px 0;">No description provided.</p>
         <span id="about-group-count" style="background: rgba(99, 102, 241, 0.2); color: var(--accent); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 14px;">0 Members</span>
       </div>
 
-      <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding-top: 14px; margin-bottom: 14px;">
-        <span class="field-label" style="color: var(--accent);">Admin: Group Settings & Invite Controls</span>
+      <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding: 16px 20px; margin-bottom: 14px; text-align: left;">
+        <span class="field-label" style="color: var(--accent); margin-bottom: 10px;">Admin: Group Settings & Editing Studio</span>
         
         <div id="admin-invite-controls" style="margin-bottom: 14px; background: var(--bg-dark); padding: 12px; border-radius: 14px;">
           <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Private Invite Link Active</div>
@@ -729,13 +809,27 @@
           </div>
         </div>
 
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <label class="btn-secondary" style="margin:0; padding: 8px; font-size: 11.5px; text-align: center; flex: 1; cursor: pointer;">
+            <span>📸 Change Banner</span>
+            <input type="file" id="admin-edit-cover-file" accept="image/*" style="display: none;" onchange="previewGroupStudioCover(this)" />
+          </label>
+          <label class="btn-secondary" style="margin:0; padding: 8px; font-size: 11.5px; text-align: center; flex: 1; cursor: pointer;">
+            <span>📸 Change Icon</span>
+            <input type="file" id="admin-edit-avatar-file" accept="image/*" style="display: none;" onchange="previewGroupStudioAvatar(this)" />
+          </label>
+        </div>
+
         <input type="text" id="admin-edit-name" class="input-dark" style="margin-bottom: 8px;" placeholder="Edit Group Name" />
         <input type="text" id="admin-edit-desc" class="input-dark" style="margin-bottom: 8px;" placeholder="Edit Group Description" />
         <button class="btn-primary" onclick="adminSaveGroupChanges()">Save Admin Updates</button>
       </div>
 
-      <span class="field-label">Members Directory</span>
-      <div id="about-members-list" style="max-height: 230px; overflow-y: auto;"></div>
+      <div style="padding: 0 20px; text-align: left;">
+        <span class="field-label">Members Directory</span>
+        <div id="about-members-list" style="max-height: 230px; overflow-y: auto;"></div>
+        <button class="btn-secondary" style="width: 100%; margin-top: 14px;" onclick="closeModal('group-about-modal')">Close</button>
+      </div>
     </div>
   </div>
 
@@ -811,22 +905,25 @@
       
       <div id="messages-feed"></div>
 
-      <!-- Footer Dock -->
+      <!-- Footer Dock & WhatsApp @ Mention Popup -->
       <div id="room-footer">
+        <!-- Floating @ Mention Container -->
+        <div id="mention-popup"></div>
+
         <div id="default-input-bar">
-          <input type="text" id="message-input" placeholder="Type a message..." />
+          <input type="text" id="message-input" placeholder="Type a message (or @ to mention)..." oninput="handleInputMention(event)" />
           
-          <label class="dock-btn" title="Attach Photo or Video" onclick="checkGuestMediaRestriction(event)">
+          <label class="dock-btn" title="Attach Photo or Video" onclick="checkGuestRestriction(event)">
             <svg viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
             <input type="file" id="media-picker" accept="image/*,video/*" style="display: none;" />
           </label>
 
-          <label class="dock-btn" title="Open Native Camera" onclick="checkGuestMediaRestriction(event)">
-            <svg viewBox="0 0 24 24"><path d="M12 12c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0-2c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm8-3h-3.17L15 5H9L7.17 7H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
+          <label class="dock-btn" title="Open Native Camera" onclick="checkGuestRestriction(event)">
+            <svg viewBox="0 0 24 24"><path d="M12 12c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-1.35-3-3-3zm0-2c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm8-3h-3.17L15 5H9L7.17 7H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
             <input type="file" id="camera-picker" accept="image/*,video/*" capture="environment" style="display: none;" />
           </label>
           
-          <button id="record-btn" class="dock-btn" title="Record Voice Note">
+          <button id="record-btn" class="dock-btn" title="Record Voice Note" onclick="checkGuestRestriction(event)">
             <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
           </button>
           
@@ -875,7 +972,7 @@
     const db = firebase.firestore();
     const storage = firebase.storage();
 
-    // App State, Cache & Unread Count Tracking
+    // App State, Cache & Global Video Setting
     let currentUser = null;
     let myProfile = null;
     let currentTab = 'all';
@@ -884,6 +981,7 @@
     let isRegistering = false;
     let viewingProfileUser = null;
     let isCreatingPrivateGroup = false;
+    let globalVideoEnabled = true;
     const userCache = new Map();
     const unreadMessageCounts = new Map();
     const playedSoundMsgIds = new Set();
@@ -894,23 +992,20 @@
       return email && email.toLowerCase() === ADMIN_EMAIL;
     }
 
-    // Null-Safe Modal Controllers
-    function openModal(id) {
-      const el = document.getElementById(id);
-      if (el) {
-        el.classList.add('active');
-        window.history.pushState({ modal: id }, "");
-      }
+    function isGuestUser() {
+      return (currentUser && currentUser.isAnonymous) || (myProfile && myProfile.isGuest);
     }
 
-    function closeModal(id) {
-      const el = document.getElementById(id);
-      if (el) {
-        el.classList.remove('active');
+    function checkGuestRestriction(event) {
+      if (isGuestUser()) {
+        if (event && event.preventDefault) event.preventDefault();
+        if (event && event.stopPropagation) event.stopPropagation();
+        openModal('guest-restriction-modal');
+        return true;
       }
+      return false;
     }
 
-    // Native Mobile History Back Button & Swipe Back Handling
     window.addEventListener('popstate', (e) => {
       const panel = document.getElementById('room-panel');
       if (panel && panel.classList.contains('mobile-active')) {
@@ -921,11 +1016,10 @@
       document.querySelectorAll('.modal-overlay.active').forEach((modal) => {
         modal.classList.remove('active');
       });
-      const senderPopup = document.getElementById('group-sender-popup');
-      if (senderPopup) senderPopup.style.display = 'none';
+      const mentionPopup = document.getElementById('mention-popup');
+      if (mentionPopup) mentionPopup.style.display = 'none';
     });
 
-    // Strictly Receiver-Only Water Droplet Chime
     let globalAudioCtx = null;
     function unlockAudio() {
       if (!globalAudioCtx) {
@@ -963,7 +1057,6 @@
       } catch (e) {}
     }
 
-    // Security Privacy Shield
     function dismissPrivacyShield() {
       const el = document.getElementById('privacy-shield');
       if (el) el.classList.remove('active');
@@ -984,7 +1077,6 @@
     let recordSeconds = 0;
     let discardRecording = false;
 
-    // Base64 Compression Helpers (~80 KB JPEG)
     function compressImageToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1043,6 +1135,23 @@
       if (img) img.src = base64;
     }
 
+    // Live previews for Group Studio in #group-about-modal
+    async function previewGroupStudioCover(inputEl) {
+      const file = inputEl.files[0];
+      if (!file) return;
+      const base64 = await compressImageToBase64(file);
+      const img = document.getElementById('about-group-cover');
+      if (img) img.src = base64;
+    }
+
+    async function previewGroupStudioAvatar(inputEl) {
+      const file = inputEl.files[0];
+      if (!file) return;
+      const base64 = await compressImageToBase64(file);
+      const img = document.getElementById('about-group-avatar');
+      if (img) img.src = base64;
+    }
+
     function showToast(msg, type = 'success') {
       const container = document.getElementById('toast-container');
       if (!container) return;
@@ -1054,6 +1163,21 @@
         toast.style.opacity = '0';
         setTimeout(() => toast.remove(), 250);
       }, 3500);
+    }
+
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.add('active');
+        window.history.pushState({ modal: id }, "");
+      }
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('active');
+      }
     }
 
     function openMediaLightbox(url, isVideo = false) {
@@ -1114,7 +1238,9 @@
             handle: g.handle,
             description: g.desc,
             isPrivate: false,
+            isGlobalPublic: true,
             photoUrl: "https://api.dicebear.com/7.x/shapes/svg?seed=" + g.handle,
+            coverUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
             adminId: "anilkrishna385@gmail.com",
             members: [currentUser ? currentUser.uid : "system"],
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1123,13 +1249,26 @@
       }
     }
 
-    // 2. AUTH & ACTIVE PRESENCE MONITOR
+    // 2. AUTH & ACTIVE PRESENCE MONITOR WITH GLOBAL VIDEO SETTING
     let myProfileUnsubscribe = null;
     auth.onAuthStateChanged(async (user) => {
       currentUser = user;
       if (user) {
+        // Listen to global app settings (Video Sharing ON/OFF)
+        db.collection("app_settings").doc("global").onSnapshot((docSnap) => {
+          if (docSnap.exists) {
+            globalVideoEnabled = docSnap.data().videoSharingEnabled !== false;
+          } else {
+            globalVideoEnabled = true;
+          }
+          const toggleBtn = document.getElementById('btn-admin-video-toggle');
+          if (toggleBtn) {
+            toggleBtn.textContent = globalVideoEnabled ? 'ON' : 'OFF';
+            toggleBtn.style.background = globalVideoEnabled ? 'var(--primary)' : 'var(--danger)';
+          }
+        });
+
         const userRef = db.collection("users").doc(user.uid);
-        
         if (myProfileUnsubscribe) myProfileUnsubscribe();
         myProfileUnsubscribe = userRef.onSnapshot((docSnap) => {
           if (docSnap.exists) {
@@ -1164,10 +1303,10 @@
         if (!checkSnap.exists) {
           const initProfile = {
             uid: user.uid,
-            email: user.email || "guest@pulse.com",
+            email: user.email || "guest@huddle.com",
             name: user.isAnonymous ? "Guest User" : (user.email ? user.email.split('@')[0] : "User"),
             username: "@" + (user.email ? user.email.split('@')[0] : "guest_" + Date.now().toString().slice(-4)),
-            bio: user.isAnonymous ? "Guest Session" : "Pulse Messenger User",
+            bio: user.isAnonymous ? "Guest Session" : "Huddle User",
             photoUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=neutral_" + user.uid,
             coverUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
             isGuest: !!user.isAnonymous,
@@ -1208,7 +1347,7 @@
     document.getElementById('toggle-auth-btn').addEventListener('click', () => {
       isRegistering = !isRegistering;
       document.getElementById('signup-extra-fields').style.display = isRegistering ? 'block' : 'none';
-      document.getElementById('auth-title').textContent = isRegistering ? 'Create Account' : 'Pulse Messenger';
+      document.getElementById('auth-title').textContent = isRegistering ? 'Create Account' : 'Huddle';
       document.getElementById('auth-submit-btn').textContent = isRegistering ? 'Sign Up' : 'Log In';
       document.getElementById('toggle-auth-btn').textContent = isRegistering ? 'Already have an account? Log In' : 'New here? Create Account';
     });
@@ -1268,18 +1407,6 @@
       }
     }
 
-    function mapAuthError(errCode, defaultMsg) {
-      switch(errCode) {
-        case 'auth/invalid-email': return 'Invalid email format. Please check your address.';
-        case 'auth/user-not-found': return 'No account found with this email. Please sign up.';
-        case 'auth/wrong-password': return 'Incorrect password. Please try again.';
-        case 'auth/invalid-credential': return 'Invalid email or password.';
-        case 'auth/email-already-in-use': return 'This email is already registered. Please log in.';
-        case 'auth/weak-password': return 'Password is too weak. Minimum 6 characters required.';
-        default: return defaultMsg;
-      }
-    }
-
     async function handleAuthSubmit(event) {
       if (event) event.preventDefault();
       const email = document.getElementById('email-input').value.trim();
@@ -1295,8 +1422,10 @@
           const username = document.getElementById('username-input').value.trim() || "@user_" + Date.now();
           const age = document.getElementById('age-input').value.trim();
           const gender = document.getElementById('gender-input').value;
-          const bio = document.getElementById('bio-input').value.trim() || "Pulse Creator";
-          let photoUrl = document.getElementById('signup-avatar-preview').src;
+          const bio = document.getElementById('bio-input').value.trim() || "Huddle Creator";
+
+          const previewEl = document.getElementById('signup-avatar-preview');
+          let photoUrl = (previewEl && previewEl.src) ? previewEl.src : `https://api.dicebear.com/7.x/avataaars/svg?seed=neutral_${Date.now()}`;
 
           const credential = await auth.createUserWithEmailAndPassword(email, password);
           await db.collection("users").doc(credential.user.uid).set({
@@ -1360,6 +1489,7 @@
     }
 
     async function handleSendFriendRequest(targetUid = null) {
+      if (checkGuestRestriction()) return;
       const uid = targetUid || viewingProfileUser?.uid;
       if (!uid || uid === currentUser.uid) return;
 
@@ -1378,11 +1508,13 @@
     }
 
     function addFriendFromHeader() {
+      if (checkGuestRestriction()) return;
       if (!activeChat || activeChat.type !== 'dm') return;
       handleSendFriendRequest(activeChat.peerId);
     }
 
     function openFriendRequestsModal() {
+      if (checkGuestRestriction()) return;
       openModal('friend-requests-modal');
       renderFriendRequests();
     }
@@ -1442,6 +1574,34 @@
     }
 
     // 5. ADMIN SUPER-DASHBOARD (anilkrishna385@gmail.com)
+    async function adminToggleGlobalVideoSharing() {
+      if (!isSuperAdmin(myProfile?.email)) return;
+      const newState = !globalVideoEnabled;
+      await db.collection("app_settings").doc("global").set({
+        videoSharingEnabled: newState
+      }, { merge: true });
+      showToast(newState ? "🎥 Global Video Sharing Turned ON" : "⚠️ Global Video Sharing Disabled!");
+    }
+
+    function switchAdminTab(tabName) {
+      const btnUsers = document.getElementById('admin-tab-users');
+      const btnGroups = document.getElementById('admin-tab-groups');
+      const viewUsers = document.getElementById('admin-view-users');
+      const viewGroups = document.getElementById('admin-view-groups');
+
+      if (tabName === 'users') {
+        btnUsers.classList.add('active');
+        btnGroups.classList.remove('active');
+        viewUsers.style.display = 'block';
+        viewGroups.style.display = 'none';
+      } else {
+        btnGroups.classList.add('active');
+        btnUsers.classList.remove('active');
+        viewGroups.style.display = 'block';
+        viewUsers.style.display = 'none';
+      }
+    }
+
     async function openAdminDashboard() {
       if (!isSuperAdmin(myProfile?.email)) {
         return showToast('⚠️ Unauthorized. Super-Admin credentials required.', 'error');
@@ -1449,21 +1609,20 @@
 
       showToast('Loading live system stats...');
       openModal('admin-dashboard-modal');
+      switchAdminTab('users');
 
       const usersSnap = await db.collection("users").get();
       const groupsSnap = await db.collection("groups").get();
       const dmsSnap = await db.collection("dms").get();
 
-      document.getElementById('admin-total-users').textContent = usersSnap.size;
-      document.getElementById('admin-total-groups').textContent = groupsSnap.size;
-      document.getElementById('admin-total-dms').textContent = dmsSnap.size;
-
+      let activeCount = 0;
       const userListContainer = document.getElementById('admin-users-list');
       userListContainer.innerHTML = '';
 
       usersSnap.forEach((doc) => {
         const u = doc.data();
         const isActive = (Date.now() - (u.lastSeen?.toMillis() || 0)) < 180000;
+        if (isActive) activeCount++;
         
         const row = document.createElement('div');
         row.className = 'admin-user-row';
@@ -1482,6 +1641,72 @@
         `;
         userListContainer.appendChild(row);
       });
+
+      document.getElementById('admin-total-users').textContent = usersSnap.size;
+      document.getElementById('admin-active-users').textContent = activeCount;
+      document.getElementById('admin-total-groups').textContent = groupsSnap.size;
+      document.getElementById('admin-total-dms').textContent = dmsSnap.size;
+
+      const groupListContainer = document.getElementById('admin-groups-list');
+      groupListContainer.innerHTML = '';
+
+      groupsSnap.forEach((doc) => {
+        const g = doc.data();
+        const gId = doc.id;
+        const row = document.createElement('div');
+        row.className = 'admin-user-row';
+        row.innerHTML = `
+          <div class="admin-user-info">
+            <img src="${g.photoUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + gId}" class="avatar-icon" style="width: 36px; height: 36px;" />
+            <div>
+              <strong># ${escapeHtml(g.name)} ${g.isGlobalPublic ? '📌' : ''}</strong>
+              <small>${g.handle || 'No handle'} | ${g.members.length} Members</small>
+            </div>
+          </div>
+          <div class="admin-actions-box">
+            <button class="btn-admin-small" onclick="adminInspectChatRoom('group', '${gId}', 'Group: #${escapeHtml(g.name)}')">👁️ Inspect</button>
+            <button class="btn-admin-small btn-admin-danger" onclick="adminDeleteGroupRoom('${gId}', '${escapeHtml(g.name)}')">🗑️ Delete Group</button>
+          </div>
+        `;
+        groupListContainer.appendChild(row);
+      });
+    }
+
+    async function adminCreateGlobalPublicGroup() {
+      if (!isSuperAdmin(myProfile?.email)) return;
+      const name = prompt("Enter Name for Global Public Group (e.g., General Chat):");
+      if (!name) return;
+      const handle = prompt("Enter @handle (e.g., @general):", "@general_" + Date.now().toString().slice(-4));
+      if (!handle) return;
+
+      await db.collection("groups").add({
+        name: name,
+        handle: handle.startsWith('@') ? handle : '@' + handle,
+        description: "Official Global Public Group for all users",
+        isPrivate: false,
+        isGlobalPublic: true,
+        photoUrl: "https://api.dicebear.com/7.x/shapes/svg?seed=" + handle,
+        coverUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
+        adminId: currentUser.uid,
+        members: [currentUser.uid],
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      showToast("➕ Global Public Group Created!");
+      openAdminDashboard();
+    }
+
+    async function adminDeleteGroupRoom(groupId, groupName) {
+      if (!isSuperAdmin(myProfile?.email)) return;
+      if (!confirm(`Are you sure you want to permanently delete group: ${groupName}?`)) return;
+
+      try {
+        await db.collection("groups").doc(groupId).delete();
+        showToast(`🗑️ Group ${groupName} deleted successfully!`);
+        openAdminDashboard();
+      } catch (err) {
+        showToast('Error deleting group: ' + err.message, 'error');
+      }
     }
 
     async function adminDeleteUserAccount(targetUid, userName) {
@@ -1631,7 +1856,8 @@
         startDirectChat(user.uid, user.name, user.photoUrl);
       };
 
-      document.getElementById('banner-action-friend').onclick = () => {
+      document.getElementById('banner-action-friend').onclick = (e) => {
+        if (checkGuestRestriction(e)) return;
         handleSendFriendRequest(user.uid);
       };
 
@@ -1649,15 +1875,15 @@
         popup.style.display = 'none';
         showUserProfile(userId);
       };
-      document.getElementById('popup-add-friend').onclick = () => {
+      document.getElementById('popup-add-friend').onclick = (e) => {
         popup.style.display = 'none';
+        if (checkGuestRestriction(e)) return;
         handleSendFriendRequest(userId);
       };
 
       window.addEventListener('click', () => { popup.style.display = 'none'; }, { once: true });
     }
 
-    // SAFE MODAL OPENER FOR EDIT PROFILE
     function openEditProfileModal() {
       try {
         closeModal('telegram-profile-modal');
@@ -1711,9 +1937,12 @@
       myProfile.coverUrl = coverUrl;
       userCache.set(currentUser.uid, myProfile);
 
-      document.getElementById('my-name-top').textContent = name;
-      document.getElementById('my-handle-top').textContent = username;
-      document.getElementById('my-avatar-top').src = photoUrl;
+      const nameTop = document.getElementById('my-name-top');
+      const handleTop = document.getElementById('my-handle-top');
+      const avatarTop = document.getElementById('my-avatar-top');
+      if (nameTop) nameTop.textContent = name;
+      if (handleTop) handleTop.textContent = username;
+      if (avatarTop) avatarTop.src = photoUrl;
       closeModal('profile-modal');
       showToast('Profile updated!');
     }
@@ -1775,7 +2004,7 @@
             snapshot.forEach((doc) => {
               const grp = { id: doc.id, ...doc.data() };
               
-              const isPinnedDefault = grp.name === "Kerala chat room" || grp.name === "Friends" || grp.handle === "@kerala_chat" || grp.handle === "@friends_group";
+              const isPinnedDefault = grp.isGlobalPublic || grp.name === "Kerala chat room" || grp.name === "Friends" || grp.handle === "@kerala_chat" || grp.handle === "@friends_group";
               if (!isPinnedDefault && !grp.members.includes(currentUser.uid)) return;
 
               const unread = unreadMessageCounts.get(doc.id) || 0;
@@ -1875,7 +2104,7 @@
       sortChatList();
     }
 
-    // 8. MESSAGING, SOUND TONE & DISAPPEARING CLOCK
+    // 8. MESSAGING, WHATSAPP-STYLE @ MENTIONS & DISAPPEARING CLOCK
     function selectConversation(item) {
       activeChat = item;
       unreadMessageCounts.set(item.id, 0);
@@ -1967,6 +2196,8 @@
       document.getElementById('room-panel').classList.remove('mobile-active');
       activeChat = null;
       if (unsubscribeMessages) unsubscribeMessages();
+      const mentionPopup = document.getElementById('mention-popup');
+      if (mentionPopup) mentionPopup.style.display = 'none';
     }
 
     function updateDisappearingClockBadge(timerSeconds) {
@@ -1996,6 +2227,67 @@
       updateDisappearingClockBadge(seconds);
       closeModal('disappear-modal');
       showToast(seconds === 0 ? 'Disappearing messages disabled' : 'Disappearing timer updated!');
+    }
+
+    // WHATSAPP-STYLE @ MENTION TRIGGER ENGINE
+    async function handleInputMention(e) {
+      const popup = document.getElementById('mention-popup');
+      if (!activeChat || activeChat.type !== 'group') {
+        if (popup) popup.style.display = 'none';
+        return;
+      }
+
+      const val = e.target.value;
+      const cursorPos = e.target.selectionStart;
+      const textBeforeCursor = val.slice(0, cursorPos);
+      const atIndex = textBeforeCursor.lastIndexOf('@');
+
+      if (atIndex !== -1 && (atIndex === 0 || textBeforeCursor[atIndex - 1] === ' ')) {
+        const query = textBeforeCursor.slice(atIndex + 1).toLowerCase();
+        popup.innerHTML = '';
+        const members = activeChat.groupData?.members || [];
+        
+        let matchCount = 0;
+        for (let uid of members) {
+          let u = userCache.get(uid);
+          if (!u) {
+            const uDoc = await db.collection("users").doc(uid).get();
+            if (!uDoc.exists) continue;
+            u = uDoc.data();
+            userCache.set(uid, u);
+          }
+          const uname = (u.username || "").toLowerCase();
+          const fname = (u.name || "").toLowerCase();
+          if (uname.includes(query) || fname.includes(query)) {
+            matchCount++;
+            const row = document.createElement('div');
+            row.className = 'mention-item';
+            row.innerHTML = `
+              <img src="${u.photoUrl}" class="avatar-icon" style="width:28px; height:28px;" />
+              <div>
+                <strong style="font-size:13px; color:#fff;">${escapeHtml(u.name)}</strong>
+                <small style="font-size:11px; color:var(--accent);">${escapeHtml(u.username)}</small>
+              </div>
+            `;
+            row.onclick = () => {
+              const beforeAt = val.slice(0, atIndex);
+              const afterCursor = val.slice(cursorPos);
+              e.target.value = beforeAt + u.username + " " + afterCursor;
+              popup.style.display = 'none';
+              e.target.focus();
+            };
+            popup.appendChild(row);
+          }
+        }
+
+        if (matchCount > 0) {
+          popup.style.display = 'flex';
+        } else {
+          popup.style.display = 'none';
+        }
+      } else {
+        if (popup) popup.style.display = 'none';
+      }
     }
 
     function renderMessageBubble(msg) {
@@ -2064,12 +2356,14 @@
       });
 
       input.value = '';
+      const popup = document.getElementById('mention-popup');
+      if (popup) popup.style.display = 'none';
     }
 
     document.getElementById('send-text-btn').addEventListener('click', sendChatMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
-    // 9. MEDIA UPLOAD ENGINE (UP TO 50 MB VIDEO VIA STORAGE)
+    // 9. MEDIA UPLOAD ENGINE WITH GLOBAL ADMIN LOCK
     async function uploadMessageMedia(mediaData, type) {
       if (!activeChat) return;
       try {
@@ -2095,8 +2389,8 @@
     }
 
     function checkGuestMediaRestriction(event) {
-      if (currentUser && currentUser.isAnonymous) {
-        if (event) event.preventDefault();
+      if (isGuestUser()) {
+        if (event && event.preventDefault) event.preventDefault();
         openModal('guest-restriction-modal');
         return true;
       }
@@ -2112,6 +2406,11 @@
       if (checkGuestMediaRestriction()) return;
 
       if (file.type.startsWith('video/')) {
+        // LIVE GLOBAL VIDEO SHARING ADMIN LOCK CHECK
+        if (!globalVideoEnabled) {
+          return showToast('⚠️ Video sharing is temporarily disabled by Huddle Admin.', 'error');
+        }
+
         if (file.size > 50 * 1024 * 1024) {
           return showToast('⚠️ Video exceeds the maximum 50 MB size limit!', 'error');
         }
@@ -2250,7 +2549,7 @@
       }
     });
 
-    // 10. DIRECTORY SEARCH & EXACT-PREFIX MATCHING
+    // 10. DIRECTORY SEARCH
     function openSearchModal() { openModal('search-modal'); }
 
     async function executeSearch(query) {
@@ -2399,7 +2698,6 @@
       showToast('Old link revoked! New invite link generated.');
     }
 
-    // Group Member Directory with Last Seen Timestamps
     async function handleHeaderClick() {
       if (!activeChat) return;
       if (activeChat.type === 'dm') {
