@@ -2637,7 +2637,7 @@
           </div>
         `;
       } else if (msg.type === 'voice') {
-        // FIXED: preload="metadata" and playsinline allow Safari/iOS to stream smoothly
+        // preload="metadata" and playsinline allow Safari/iOS and desktop to stream smoothly
         content = `<div class="msg-audio-player"><audio controls preload="metadata" playsinline src="${msg.mediaUrl}"></audio></div>`;
       }
 
@@ -2807,7 +2807,7 @@
       e.target.value = '';
     });
 
-    // Voice Recorder (Direct to Firebase Storage) - WITH CROSS-BROWSER MIME DETECTION AND task.snapshot.ref FIX
+    // Voice Recorder - Bypasses Firebase Storage entirely by saving Base64 string directly to Firestore
     function startRecordTimer() {
       recordSeconds = 0;
       document.getElementById('record-timer-text').textContent = "00:00";
@@ -2831,7 +2831,7 @@
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         
-        // 1. Better cross-browser MIME type detection (Safari/iOS compatibility)
+        // 1. Cross-browser MIME type detection (Safari/iOS compatibility)
         let mimeType = '';
         const possibleTypes = [
           'audio/mp4',
@@ -2871,36 +2871,19 @@
           }
 
           if (audioChunks.length > 0) {
-            showToast('Uploading voice message...');
+            showToast('Sending voice message...');
             try {
               const actualMime = mediaRecorder.mimeType || mimeType || 'audio/webm';
               const audioBlob = new Blob(audioChunks, { type: actualMime });
               
-              // Determine clean extension for storage
-              let ext = 'webm';
-              if (actualMime.includes('mp4') || actualMime.includes('m4a') || actualMime.includes('aac')) {
-                ext = 'mp4';
-              } else if (actualMime.includes('ogg')) {
-                ext = 'ogg';
-              }
-
-              const fileRef = storage.ref().child(`chat_voice/${Date.now()}_voice.${ext}`);
-              
-              // 2. Add content-type metadata so Firebase serves the correct audio header
-              const metadata = { contentType: actualMime };
-              const task = fileRef.put(audioBlob, metadata);
-
-              // 3. Listen for completion correctly using task.on or awaiting the snapshot
-              task.on('state_changed', 
-                null, 
-                (err) => showToast('Voice upload error: ' + err.message, 'error'), 
-                async () => {
-                  // FIXED: Must use task.snapshot.ref in Firebase v10 compat
-                  const downloadUrl = await task.snapshot.ref.getDownloadURL();
-                  await uploadMessageMedia(downloadUrl, 'voice');
-                  showToast('Voice message sent!');
-                }
-              );
+              // 2. Convert recorded audio Blob directly to Base64 Data URL (Bypasses Firebase Storage!)
+              const reader = new FileReader();
+              reader.readAsDataURL(audioBlob);
+              reader.onloadend = async () => {
+                const base64AudioUrl = reader.result;
+                await uploadMessageMedia(base64AudioUrl, 'voice');
+                showToast('Voice message sent!');
+              };
             } catch (err) {
               showToast('Voice upload error: ' + err.message, 'error');
             }
