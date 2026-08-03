@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Pulse Messenger — WhatsApp & Telegram Edition</title>
+  <title>Pulse Messenger — Ultimate Hybrid</title>
   <style>
     :root {
       --bg-dark: #0B1120;
@@ -20,13 +20,30 @@
       --shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    /* Anti-Screenshot & Selection Protection */
+    * { 
+      box-sizing: border-box; margin: 0; padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
+      -webkit-tap-highlight-color: transparent; 
+      user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+    }
+    input, textarea { user-select: text !important; -webkit-user-select: text !important; }
+
     body { background: var(--bg-dark); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
 
     /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+
+    /* Security Privacy Blur Shield */
+    #privacy-shield {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(25px);
+      z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 24px;
+    }
+    #privacy-shield.active { display: flex; }
 
     /* Toast System */
     #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
@@ -44,7 +61,7 @@
     .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
     .btn-close { background: var(--bg-card); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-weight: bold; }
 
-    /* Telegram Profile Card Specific Styling */
+    /* Telegram Profile Card */
     .telegram-profile-card { text-align: center; }
     .telegram-avatar-lg { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 12px; background: var(--bg-card); }
     .telegram-name { font-size: 22px; font-weight: 700; color: var(--text-main); }
@@ -55,8 +72,8 @@
     .telegram-bio-box { background: var(--bg-dark); padding: 14px; border-radius: 16px; border: 1px solid var(--border); text-align: left; margin: 18px 0; font-size: 13.5px; color: var(--text-main); }
 
     /* Photo Preview Modal */
-    .preview-image-box { width: 100%; max-height: 380px; border-radius: 18px; overflow: hidden; margin-bottom: 18px; border: 1px solid var(--border); background: #000; display: flex; align-items: center; justify-content: center; }
-    #preview-img-el { max-width: 100%; max-height: 380px; object-fit: contain; }
+    .preview-image-box { width: 100%; max-height: 360px; border-radius: 18px; overflow: hidden; margin-bottom: 18px; border: 1px solid var(--border); background: #000; display: flex; align-items: center; justify-content: center; }
+    #preview-img-el { max-width: 100%; max-height: 360px; object-fit: contain; }
 
     /* Inputs & Buttons */
     .field-group { margin-bottom: 16px; text-align: left; }
@@ -79,12 +96,13 @@
     .header-actions { display: flex; gap: 8px; }
     .icon-btn-round { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-main); font-size: 16px; }
 
-    /* Segmented Tabs */
-    #tabs-bar { display: flex; padding: 10px 16px; border-bottom: 1px solid var(--border); gap: 8px; background: rgba(11, 17, 32, 0.4); }
-    .tab-btn { flex: 1; padding: 10px 0; border: none; background: transparent; font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-radius: 12px; }
+    /* Segmented Navigation Tabs with Unread Badges */
+    #tabs-bar { display: flex; padding: 10px 14px; border-bottom: 1px solid var(--border); gap: 8px; background: rgba(11, 17, 32, 0.4); }
+    .tab-btn { flex: 1; padding: 10px 0; border: none; background: transparent; font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-radius: 12px; position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .tab-btn.active { background: var(--primary); color: #fff; }
+    .tab-pill-badge { background: var(--success); color: #000; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 10px; display: none; }
 
-    /* Conversation List & Unread Badge */
+    /* Conversation List & Unread Badges */
     #chat-list { flex: 1; overflow-y: auto; list-style: none; }
     .list-item { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; gap: 14px; position: relative; }
     .list-item:hover { background: rgba(255, 255, 255, 0.04); }
@@ -97,10 +115,9 @@
     .item-time { font-size: 11px; color: var(--text-muted); }
     .item-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     
-    /* WhatsApp Green Unread Message Badge */
     .unread-badge { background: var(--success); color: #000; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 12px; display: inline-block; flex-shrink: 0; }
 
-    /* Typing & Recording Status Animations */
+    /* Typing & Recording Animations */
     .status-active-text { color: var(--success) !important; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
     .typing-dots span { display: inline-block; animation: bounceDot 1.2s infinite; }
     .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
@@ -108,12 +125,18 @@
     @keyframes bounceDot { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-3px); } }
 
     /* Right Main Room */
-    #room-panel { flex: 1; display: flex; flex-direction: column; background: var(--bg-dark); height: 100%; position: relative; }
-    #room-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); }
-    .peer-info { display: flex; align-items: center; gap: 14px; cursor: pointer; }
-    .peer-name { font-size: 16px; font-weight: 700; color: var(--text-main); }
+    #room-panel { flex: 1; display: flex; flex-direction: column; background: var(--bg-dark); height: 100%; position: relative; overflow: hidden; }
+    #room-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); flex-shrink: 0; }
+    .peer-info { display: flex; align-items: center; gap: 14px; cursor: pointer; min-width: 0; flex: 1; }
+    .peer-name { font-size: 16px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .peer-sub { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
-    #back-btn { display: none; background: none; border: none; font-size: 24px; color: var(--accent); margin-right: 8px; cursor: pointer; }
+    #back-btn { display: none; background: none; border: none; font-size: 24px; color: var(--accent); margin-right: 8px; cursor: pointer; flex-shrink: 0; }
+
+    /* Disappearing Messages & Header Actions */
+    .header-right-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .disappear-clock-btn { background: var(--bg-card); border: 1px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; position: relative; transition: all 0.15s; }
+    .disappear-clock-btn:hover { background: var(--primary); }
+    .disappear-active-indicator { position: absolute; top: -2px; right: -2px; background: var(--accent); color: #000; font-size: 9px; font-weight: 900; padding: 1px 4px; border-radius: 8px; }
 
     /* Messages Stream */
     #messages-feed { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 14px; background: radial-gradient(circle at top right, rgba(30,41,59,0.3) 0%, rgba(11,17,32,1) 100%); }
@@ -130,8 +153,8 @@
     .msg-audio-player { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 16px; margin-top: 6px; min-width: 230px; }
     .msg-audio-player audio { width: 100%; height: 32px; border-radius: 8px; outline: none; }
 
-    /* Input Dock */
-    #room-footer { padding: 16px 24px; border-top: 1px solid var(--border); background: var(--bg-panel); display: flex; align-items: center; gap: 10px; min-height: 74px; }
+    /* Input Dock (Fixed & docked at bottom on Mobile) */
+    #room-footer { padding: 14px 20px; border-top: 1px solid var(--border); background: var(--bg-panel); display: flex; align-items: center; gap: 10px; min-height: 72px; flex-shrink: 0; width: 100%; z-index: 10; }
     #default-input-bar { display: flex; align-items: center; gap: 10px; width: 100%; }
     #message-input { flex: 1; padding: 13px 18px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 24px; font-size: 14px; color: #fff; outline: none; }
     #message-input:focus { border-color: var(--primary); }
@@ -146,9 +169,9 @@
     .red-pulse-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--danger); animation: pulseDot 0.8s infinite; }
     @keyframes pulseDot { 0% { transform: scale(0.9); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } 100% { transform: scale(0.9); opacity: 1; } }
     .recording-actions { display: flex; align-items: center; gap: 8px; }
-    .btn-cancel-record { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+    .btn-cancel-record { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 18px; font-size: 13px; font-weight: 600; cursor: pointer; }
     .btn-cancel-record:hover { background: rgba(239, 68, 68, 0.3); }
-    .btn-send-record { background: var(--primary); color: #fff; border: none; padding: 8px 18px; border-radius: 18px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 6px; }
+    .btn-send-record { background: var(--primary); color: #fff; border: none; padding: 8px 18px; border-radius: 18px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
     .btn-send-record:hover { background: var(--primary-hover); }
 
     /* Member List Item */
@@ -158,18 +181,32 @@
     .status-badge.active { background: rgba(16, 185, 129, 0.2); color: var(--success); }
     .status-badge.inactive { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
 
-    /* WhatsApp Mobile Drawer Sliding Screen */
+    /* Mobile Fixed Modal Screen Transition (Fixes input bar truncation) */
     @media (max-width: 768px) {
       body { padding: 0; }
       #app-shell { height: 100vh; border-radius: 0; border: none; }
       #sidebar-panel { width: 100%; }
-      #room-panel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100; }
+      #room-panel { 
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+        background: var(--bg-dark); z-index: 500; 
+        transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1); 
+      }
       #room-panel.mobile-active { transform: translateX(0); }
       #back-btn { display: inline-block; }
     }
   </style>
 </head>
 <body>
+
+  <!-- DRM PRIVACY & ANTI-SCREENSHOT SECURITY SHIELD -->
+  <div id="privacy-shield">
+    <div style="font-size: 48px; margin-bottom: 16px;">🛡️</div>
+    <h2 style="font-size: 22px; margin-bottom: 8px;">Security Protection Active</h2>
+    <p style="color: var(--text-muted); max-width: 320px; margin-bottom: 20px; font-size: 14px;">
+      Screenshots and screen recording are restricted on Pulse Messenger to protect message privacy.
+    </p>
+    <button class="btn-primary" style="width: auto; padding: 10px 24px;" onclick="dismissPrivacyShield()">Return to App</button>
+  </div>
 
   <!-- TOAST CONTAINER -->
   <div id="toast-container"></div>
@@ -230,10 +267,17 @@
         </div>
       </div>
 
+      <!-- Segmented Navigation Tabs with Total Unread Badges -->
       <div id="tabs-bar">
-        <button class="tab-btn active" onclick="switchTab('all')">All</button>
-        <button class="tab-btn" onclick="switchTab('chats')">Direct</button>
-        <button class="tab-btn" onclick="switchTab('groups')">Groups</button>
+        <button class="tab-btn active" onclick="switchTab('all')">
+          All <span id="badge-tab-all" class="tab-pill-badge">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('chats')">
+          Direct <span id="badge-tab-chats" class="tab-pill-badge">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('groups')">
+          Groups <span id="badge-tab-groups" class="tab-pill-badge">0</span>
+        </button>
       </div>
 
       <ul id="chat-list"></ul>
@@ -245,20 +289,26 @@
         <div class="peer-info" onclick="handleHeaderClick()">
           <button id="back-btn" onclick="closeMobileRoom(event)">‹</button>
           <img id="room-peer-avatar" class="avatar-icon" src="" />
-          <div>
+          <div style="min-width: 0; flex: 1;">
             <div id="room-peer-name" class="peer-name">Select a Chat</div>
             <div id="room-peer-status" class="peer-sub">Tap a conversation from the sidebar</div>
           </div>
         </div>
-        <div>
-          <button id="invite-btn" class="btn-secondary" style="padding: 6px 14px; margin: 0; display: none;" onclick="copyGroupInviteLink(event)">🔗 Invite Link</button>
+        
+        <div class="header-right-actions">
+          <!-- Top-Right Disappearing Messages Clock Toggle -->
+          <button class="disappear-clock-btn" onclick="openDisappearingModal()" title="Set Disappearing Messages Timer">
+            ⏱️
+            <span id="disappear-badge-num" class="disappear-active-indicator" style="display: none;">24h</span>
+          </button>
+          <button id="invite-btn" class="btn-secondary" style="padding: 6px 14px; margin: 0; display: none;" onclick="copyGroupInviteLink(event)">🔗 Invite</button>
         </div>
       </header>
       
       <div id="messages-feed"></div>
 
+      <!-- Footer Input Dock -->
       <div id="room-footer">
-        <!-- Default Text Input & Icons -->
         <div id="default-input-bar">
           <input type="text" id="message-input" placeholder="Type a message..." />
           
@@ -282,7 +332,6 @@
           </button>
         </div>
 
-        <!-- Telegram Voice Recording Bar -->
         <div id="recording-bar">
           <div class="recording-status">
             <div class="red-pulse-dot"></div>
@@ -297,6 +346,24 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- DISAPPEARING MESSAGES MODAL -->
+  <div id="disappear-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Disappearing Messages</span>
+        <button class="btn-close" onclick="closeModal('disappear-modal')">✕</button>
+      </div>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 18px;">
+        When enabled, messages sent in this chat will automatically vanish after the selected duration.
+      </p>
+      <button class="btn-secondary" style="margin-bottom: 8px;" onclick="setDisappearingTimer(0)">Off (Keep Messages)</button>
+      <button class="btn-secondary" style="margin-bottom: 8px;" onclick="setDisappearingTimer(60)">1 Minute (Test Mode)</button>
+      <button class="btn-secondary" style="margin-bottom: 8px;" onclick="setDisappearingTimer(86400)">24 Hours</button>
+      <button class="btn-secondary" style="margin-bottom: 8px;" onclick="setDisappearingTimer(604800)">7 Days</button>
+      <button class="btn-secondary" onclick="setDisappearingTimer(2592000)">30 Days</button>
     </div>
   </div>
 
@@ -372,7 +439,7 @@
     </div>
   </div>
 
-  <!-- CREATE GROUP MODAL -->
+  <!-- CREATE GROUP MODAL (Public vs Private toggle) -->
   <div id="create-group-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -381,15 +448,26 @@
       </div>
       <div class="field-group">
         <label class="field-label">Group Name</label>
-        <input type="text" id="new-group-name" class="input-dark" placeholder="Design Studio HQ" />
+        <input type="text" id="new-group-name" class="input-dark" placeholder="Design HQ" />
       </div>
+      
+      <!-- Privacy Toggle -->
       <div class="field-group">
-        <label class="field-label">Group Handle (For Search & Link)</label>
+        <label class="field-label">Group Privacy</label>
+        <div style="display: flex; gap: 8px;">
+          <button id="toggle-privacy-pub" class="btn-primary" style="flex:1; padding:10px;" onclick="setGroupPrivacyMode(false)">🌐 Public</button>
+          <button id="toggle-privacy-priv" class="btn-secondary" style="flex:1; padding:10px; margin:0;" onclick="setGroupPrivacyMode(true)">🔒 Private</button>
+        </div>
+      </div>
+
+      <div class="field-group" id="group-handle-box">
+        <label class="field-label">Public Username Handle</label>
         <input type="text" id="new-group-handle" class="input-dark" placeholder="@design_hq" />
       </div>
+
       <div class="field-group">
         <label class="field-label">Description</label>
-        <input type="text" id="new-group-desc" class="input-dark" placeholder="Official group collaboration" />
+        <input type="text" id="new-group-desc" class="input-dark" placeholder="Team inspiration & chat" />
       </div>
       <div class="field-group">
         <label class="field-label">Group Cover Photo</label>
@@ -399,19 +477,19 @@
     </div>
   </div>
 
-  <!-- SEARCH MODAL -->
+  <!-- SEARCH MODAL (Prefix & exact similarity matching only) -->
   <div id="search-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
         <span class="modal-title">Discover Directory</span>
         <button class="btn-close" onclick="closeModal('search-modal')">✕</button>
       </div>
-      <input type="text" id="search-query" class="input-dark" placeholder="Search by name or @username..." style="margin-bottom: 16px;" oninput="executeSearch(this.value)" />
+      <input type="text" id="search-query" class="input-dark" placeholder="Search prefix matching (@name or handle)..." style="margin-bottom: 16px;" oninput="executeSearch(this.value)" />
       <ul id="search-results" style="list-style: none; max-height: 300px; overflow-y: auto;"></ul>
     </div>
   </div>
 
-  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL -->
+  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL (With Revoke/Regenerate Link) -->
   <div id="group-about-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -426,7 +504,17 @@
       </div>
 
       <div id="admin-edit-section" style="display: none; border-top: 1px solid var(--border); padding-top: 14px; margin-bottom: 14px;">
-        <span class="field-label">Admin Settings: Modify Group</span>
+        <span class="field-label" style="color: var(--accent);">Admin: Group Settings & Invite Controls</span>
+        
+        <!-- Invite Link Controls for Private Groups -->
+        <div id="admin-invite-controls" style="margin-bottom: 14px; background: var(--bg-dark); padding: 12px; border-radius: 14px;">
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Private Invite Link Active</div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-primary" style="padding: 8px 12px; font-size: 12px;" onclick="copyGroupInviteLink(event)">📋 Copy Link</button>
+            <button class="btn-secondary" style="margin:0; padding: 8px 12px; font-size: 12px; color: var(--danger);" onclick="adminRevokeAndRegenerateLink()">🔄 Revoke & Regenerate</button>
+          </div>
+        </div>
+
         <input type="text" id="admin-edit-name" class="input-dark" style="margin-bottom: 8px;" placeholder="Edit Group Name" />
         <input type="text" id="admin-edit-desc" class="input-dark" style="margin-bottom: 8px;" placeholder="Edit Group Description" />
         <button class="btn-primary" onclick="adminSaveGroupChanges()">Save Admin Updates</button>
@@ -466,8 +554,9 @@
     let unsubscribeMessages = null;
     let isRegistering = false;
     let viewingProfileUser = null;
+    let isCreatingPrivateGroup = false;
     const userCache = new Map();
-    const unreadMessageCounts = new Map(); // Tracks WhatsApp unread count per chat ID
+    const unreadMessageCounts = new Map();
     let typingStatusTimeout = null;
 
     // Built-in HTML5 Web Audio Message Tone Synthesizer
@@ -476,23 +565,38 @@
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        
         osc.type = 'sine';
         osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // Note D5
         osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.1); // Note A5
-        
         gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
-        
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        
         osc.start();
         osc.stop(audioCtx.currentTime + 0.35);
-      } catch (e) {
-        // Fallback for browsers that block auto-play
-      }
+      } catch (e) {}
     }
+
+    // DRM Security Shield Protection Handlers
+    function dismissPrivacyShield() {
+      document.getElementById('privacy-shield').classList.remove('active');
+    }
+
+    window.addEventListener('blur', () => {
+      if (currentUser) document.getElementById('privacy-shield').classList.add('active');
+    });
+    window.addEventListener('focus', () => {
+      document.getElementById('privacy-shield').classList.remove('active');
+    });
+
+    // Intercept PrintScreen and Screenshot Shortcuts
+    document.addEventListener('keyup', (e) => {
+      if (e.key === 'PrintScreen' || e.keyCode === 44 || (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5'))) {
+        document.getElementById('privacy-shield').classList.add('active');
+        showToast('Screenshots restricted for privacy', 'error');
+        if (navigator.clipboard) navigator.clipboard.writeText('Screenshots disabled on Pulse Messenger.');
+      }
+    });
 
     // Media & Voice Recording State
     let pendingPreviewImageBase64 = null;
@@ -537,7 +641,6 @@
       });
     }
 
-    // Base64 Audio Helper
     function blobToBase64(blob) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -599,8 +702,9 @@
 
         const params = new URLSearchParams(window.location.search);
         const joinId = params.get('join');
+        const token = params.get('token');
         if (joinId) {
-          await joinGroupById(joinId);
+          await joinGroupById(joinId, token);
           window.history.replaceState({}, document.title, window.location.pathname);
         }
 
@@ -735,12 +839,38 @@
       showToast('Profile updated!');
     }
 
-    // 4. CONVERSATION FEED & UNREAD COUNTS
+    // 4. CONVERSATION FEED & UNREAD TAB BADGES
     function switchTab(tabName) {
       currentTab = tabName;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       event.currentTarget.classList.add('active');
       loadConversationList();
+    }
+
+    function updateTopTabBadges() {
+      let dmUnread = 0;
+      let groupUnread = 0;
+
+      unreadMessageCounts.forEach((count, id) => {
+        if (count > 0) {
+          if (id.includes('_')) dmUnread++;
+          else groupUnread++;
+        }
+      });
+
+      const totalUnread = dmUnread + groupUnread;
+      const allBadge = document.getElementById('badge-tab-all');
+      const chatsBadge = document.getElementById('badge-tab-chats');
+      const groupsBadge = document.getElementById('badge-tab-groups');
+
+      if (totalUnread > 0) { allBadge.textContent = totalUnread; allBadge.style.display = 'inline-block'; } 
+      else allBadge.style.display = 'none';
+
+      if (dmUnread > 0) { chatsBadge.textContent = dmUnread; chatsBadge.style.display = 'inline-block'; } 
+      else chatsBadge.style.display = 'none';
+
+      if (groupUnread > 0) { groupsBadge.textContent = groupUnread; groupsBadge.style.display = 'inline-block'; } 
+      else groupsBadge.style.display = 'none';
     }
 
     function loadConversationList() {
@@ -778,6 +908,7 @@
                 unreadCount: unread,
                 typingStatus: data.typing ? data.typing[peer.uid] : null
               });
+              updateTopTabBadges();
             });
           });
       }
@@ -799,8 +930,10 @@
                 time: '',
                 isActive: false,
                 unreadCount: unread,
-                typingStatus: null
+                typingStatus: null,
+                groupData: grp
               });
+              updateTopTabBadges();
             });
           });
       }
@@ -841,10 +974,11 @@
       listEl.appendChild(li);
     }
 
-    // 5. MESSAGING, SOUND TONE & TYPING STATUS
+    // 5. MESSAGING, SOUND TONE & DISAPPEARING MESSAGES CLOCK
     function selectConversation(item) {
       activeChat = item;
-      unreadMessageCounts.set(item.id, 0); // Clear WhatsApp unread badge count
+      unreadMessageCounts.set(item.id, 0);
+      updateTopTabBadges();
       
       document.querySelectorAll('.list-item').forEach(el => el.classList.remove('active'));
       const activeEl = document.getElementById(`item-${item.id}`);
@@ -858,36 +992,24 @@
       document.getElementById('room-peer-avatar').src = item.avatar;
       
       if (item.type === 'group') {
-        document.getElementById('room-peer-status').textContent = '👥 Tap for Group Info';
+        document.getElementById('room-peer-status').textContent = '👥 Tap for Group Info & Links';
         document.getElementById('invite-btn').style.display = 'inline-block';
       } else {
         document.getElementById('room-peer-status').textContent = item.isActive ? '● Active Now' : 'Offline';
         document.getElementById('invite-btn').style.display = 'none';
       }
 
-      // Slide open WhatsApp Mobile Screen
       document.getElementById('room-panel').classList.add('mobile-active');
 
       if (unsubscribeMessages) unsubscribeMessages();
 
       const collName = item.type === 'group' ? 'groups' : 'dms';
       
-      // Listen for Live Typing/Recording Status in Header
-      if (item.type === 'dm') {
-        db.collection("dms").doc(item.id).onSnapshot((doc) => {
-          if (!doc.exists || !activeChat || activeChat.id !== item.id) return;
-          const statusMap = doc.data().typing || {};
-          const peerStatus = statusMap[item.peerId];
-          const statusEl = document.getElementById('room-peer-status');
-          if (peerStatus === 'typing') {
-            statusEl.innerHTML = `<span class="status-active-text">typing<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span></span>`;
-          } else if (peerStatus === 'recording') {
-            statusEl.innerHTML = `<span class="status-active-text">🎤 recording audio...</span>`;
-          } else {
-            statusEl.textContent = item.isActive ? '● Active Now' : 'Offline';
-          }
-        });
-      }
+      // Check Disappearing Messages Timer indicator
+      db.collection(collName).doc(item.id).get().then((doc) => {
+        const timer = doc.data()?.disappearingTimer || 0;
+        updateDisappearingClockBadge(timer);
+      });
 
       let isInitialLoad = true;
       unsubscribeMessages = db.collection(collName).doc(item.id).collection('messages')
@@ -895,28 +1017,71 @@
         .onSnapshot((snapshot) => {
           const feed = document.getElementById('messages-feed');
           feed.innerHTML = '';
-          snapshot.forEach((doc) => {
-            const msg = doc.data();
-            renderMessageBubble(msg);
-            
-            // Play notification tone and increase unread badge if message is from another user
-            if (!isInitialLoad && msg.senderId !== currentUser.uid) {
-              playNotificationTone();
-              if (!activeChat || activeChat.id !== item.id) {
-                const currentUnread = unreadMessageCounts.get(item.id) || 0;
-                unreadMessageCounts.set(item.id, currentUnread + 1);
-                loadConversationList();
+          
+          // Check disappearing timer threshold
+          db.collection(collName).doc(item.id).get().then((docMeta) => {
+            const timer = docMeta.data()?.disappearingTimer || 0;
+            updateDisappearingClockBadge(timer);
+
+            snapshot.forEach((doc) => {
+              const msg = doc.data();
+              
+              // Skip message rendering if it has expired past disappearing timer
+              if (timer > 0 && msg.createdAt) {
+                const ageSecs = (Date.now() - msg.createdAt.toMillis()) / 1000;
+                if (ageSecs > timer) return;
               }
-            }
+
+              renderMessageBubble(msg);
+              
+              if (!isInitialLoad && msg.senderId !== currentUser.uid) {
+                playNotificationTone();
+                if (!activeChat || activeChat.id !== item.id) {
+                  const currentUnread = unreadMessageCounts.get(item.id) || 0;
+                  unreadMessageCounts.set(item.id, currentUnread + 1);
+                  loadConversationList();
+                  updateTopTabBadges();
+                }
+              }
+            });
+            isInitialLoad = false;
+            feed.scrollTop = feed.scrollHeight;
           });
-          isInitialLoad = false;
-          feed.scrollTop = feed.scrollHeight;
         });
     }
 
     function closeMobileRoom(e) {
       e.stopPropagation();
       document.getElementById('room-panel').classList.remove('mobile-active');
+    }
+
+    function updateDisappearingClockBadge(timerSeconds) {
+      const badge = document.getElementById('disappear-badge-num');
+      if (!timerSeconds || timerSeconds === 0) {
+        badge.style.display = 'none';
+      } else {
+        badge.style.display = 'inline-block';
+        if (timerSeconds === 60) badge.textContent = '1m';
+        else if (timerSeconds === 86400) badge.textContent = '24h';
+        else if (timerSeconds === 604800) badge.textContent = '7d';
+        else if (timerSeconds === 2592000) badge.textContent = '30d';
+      }
+    }
+
+    function openDisappearingModal() {
+      if (!activeChat) return showToast('Select a conversation first!', 'error');
+      openModal('disappear-modal');
+    }
+
+    async function setDisappearingTimer(seconds) {
+      if (!activeChat) return;
+      const collName = activeChat.type === 'group' ? 'groups' : 'dms';
+      await db.collection(collName).doc(activeChat.id).update({
+        disappearingTimer: seconds
+      });
+      updateDisappearingClockBadge(seconds);
+      closeModal('disappear-modal');
+      showToast(seconds === 0 ? 'Disappearing messages disabled' : 'Disappearing timer updated!');
     }
 
     function renderMessageBubble(msg) {
@@ -947,27 +1112,10 @@
       return str.replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t));
     }
 
-    // Set Live Typing/Recording Indicator in Firestore
-    function setMyTypingStatus(status) {
-      if (!activeChat || activeChat.type !== 'dm') return;
-      db.collection("dms").doc(activeChat.id).set({
-        typing: { [currentUser.uid]: status }
-      }, { merge: true });
-
-      if (typingStatusTimeout) clearTimeout(typingStatusTimeout);
-      if (status) {
-        typingStatusTimeout = setTimeout(() => {
-          setMyTypingStatus(null);
-        }, 3000);
-      }
-    }
-
     function sendChatMessage() {
       const input = document.getElementById('message-input');
       const text = input.value.trim();
       if (!text || !activeChat) return;
-
-      setMyTypingStatus(null); // Clear typing status on send
 
       const collName = activeChat.type === 'group' ? 'groups' : 'dms';
       db.collection(collName).doc(activeChat.id).collection('messages').add({
@@ -988,14 +1136,12 @@
     }
 
     document.getElementById('send-text-btn').addEventListener('click', sendChatMessage);
-    document.getElementById('message-input').addEventListener('input', () => setMyTypingStatus('typing'));
     document.getElementById('message-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
-    // 6. TELEGRAM PHOTO PREVIEW MODAL & VOICE RECORDING DOCK
+    // 6. PHOTO PREVIEW MODAL & VOICE RECORDING DOCK
     async function uploadMessageMedia(mediaData, type) {
       if (!activeChat) return;
       try {
-        setMyTypingStatus(null);
         const collName = activeChat.type === 'group' ? 'groups' : 'dms';
         await db.collection(collName).doc(activeChat.id).collection('messages').add({
           mediaUrl: mediaData,
@@ -1060,7 +1206,6 @@
 
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        setMyTypingStatus('recording'); // Broadcast recording audio indicator
         
         let options = {};
         if (MediaRecorder.isTypeSupported('audio/webm')) options = { mimeType: 'audio/webm' };
@@ -1076,7 +1221,6 @@
 
         mediaRecorder.onstop = async () => {
           stopRecordTimer();
-          setMyTypingStatus(null);
           document.getElementById('recording-bar').style.display = 'none';
           document.getElementById('default-input-bar').style.display = 'flex';
           isRecording = false;
@@ -1122,7 +1266,7 @@
       }
     });
 
-    // 7. DIRECTORY SEARCH & GROUP CREATION
+    // 7. PRECISION PREFIX SEARCH MATCHING ONLY
     function openSearchModal() { openModal('search-modal'); }
 
     async function executeSearch(query) {
@@ -1130,10 +1274,18 @@
       resultsEl.innerHTML = '';
       if (!query.trim()) return;
 
+      const cleanQ = query.toLowerCase().trim();
+
+      // Search Public Groups by exact keyword prefix matching
       const groupsSnap = await db.collection("groups").get();
       groupsSnap.forEach((doc) => {
         const g = { id: doc.id, ...doc.data() };
-        if (g.name.toLowerCase().includes(query.toLowerCase()) || (g.handle && g.handle.toLowerCase().includes(query.toLowerCase()))) {
+        if (g.isPrivate) return; // Never show Private groups in public search!
+        
+        const nameMatch = g.name.toLowerCase().startsWith(cleanQ);
+        const handleMatch = g.handle && g.handle.toLowerCase().startsWith(cleanQ);
+        
+        if (nameMatch || handleMatch) {
           const li = document.createElement('li');
           li.className = 'member-row';
           li.innerHTML = `
@@ -1141,17 +1293,22 @@
               <img src="${g.photoUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + g.id}" class="avatar-icon" />
               <div><strong># ${g.name}</strong><br><small style="color:var(--text-muted);">${g.handle || ''}</small></div>
             </div>
-            <button class="btn-primary" style="width:auto; padding:6px 14px;" onclick="joinGroupById('${g.id}')">Join</button>
+            <button class="btn-primary" style="width:auto; padding:6px 14px;" onclick="joinGroupById('${g.id}', '${g.inviteToken || ''}')">Join</button>
           `;
           resultsEl.appendChild(li);
         }
       });
 
+      // Search Users by exact name/handle prefix matching
       const usersSnap = await db.collection("users").get();
       usersSnap.forEach((doc) => {
         const u = doc.data();
         if (u.uid === currentUser.uid) return;
-        if (u.name.toLowerCase().includes(query.toLowerCase()) || (u.username && u.username.toLowerCase().includes(query.toLowerCase()))) {
+        
+        const nameMatch = u.name.toLowerCase().startsWith(cleanQ);
+        const userMatch = u.username && u.username.toLowerCase().startsWith(cleanQ);
+
+        if (nameMatch || userMatch) {
           const li = document.createElement('li');
           li.className = 'member-row';
           li.innerHTML = `
@@ -1166,28 +1323,28 @@
       });
     }
 
-    async function joinGroupById(groupId) {
-      const groupRef = db.collection("groups").doc(groupId);
-      const docSnap = await groupRef.get();
-      if (!docSnap.exists) return showToast('Group does not exist!', 'error');
-
-      await groupRef.update({
-        members: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
-      });
-      showToast('Joined group: #' + docSnap.data().name);
-      closeModal('search-modal');
-      switchTab('groups');
+    // 8. PUBLIC VS PRIVATE GROUP CREATION & REVOKABLE LINKS
+    function openCreateGroupModal() {
+      setGroupPrivacyMode(false); // Default to Public
+      openModal('create-group-modal');
     }
 
-    function copyGroupInviteLink(e) {
-      e.stopPropagation();
-      if (!activeChat || activeChat.type !== 'group') return;
-      const url = `${window.location.origin}${window.location.pathname}?join=${activeChat.id}`;
-      navigator.clipboard.writeText(url);
-      showToast('Invite link copied to clipboard!');
-    }
+    function setGroupPrivacyMode(isPrivate) {
+      isCreatingPrivateGroup = isPrivate;
+      const pubBtn = document.getElementById('toggle-privacy-pub');
+      const privBtn = document.getElementById('toggle-privacy-priv');
+      const handleBox = document.getElementById('group-handle-box');
 
-    function openCreateGroupModal() { openModal('create-group-modal'); }
+      if (isPrivate) {
+        privBtn.className = 'btn-primary';
+        pubBtn.className = 'btn-secondary';
+        handleBox.style.display = 'none'; // Private groups use invite link instead of public handle
+      } else {
+        pubBtn.className = 'btn-primary';
+        privBtn.className = 'btn-secondary';
+        handleBox.style.display = 'block';
+      }
+    }
 
     async function createNewGroup() {
       const name = document.getElementById('new-group-name').value.trim();
@@ -1196,6 +1353,7 @@
       const picFile = document.getElementById('new-group-pic').files[0];
 
       if (!name) return showToast('Group Name is required!', 'error');
+      if (!isCreatingPrivateGroup && !handle) return showToast('Public username handle is required!', 'error');
 
       let photoUrl = "https://api.dicebear.com/7.x/shapes/svg?seed=" + Date.now();
       if (picFile) {
@@ -1203,9 +1361,13 @@
         photoUrl = await compressImageToBase64(picFile);
       }
 
+      const inviteToken = "inv_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6);
+
       await db.collection("groups").add({
         name: name,
-        handle: handle.startsWith('@') ? handle : '@' + handle,
+        isPrivate: isCreatingPrivateGroup,
+        handle: isCreatingPrivateGroup ? null : (handle.startsWith('@') ? handle : '@' + handle),
+        inviteToken: inviteToken,
         description: desc,
         photoUrl: photoUrl,
         adminId: currentUser.uid,
@@ -1214,8 +1376,45 @@
       });
 
       closeModal('create-group-modal');
-      showToast('Group created!');
+      showToast(isCreatingPrivateGroup ? 'Private group created with link!' : 'Public group created!');
       switchTab('groups');
+    }
+
+    async function joinGroupById(groupId, token = null) {
+      const groupRef = db.collection("groups").doc(groupId);
+      const docSnap = await groupRef.get();
+      if (!docSnap.exists) return showToast('Group does not exist!', 'error');
+
+      const data = docSnap.data();
+      if (data.isPrivate && data.inviteToken !== token) {
+        return showToast('This invite link is invalid or has been revoked!', 'error');
+      }
+
+      await groupRef.update({
+        members: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
+      });
+      showToast('Joined group: #' + data.name);
+      closeModal('search-modal');
+      switchTab('groups');
+    }
+
+    function copyGroupInviteLink(e) {
+      e.stopPropagation();
+      if (!activeChat || activeChat.type !== 'group') return;
+      const token = activeChat.groupData.inviteToken || '';
+      const url = `${window.location.origin}${window.location.pathname}?join=${activeChat.id}&token=${token}`;
+      navigator.clipboard.writeText(url);
+      showToast('Invite link copied to clipboard!');
+    }
+
+    async function adminRevokeAndRegenerateLink() {
+      if (!activeChat || activeChat.type !== 'group') return;
+      const newToken = "inv_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6);
+      await db.collection("groups").doc(activeChat.id).update({
+        inviteToken: newToken
+      });
+      activeChat.groupData.inviteToken = newToken;
+      showToast('Old link revoked! New invite link generated.');
     }
 
     async function handleHeaderClick() {
