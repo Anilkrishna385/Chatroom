@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Pulse Messenger — Pro Banner & Public Groups</title>
+  <title>Pulse Messenger — Pinned Public & Admin Pro</title>
   <style>
     :root {
       --bg-dark: #090D16;
@@ -75,7 +75,7 @@
     .btn-close { background: var(--bg-card); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-weight: bold; }
 
     /* EDIT PROFILE MODAL HIGH PRIORITY OVERRIDE */
-    #profile-modal { z-index: 2500 !important; }
+    #profile-modal { z-index: 3000 !important; }
 
     /* UNIFIED TOP-LEFT ACCOUNT SHEET */
     .profile-sheet-banner {
@@ -135,6 +135,11 @@
     .profile-handle-sub { font-size: 13.5px; color: var(--accent); font-weight: 600; margin-top: 4px; }
     .profile-about-box { font-size: 13.5px; color: var(--text-main); margin-top: 10px; line-height: 1.4; }
     .profile-actions-right { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+
+    .pinned-badge-tag {
+      background: rgba(99, 102, 241, 0.2); color: var(--accent); font-size: 10px;
+      font-weight: 800; padding: 2px 7px; border-radius: 8px; margin-left: 6px; display: inline-block;
+    }
 
     .red-circle-badge {
       position: absolute; top: 2px; right: 2px; background: var(--danger);
@@ -234,6 +239,18 @@
     .msg-tick.sent { color: #A0AEC0; }
     .msg-tick.delivered { color: #CBD5E0; }
     .msg-tick.read { color: #10B981; }
+
+    .video-stream-card {
+      background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 14px;
+      padding: 10px; margin-top: 6px; text-align: left; display: flex; flex-direction: column; gap: 8px;
+    }
+    .video-stream-hint { font-size: 12px; color: var(--accent); font-weight: 600; }
+    .btn-video-stream {
+      background: var(--bg-card); color: #fff; border: 1px solid var(--border);
+      padding: 8px 12px; border-radius: 12px; font-size: 12.5px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-video-stream:hover { background: var(--primary); }
 
     .msg-img { max-width: 100%; max-height: 280px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); object-fit: cover; cursor: pointer; }
     .msg-video { max-width: 100%; max-height: 280px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); outline: none; background: #000; }
@@ -595,7 +612,7 @@
   </div>
 
   <!-- EDIT PROFILE MODAL (HIGH PRIORITY Z-INDEX OVERRIDE) -->
-  <div id="profile-modal" class="modal-overlay" style="z-index: 2500 !important;">
+  <div id="profile-modal" class="modal-overlay" style="z-index: 3000 !important;">
     <div class="modal-card">
       <div class="modal-header">
         <span class="modal-title">Edit Profile Settings</span>
@@ -722,6 +739,119 @@
     </div>
   </div>
 
+  <!-- MAIN APP SHELL -->
+  <div id="app-shell" style="display: none;">
+    
+    <!-- LEFT PANEL -->
+    <div id="sidebar-panel">
+      <div class="nav-header">
+        <div class="user-badge" onclick="openUnifiedAccountSheet()">
+          <img id="my-avatar-top" class="avatar-icon" src="" alt="Me" />
+          <div>
+            <strong id="my-name-top" style="font-size: 14px; display: block;">Account</strong>
+            <small id="my-handle-top" style="font-size: 11px; color: var(--accent);">@username</small>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="admin-trigger-btn" class="icon-btn-round" style="display: none; border-color: var(--warning); color: var(--warning);" onclick="openAdminDashboard()" title="Open Admin Command Center">👑</button>
+          
+          <button class="icon-btn-round" onclick="openFriendRequestsModal()" title="Friend Requests">
+            🤝
+            <span id="friend-request-red-badge" class="red-circle-badge">0</span>
+          </button>
+          
+          <button class="icon-btn-round" onclick="openSearchModal()" title="Search">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </button>
+          <button class="icon-btn-round" onclick="openCreateGroupModal()" title="Create Group">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('all')">
+          All <span id="badge-tab-all" class="tab-pill-badge">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('chats')">
+          Direct <span id="badge-tab-chats" class="tab-pill-badge">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('groups')">
+          Groups <span id="badge-tab-groups" class="tab-pill-badge">0</span>
+        </button>
+      </div>
+
+      <ul id="chat-list"></ul>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div id="room-panel">
+      <header id="room-header">
+        <div class="peer-info" onclick="handleHeaderClick()">
+          <button id="back-btn" onclick="closeMobileRoom(event)">‹</button>
+          <img id="room-peer-avatar" class="avatar-icon" src="" />
+          <div style="min-width: 0; flex: 1;">
+            <div id="room-peer-name" class="peer-name">Select a Chat</div>
+            <div id="room-peer-status" class="peer-sub">Tap a conversation from the sidebar</div>
+          </div>
+        </div>
+        
+        <div class="header-right-actions">
+          <button id="header-add-friend-btn" class="icon-btn-round" style="display: none; width: auto; padding: 0 10px; font-size: 12px; gap: 4px;" onclick="addFriendFromHeader()">
+            <span>🤝 Add Friend</span>
+          </button>
+
+          <button class="disappear-clock-btn" onclick="openDisappearingModal()" title="Disappearing Messages Timer">
+            <svg viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+            <span id="disappear-badge-num" class="disappear-active-indicator" style="display: none;">24h</span>
+          </button>
+          <button id="invite-btn" class="btn-secondary" style="padding: 6px 14px; margin: 0; display: none;" onclick="copyGroupInviteLink(event)">🔗 Invite</button>
+        </div>
+      </header>
+      
+      <div id="messages-feed"></div>
+
+      <!-- Footer Dock -->
+      <div id="room-footer">
+        <div id="default-input-bar">
+          <input type="text" id="message-input" placeholder="Type a message..." />
+          
+          <label class="dock-btn" title="Attach Photo or Video" onclick="checkGuestMediaRestriction(event)">
+            <svg viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
+            <input type="file" id="media-picker" accept="image/*,video/*" style="display: none;" />
+          </label>
+
+          <label class="dock-btn" title="Open Native Camera" onclick="checkGuestMediaRestriction(event)">
+            <svg viewBox="0 0 24 24"><path d="M12 12c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0-2c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm8-3h-3.17L15 5H9L7.17 7H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
+            <input type="file" id="camera-picker" accept="image/*,video/*" capture="environment" style="display: none;" />
+          </label>
+          
+          <button id="record-btn" class="dock-btn" title="Record Voice Note">
+            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+          </button>
+          
+          <button id="send-text-btn" class="dock-btn" style="background: var(--primary); color: #fff;" title="Send">
+            <svg viewBox="0 0 24 24" style="transform: translateX(1px);"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+
+        <div id="recording-bar">
+          <div class="recording-status">
+            <div class="red-pulse-dot"></div>
+            <span id="record-timer-text">00:00</span>
+            <span style="font-weight: 500; color: var(--text-muted);">Recording voice note...</span>
+          </div>
+          <div class="recording-actions">
+            <button id="cancel-record-btn" class="btn-cancel-record">🗑️ Cancel</button>
+            <button id="send-record-btn" class="btn-send-record">
+              <span>➤</span> Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase 10.x Compat CDN SDKs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.min.js"></script>
@@ -764,6 +894,22 @@
       return email && email.toLowerCase() === ADMIN_EMAIL;
     }
 
+    // Null-Safe Modal Controllers
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.add('active');
+        window.history.pushState({ modal: id }, "");
+      }
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('active');
+      }
+    }
+
     // Native Mobile History Back Button & Swipe Back Handling
     window.addEventListener('popstate', (e) => {
       const panel = document.getElementById('room-panel');
@@ -775,7 +921,8 @@
       document.querySelectorAll('.modal-overlay.active').forEach((modal) => {
         modal.classList.remove('active');
       });
-      document.getElementById('group-sender-popup').style.display = 'none';
+      const senderPopup = document.getElementById('group-sender-popup');
+      if (senderPopup) senderPopup.style.display = 'none';
     });
 
     // Strictly Receiver-Only Water Droplet Chime
@@ -818,19 +965,16 @@
 
     // Security Privacy Shield
     function dismissPrivacyShield() {
-      document.getElementById('privacy-shield').classList.remove('active');
+      const el = document.getElementById('privacy-shield');
+      if (el) el.classList.remove('active');
     }
     window.addEventListener('blur', () => {
-      if (currentUser) document.getElementById('privacy-shield').classList.add('active');
+      const el = document.getElementById('privacy-shield');
+      if (currentUser && el) el.classList.add('active');
     });
     window.addEventListener('focus', () => {
-      document.getElementById('privacy-shield').classList.remove('active');
-    });
-    document.addEventListener('keyup', (e) => {
-      if (e.key === 'PrintScreen' || e.keyCode === 44 || (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5'))) {
-        document.getElementById('privacy-shield').classList.add('active');
-        showToast('Screenshots restricted for privacy', 'error');
-      }
+      const el = document.getElementById('privacy-shield');
+      if (el) el.classList.remove('active');
     });
 
     let isRecording = false;
@@ -885,19 +1029,23 @@
 
     function updateDefaultStudioAvatar(gender, imgElementId) {
       const img = document.getElementById(imgElementId);
-      const seedPrefix = gender === 'male' ? 'boy_' : (gender === 'female' ? 'girl_' : 'neutral_');
-      img.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seedPrefix}${Date.now()}`;
+      if (img) {
+        const seedPrefix = gender === 'male' ? 'boy_' : (gender === 'female' ? 'girl_' : 'neutral_');
+        img.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seedPrefix}${Date.now()}`;
+      }
     }
 
     async function previewStudioAvatar(inputEl, imgElementId) {
       const file = inputEl.files[0];
       if (!file) return;
       const base64 = await compressImageToBase64(file);
-      document.getElementById(imgElementId).src = base64;
+      const img = document.getElementById(imgElementId);
+      if (img) img.src = base64;
     }
 
     function showToast(msg, type = 'success') {
       const container = document.getElementById('toast-container');
+      if (!container) return;
       const toast = document.createElement('div');
       toast.className = `toast ${type}`;
       toast.innerHTML = `<span>${type === 'success' ? '⚡' : '⚠️'}</span><span>${msg}</span>`;
@@ -908,40 +1056,39 @@
       }, 3500);
     }
 
-    function openModal(id) {
-      document.getElementById(id).classList.add('active');
-      window.history.pushState({ modal: id }, "");
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('active');
-    }
-
     function openMediaLightbox(url, isVideo = false) {
       const modal = document.getElementById('fullscreen-media-modal');
       const imgEl = document.getElementById('lightbox-img-el');
       const vidEl = document.getElementById('lightbox-video-el');
 
       if (isVideo) {
-        imgEl.style.display = 'none';
-        vidEl.src = url;
-        vidEl.style.display = 'block';
-        vidEl.play();
+        if (imgEl) imgEl.style.display = 'none';
+        if (vidEl) {
+          vidEl.src = url;
+          vidEl.style.display = 'block';
+          vidEl.play();
+        }
       } else {
-        vidEl.pause();
-        vidEl.style.display = 'none';
-        imgEl.src = url;
-        imgEl.style.display = 'block';
+        if (vidEl) {
+          vidEl.pause();
+          vidEl.style.display = 'none';
+        }
+        if (imgEl) {
+          imgEl.src = url;
+          imgEl.style.display = 'block';
+        }
       }
-      modal.classList.add('active');
-      window.history.pushState({ modal: 'fullscreen-media-modal' }, "");
+      if (modal) {
+        modal.classList.add('active');
+        window.history.pushState({ modal: 'fullscreen-media-modal' }, "");
+      }
     }
 
     function closeMediaLightbox() {
       const modal = document.getElementById('fullscreen-media-modal');
       const vidEl = document.getElementById('lightbox-video-el');
-      vidEl.pause();
-      modal.classList.remove('active');
+      if (vidEl) vidEl.pause();
+      if (modal) modal.classList.remove('active');
     }
 
     async function handleSignOut() {
@@ -988,23 +1135,27 @@
           if (docSnap.exists) {
             myProfile = docSnap.data();
             userCache.set(user.uid, myProfile);
-            document.getElementById('my-name-top').textContent = myProfile.name;
-            document.getElementById('my-handle-top').textContent = myProfile.username;
-            document.getElementById('my-avatar-top').src = myProfile.photoUrl;
+            const nameEl = document.getElementById('my-name-top');
+            const handleEl = document.getElementById('my-handle-top');
+            const avatarEl = document.getElementById('my-avatar-top');
+            if (nameEl) nameEl.textContent = myProfile.name;
+            if (handleEl) handleEl.textContent = myProfile.username;
+            if (avatarEl) avatarEl.src = myProfile.photoUrl;
 
             const reqCount = myProfile.friendRequests?.received?.length || 0;
             const badgeEl = document.getElementById('friend-request-red-badge');
-            if (reqCount > 0) {
-              badgeEl.textContent = reqCount;
-              badgeEl.style.display = 'inline-flex';
-            } else {
-              badgeEl.style.display = 'none';
+            if (badgeEl) {
+              if (reqCount > 0) {
+                badgeEl.textContent = reqCount;
+                badgeEl.style.display = 'inline-flex';
+              } else {
+                badgeEl.style.display = 'none';
+              }
             }
 
-            if (isSuperAdmin(myProfile.email)) {
-              document.getElementById('admin-trigger-btn').style.display = 'flex';
-            } else {
-              document.getElementById('admin-trigger-btn').style.display = 'none';
+            const adminBtn = document.getElementById('admin-trigger-btn');
+            if (adminBtn) {
+              adminBtn.style.display = isSuperAdmin(myProfile.email) ? 'flex' : 'none';
             }
           }
         });
@@ -1290,7 +1441,7 @@
       renderFriendRequests();
     }
 
-    // 5. ADMIN SUPER-DASHBOARD
+    // 5. ADMIN SUPER-DASHBOARD (anilkrishna385@gmail.com)
     async function openAdminDashboard() {
       if (!isSuperAdmin(myProfile?.email)) {
         return showToast('⚠️ Unauthorized. Super-Admin credentials required.', 'error');
@@ -1506,16 +1657,29 @@
       window.addEventListener('click', () => { popup.style.display = 'none'; }, { once: true });
     }
 
+    // SAFE MODAL OPENER FOR EDIT PROFILE
     function openEditProfileModal() {
-      closeModal('telegram-profile-modal');
-      closeModal('banner-profile-modal');
-      closeModal('unified-profile-sheet');
-      document.getElementById('edit-name').value = myProfile.name || '';
-      document.getElementById('edit-username').value = myProfile.username || '';
-      document.getElementById('edit-bio').value = myProfile.bio || '';
-      document.getElementById('edit-avatar-preview').src = myProfile.photoUrl;
-      document.getElementById('edit-cover-preview').src = myProfile.coverUrl || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80";
-      openModal('profile-modal');
+      try {
+        closeModal('telegram-profile-modal');
+        closeModal('banner-profile-modal');
+        closeModal('unified-profile-sheet');
+
+        const nameEl = document.getElementById('edit-name');
+        const userEl = document.getElementById('edit-username');
+        const bioEl = document.getElementById('edit-bio');
+        const avatarEl = document.getElementById('edit-avatar-preview');
+        const coverEl = document.getElementById('edit-cover-preview');
+
+        if (nameEl) nameEl.value = myProfile?.name || '';
+        if (userEl) userEl.value = myProfile?.username || '';
+        if (bioEl) bioEl.value = myProfile?.bio || '';
+        if (avatarEl) avatarEl.src = myProfile?.photoUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=neutral';
+        if (coverEl) coverEl.src = myProfile?.coverUrl || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80";
+
+        openModal('profile-modal');
+      } catch (err) {
+        showToast("Error opening edit modal: " + err.message, "error");
+      }
     }
 
     async function saveProfileChanges() {
@@ -1554,7 +1718,7 @@
       showToast('Profile updated!');
     }
 
-    // 7. CONVERSATION FEED (Pinned Public Groups on Top!)
+    // 7. CONVERSATION FEED (AUTOMATIC PINNING AT THE TOP)
     function switchTab(tabName) {
       currentTab = tabName;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1588,8 +1752,21 @@
       else groupsBadge.style.display = 'none';
     }
 
+    function sortChatList() {
+      const listEl = document.getElementById('chat-list');
+      if (!listEl) return;
+      const items = Array.from(listEl.children);
+      items.sort((a, b) => {
+        const aPinned = a.getAttribute('data-pinned') === 'true' ? 1 : 0;
+        const bPinned = b.getAttribute('data-pinned') === 'true' ? 1 : 0;
+        return bPinned - aPinned;
+      });
+      items.forEach(item => listEl.appendChild(item));
+    }
+
     function loadConversationList() {
       const listEl = document.getElementById('chat-list');
+      if (!listEl) return;
       listEl.innerHTML = '';
 
       if (currentTab === 'all' || currentTab === 'groups') {
@@ -1598,12 +1775,11 @@
             snapshot.forEach((doc) => {
               const grp = { id: doc.id, ...doc.data() };
               
-              if (grp.isPrivate && !grp.members.includes(currentUser.uid)) return;
+              const isPinnedDefault = grp.name === "Kerala chat room" || grp.name === "Friends" || grp.handle === "@kerala_chat" || grp.handle === "@friends_group";
+              if (!isPinnedDefault && !grp.members.includes(currentUser.uid)) return;
 
               const unread = unreadMessageCounts.get(doc.id) || 0;
-              const isPinnedDefault = grp.handle === "@kerala_chat" || grp.handle === "@friends_group";
-
-              const itemObj = {
+              renderListItem({
                 type: 'group',
                 id: grp.id,
                 name: grp.name,
@@ -1615,9 +1791,7 @@
                 typingStatus: null,
                 isPinned: isPinnedDefault,
                 groupData: grp
-              };
-
-              renderListItem(itemObj, isPinnedDefault);
+              }, isPinnedDefault);
               updateTopTabBadges();
             });
           });
@@ -1661,8 +1835,9 @@
       }
     }
 
-    function renderListItem(item, appendToTop = false) {
+    function renderListItem(item, isPinned = false) {
       const listEl = document.getElementById('chat-list');
+      if (!listEl) return;
       const existing = document.getElementById(`item-${item.id}`);
       if (existing) existing.remove();
 
@@ -1675,6 +1850,7 @@
 
       const li = document.createElement('li');
       li.id = `item-${item.id}`;
+      li.setAttribute('data-pinned', isPinned ? 'true' : 'false');
       li.className = `list-item ${activeChat && activeChat.id === item.id ? 'active' : ''}`;
       li.innerHTML = `
         <div class="avatar-wrap">
@@ -1684,7 +1860,7 @@
         <div class="item-content">
           <div class="item-top">
             <span class="item-title">
-              ${item.name} ${item.isPinned ? '<span class="pinned-badge-tag">📌 Pinned</span>' : ''}
+              ${item.name} ${isPinned ? '<span class="pinned-badge-tag">📌 Pinned</span>' : ''}
             </span>
             <span class="item-time">${item.time}</span>
           </div>
@@ -1695,15 +1871,11 @@
         </div>
       `;
       li.onclick = () => selectConversation(item);
-      
-      if (appendToTop && listEl.firstChild) {
-        listEl.insertBefore(li, listEl.firstChild);
-      } else {
-        listEl.appendChild(li);
-      }
+      listEl.appendChild(li);
+      sortChatList();
     }
 
-    // 8. MESSAGING, RECEIVER-ONLY WATER DROP SOUND & DISAPPEARING CLOCK
+    // 8. MESSAGING, SOUND TONE & DISAPPEARING CLOCK
     function selectConversation(item) {
       activeChat = item;
       unreadMessageCounts.set(item.id, 0);
@@ -1897,7 +2069,7 @@
     document.getElementById('send-text-btn').addEventListener('click', sendChatMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
-    // 9. MEDIA UPLOAD & PREVIEW ENGINE (UP TO 50 MB VIDEO VIA STORAGE)
+    // 9. MEDIA UPLOAD ENGINE (UP TO 50 MB VIDEO VIA STORAGE)
     async function uploadMessageMedia(mediaData, type) {
       if (!activeChat) return;
       try {
