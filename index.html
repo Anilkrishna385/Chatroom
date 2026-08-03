@@ -139,6 +139,72 @@
     .mention-item:hover { background: var(--bg-card); }
     .mention-item:last-child { border-bottom: none; }
 
+    /* WHATSAPP-STYLE QUOTED REPLY BLOCK inside Bubble */
+    .quoted-reply-box {
+      background: rgba(0, 0, 0, 0.28);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .quoted-sender {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 11.5px;
+      margin-bottom: 2px;
+      display: block;
+    }
+    .quoted-text {
+      color: rgba(255, 255, 255, 0.82);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+
+    /* REPLY PREVIEW BAR ABOVE ROOM FOOTER */
+    #reply-preview-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(17, 24, 39, 0.94);
+      border-top: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 8px 18px;
+      width: 100%;
+      z-index: 20;
+    }
+    .reply-preview-info {
+      min-width: 0;
+      flex: 1;
+      text-align: left;
+    }
+    .reply-preview-sender {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+    .reply-preview-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-cancel-reply {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
     /* EDIT PROFILE & GROUP BANNER HERO STUDIO */
     .edit-profile-hero {
       position: relative; width: 100%; height: 140px; border-radius: 16px;
@@ -179,11 +245,23 @@
       font-weight: 800; padding: 2px 7px; border-radius: 8px; margin-left: 6px; display: inline-block;
     }
 
+    .mention-at-badge {
+      background: var(--primary); color: #fff; font-size: 11px; font-weight: 900;
+      width: 18px; height: 18px; border-radius: 50%; display: inline-flex;
+      align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
     .red-circle-badge {
       position: absolute; top: 2px; right: 2px; background: var(--danger);
       color: #fff; font-size: 10px; font-weight: 800; width: 18px; height: 18px;
       border-radius: 50%; display: none; align-items: center; justify-content: center;
       border: 2px solid var(--bg-panel);
+    }
+
+    #group-sender-popup {
+      position: fixed; z-index: 10000; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 10px; box-shadow: var(--shadow); display: none;
+      flex-direction: column; gap: 6px; min-width: 170px;
     }
 
     /* WHATSAPP-STYLE FLOATING SCROLL-TO-BOTTOM ARROW (#scroll-bottom-btn) */
@@ -303,17 +381,17 @@
 
     #room-footer { 
       padding: 12px 18px; border-top: 1px solid var(--border); background: var(--bg-panel); 
-      display: flex; align-items: center; gap: 8px; min-height: 68px; flex-shrink: 0; width: 100%; 
+      display: flex; flex-direction: column; gap: 0; min-height: 68px; flex-shrink: 0; width: 100%; 
       z-index: 10; padding-bottom: max(12px, env(safe-area-inset-bottom)); position: relative;
     }
-    #default-input-bar { display: flex; align-items: center; gap: 8px; width: 100%; }
+    #default-input-bar { display: flex; align-items: center; gap: 8px; width: 100%; padding-top: 4px; }
     #message-input { flex: 1; padding: 12px 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 24px; font-size: 14px; color: #fff; outline: none; }
     #message-input:focus { border-color: var(--primary); }
     .dock-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: all 0.15s; flex-shrink: 0; }
     .dock-btn:hover { background: var(--primary); }
     .dock-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
-    #recording-bar { display: none; align-items: center; justify-content: space-between; width: 100%; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 16px; border-radius: 24px; }
+    #recording-bar { display: none; align-items: center; justify-content: space-between; width: 100%; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 16px; border-radius: 24px; margin-top: 4px; }
     .recording-status { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; color: #fff; }
     .red-pulse-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--danger); animation: pulseDot 0.8s infinite; }
     @keyframes pulseDot { 0% { transform: scale(0.9); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } 100% { transform: scale(0.9); opacity: 1; } }
@@ -790,7 +868,7 @@
     </div>
   </div>
 
-  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL -->
+  <!-- GROUP ABOUT & ADMIN SETTINGS MODAL (With Banner Cover & Overlapping Avatar) -->
   <div id="group-about-modal" class="modal-overlay">
     <div class="modal-card" style="padding: 0 0 24px 0; max-width: 480px; overflow: hidden;">
       <div class="profile-banner-wrap" style="margin-bottom: 54px;">
@@ -1025,7 +1103,7 @@
       return false;
     }
 
-    // REAL-TIME USER DIRECTORY OBSERVER
+    // REAL-TIME USER DIRECTORY OBSERVER (Instantly syncs profile updates across all chats)
     db.collection("users").onSnapshot((snapshot) => {
       snapshot.docChanges().forEach((change) => {
         const u = change.doc.data();
@@ -1145,6 +1223,7 @@
     let recordSeconds = 0;
     let discardRecording = false;
 
+    // Base64 Compression Helpers (~80 KB JPEG)
     function compressImageToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1713,6 +1792,15 @@
     }
 
     // 5. ADMIN SUPER-DASHBOARD
+    async function adminToggleGlobalVideoSharing() {
+      if (!isSuperAdmin(myProfile?.email)) return;
+      const newState = !globalVideoEnabled;
+      await db.collection("app_settings").doc("global").set({
+        videoSharingEnabled: newState
+      }, { merge: true });
+      showToast(newState ? "🎥 Global Video Sharing Turned ON" : "⚠️ Global Video Sharing Disabled!");
+    }
+
     function switchAdminTab(tabName) {
       const btnUsers = document.getElementById('admin-tab-users');
       const btnGroups = document.getElementById('admin-tab-groups');
@@ -2077,7 +2165,7 @@
       showToast('Profile updated!');
     }
 
-    // 7. CONVERSATION FEED (AUTOMATIC PINNING AT THE TOP)
+    // 7. CONVERSATION FEED (AUTOMATIC PINNING AT THE TOP & LAST MESSAGE PREVIEW)
     function switchTab(tabName) {
       currentTab = tabName;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -2143,7 +2231,7 @@
                 id: grp.id,
                 name: grp.name,
                 avatar: grp.photoUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=" + grp.id,
-                preview: grp.description || 'Group conversation',
+                preview: grp.lastMessage || grp.description || 'Group conversation',
                 time: '',
                 isActive: false,
                 unreadCount: unread,
@@ -2234,7 +2322,7 @@
       sortChatList();
     }
 
-    // 8. MESSAGING, WHATSAPP-STYLE @ MENTIONS & DISAPPEARING CLOCK
+    // 8. MESSAGING, WHATSAPP-STYLE @ MENTIONS & ZERO-BLINK DOM ENGINE
     function selectConversation(item) {
       activeChat = item;
       unreadMessageCounts.set(item.id, 0);
@@ -2275,21 +2363,22 @@
         updateDisappearingClockBadge(timer);
       });
 
+      const feed = document.getElementById('messages-feed');
+      feed.innerHTML = '';
       let isInitialLoad = true;
+
+      // ZERO-BLINK DOM DIFFING ENGINE USING snapshot.docChanges()
       unsubscribeMessages = db.collection(collName).doc(item.id).collection('messages')
         .orderBy('createdAt', 'asc')
         .onSnapshot((snapshot) => {
-          const feed = document.getElementById('messages-feed');
-          feed.innerHTML = '';
-          
           db.collection(collName).doc(item.id).get().then((docMeta) => {
             const timer = docMeta.data()?.disappearingTimer || 0;
             updateDisappearingClockBadge(timer);
 
-            snapshot.forEach((doc) => {
-              const msg = doc.data();
-              const msgId = doc.id;
-              
+            snapshot.docChanges().forEach((change) => {
+              const msg = change.doc.data();
+              const msgId = change.doc.id;
+
               if (timer > 0 && msg.createdAt) {
                 const ageSecs = (Date.now() - msg.createdAt.toMillis()) / 1000;
                 if (ageSecs > timer) return;
@@ -2301,8 +2390,12 @@
                 });
               }
 
-              renderMessageBubble(msg);
-              
+              if (change.type === 'added') {
+                renderMessageBubble(msg, msgId);
+              } else if (change.type === 'modified') {
+                updateMessageBubble(msg, msgId);
+              }
+
               // 🔕 STRICT RECEIVER-ONLY GUARANTEE
               if (!isInitialLoad && msg.senderId !== currentUser.uid && !playedSoundMsgIds.has(msgId)) {
                 playedSoundMsgIds.add(msgId);
@@ -2315,6 +2408,7 @@
                 }
               }
             });
+
             isInitialLoad = false;
             feed.scrollTop = feed.scrollHeight;
           });
@@ -2359,7 +2453,17 @@
       showToast(seconds === 0 ? 'Disappearing messages disabled' : 'Disappearing timer updated!');
     }
 
-    // WHATSAPP-STYLE @ MENTION TRIGGER ENGINE (HIDES STEALTH ADMIN)
+    // TELEGRAM-STYLE @MENTION / REPLY IN GROUP CHAT
+    function instantMentionUser(usernameHandle) {
+      const input = document.getElementById('message-input');
+      if (input && usernameHandle) {
+        const mentionText = usernameHandle.startsWith('@') ? usernameHandle + " " : '@' + usernameHandle + " ";
+        input.value = mentionText + input.value;
+        input.focus();
+      }
+    }
+
+    // WHATSAPP-STYLE @ MENTION TRIGGER ENGINE
     async function handleInputMention(e) {
       const popup = document.getElementById('mention-popup');
       if (!activeChat || activeChat.type !== 'group') {
@@ -2386,10 +2490,6 @@
             u = uDoc.data();
             userCache.set(uid, u);
           }
-          
-          // STRICT STEALTH ADMIN FILTER
-          if (isSuperAdmin(u.email)) continue;
-
           const uname = (u.username || "").toLowerCase();
           const fname = (u.name || "").toLowerCase();
           if (uname.includes(query) || fname.includes(query)) {
@@ -2424,10 +2524,11 @@
       }
     }
 
-    function renderMessageBubble(msg) {
+    function renderMessageBubble(msg, msgId) {
       const isMe = msg.senderId === currentUser.uid;
       const feed = document.getElementById('messages-feed');
       const div = document.createElement('div');
+      div.id = `msg-el-${msgId}`;
       div.className = `msg-bubble ${isMe ? 'msg-me' : 'msg-other'}`;
 
       let senderTag = '';
@@ -2435,7 +2536,7 @@
         const cachedUser = userCache.get(msg.senderId);
         const displayName = cachedUser ? cachedUser.name : (msg.senderName || 'User');
         const displayHandle = cachedUser ? cachedUser.username : (msg.senderHandle || '@user');
-        senderTag = `<span class="msg-sender-tag" onclick="showGroupSenderPopup(event, '${msg.senderId}')">${escapeHtml(displayName)} (${escapeHtml(displayHandle)})</span><br>`;
+        senderTag = `<span class="msg-sender-tag" onclick="instantMentionUser('${escapeHtml(displayHandle)}')">${escapeHtml(displayName)} (${escapeHtml(displayHandle)})</span><br>`;
       }
 
       let content = '';
@@ -2465,6 +2566,23 @@
 
       div.innerHTML = senderTag + content + metaFooter;
       feed.appendChild(div);
+    }
+
+    function updateMessageBubble(msg, msgId) {
+      const existingDiv = document.getElementById(`msg-el-${msgId}`);
+      if (!existingDiv) return;
+
+      const isMe = msg.senderId === currentUser.uid;
+      let tickSymbol = '✓';
+      let tickClass = 'sent';
+      if (msg.status === 'delivered') { tickSymbol = '✓✓'; tickClass = 'delivered'; }
+      else if (msg.status === 'read') { tickSymbol = '✓✓'; tickClass = 'read'; }
+
+      const tickSpan = existingDiv.querySelector('.msg-tick');
+      if (tickSpan && isMe) {
+        tickSpan.className = `msg-tick ${tickClass}`;
+        tickSpan.textContent = tickSymbol;
+      }
     }
 
     function escapeHtml(str) {
@@ -2851,8 +2969,18 @@
       const membersContainer = document.getElementById('about-members-list');
       membersContainer.innerHTML = '';
 
+      const isGlobalPublicRoom = grp.isGlobalPublic || grp.name === "Kerala chat room" || grp.name === "Friends" || grp.handle === "@kerala_chat" || grp.handle === "@friends_group";
+      let displayMembers = grp.members || [];
+      
+      if (isGlobalPublicRoom) {
+        const allUsersSnap = await db.collection("users").get();
+        const globalUids = [];
+        allUsersSnap.forEach(d => globalUids.push(d.id));
+        displayMembers = globalUids;
+      }
+
       let visibleMemberCount = 0;
-      for (let memberId of grp.members) {
+      for (let memberId of displayMembers) {
         let u = userCache.get(memberId);
         if (!u) {
           const uDoc = await db.collection("users").doc(memberId).get();
