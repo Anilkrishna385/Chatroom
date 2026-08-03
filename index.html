@@ -38,12 +38,10 @@
       height: 100dvh; width: 100vw; overflow: hidden;
     }
 
-    /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
 
-    /* Security Shield */
     #privacy-shield {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
       background: rgba(9, 13, 22, 0.98); backdrop-filter: blur(30px);
@@ -52,14 +50,12 @@
     }
     #privacy-shield.active { display: flex; }
 
-    /* Themed Toast System */
     #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: 90%; max-width: 400px; }
     .toast { background: rgba(17, 24, 39, 0.96); color: #fff; padding: 14px 20px; border-radius: 20px; font-size: 13.5px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); backdrop-filter: blur(14px); animation: toastIn 0.25s ease; }
     .toast.success { border-left: 4px solid var(--success); }
     .toast.error { border-left: 4px solid var(--danger); background: rgba(30, 15, 20, 0.96); }
     @keyframes toastIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Modal Overlay & Cards */
     .modal-overlay { 
       position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; 
       background: rgba(11, 17, 32, 0.88); backdrop-filter: blur(12px); 
@@ -78,78 +74,35 @@
     .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
     .btn-close { background: var(--bg-card); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-muted); font-weight: bold; }
 
-    /* STICKY TOP SEARCH MODAL OVERRIDE (Never align to center!) */
-    #search-modal {
-      align-items: flex-start !important;
-      padding-top: 24px !important;
-    }
-    #search-modal .modal-card {
-      margin-top: 0;
-      max-height: 82dvh;
-    }
-    .sticky-search-header {
-      position: sticky;
-      top: -24px;
-      background: var(--bg-panel);
-      padding-bottom: 12px;
-      z-index: 20;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 14px;
-    }
+    #search-modal { align-items: flex-start !important; padding-top: 24px !important; }
+    #search-modal .modal-card { margin-top: 0; max-height: 82dvh; }
+    .sticky-search-header { position: sticky; top: -24px; background: var(--bg-panel); padding-bottom: 12px; z-index: 20; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
 
-    /* Custom Premium Interactive Avatar Upload Studio */
-    .avatar-studio-wrap {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      margin: 12px 0 20px 0;
-    }
-    .avatar-upload-ring {
-      position: relative; width: 92px; height: 92px; border-radius: 50%;
-      cursor: pointer; border: 3px dashed var(--primary); padding: 3px;
-      transition: all 0.25s ease;
-    }
+    .avatar-studio-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 12px 0 20px 0; }
+    .avatar-upload-ring { position: relative; width: 92px; height: 92px; border-radius: 50%; cursor: pointer; border: 3px dashed var(--primary); padding: 3px; transition: all 0.25s ease; }
     .avatar-upload-ring:hover { border-color: var(--accent); transform: scale(1.04); box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
     .avatar-studio-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: var(--bg-card); }
-    .avatar-camera-badge {
-      position: absolute; bottom: -2px; right: -2px; width: 28px; height: 28px;
-      background: var(--primary); border-radius: 50%; border: 2px solid var(--bg-panel);
-      display: flex; align-items: center; justify-content: center; font-size: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    }
+    .avatar-camera-badge { position: absolute; bottom: -2px; right: -2px; width: 28px; height: 28px; background: var(--primary); border-radius: 50%; border: 2px solid var(--bg-panel); display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
     .avatar-studio-hint { font-size: 11.5px; color: var(--accent); font-weight: 600; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* Admin Dashboard Special Styling */
-    .admin-stats-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
-    }
-    .stat-card {
-      background: var(--bg-dark); border: 1px solid var(--border); border-radius: 16px;
-      padding: 14px 10px; text-align: center;
-    }
+    .admin-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .stat-card { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 16px; padding: 14px 10px; text-align: center; }
     .stat-val { font-size: 20px; font-weight: 800; color: var(--accent); margin-bottom: 2px; }
     .stat-label { font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-    .admin-user-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 12px; background: var(--bg-dark); border: 1px solid var(--border);
-      border-radius: 14px; margin-bottom: 8px; gap: 8px;
-    }
+    .admin-user-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 8px; gap: 8px; }
     .admin-user-info { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
     .admin-user-info strong { font-size: 13.5px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
     .admin-user-info small { font-size: 11px; color: var(--text-muted); }
     .admin-actions-box { display: flex; align-items: center; gap: 6px; }
-    .btn-admin-small {
-      padding: 6px 10px; border-radius: 10px; font-size: 11px; font-weight: 700;
-      cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: #fff;
-    }
+    .btn-admin-small { padding: 6px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: #fff; }
     .btn-admin-small:hover { background: var(--primary); }
     .btn-admin-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
     .btn-admin-danger:hover { background: var(--danger); color: #fff; }
 
-    /* Password Input Wrapper with Eye Button */
     .password-wrap { position: relative; width: 100%; display: flex; align-items: center; }
     .password-wrap input { width: 100%; padding-right: 44px !important; }
     .btn-toggle-pass { position: absolute; right: 10px; background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 6px; }
 
-    /* Telegram Profile Card */
     .telegram-profile-card { text-align: center; }
     .telegram-avatar-lg { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 12px; background: var(--bg-card); }
     .telegram-name { font-size: 22px; font-weight: 700; color: var(--text-main); }
@@ -159,27 +112,14 @@
     .telegram-handle { color: var(--accent); font-size: 14px; font-weight: 600; margin-top: 4px; }
     .telegram-bio-box { background: var(--bg-dark); padding: 14px; border-radius: 16px; border: 1px solid var(--border); text-align: left; margin: 18px 0; font-size: 13.5px; color: var(--text-main); }
 
-    /* Full-Screen Cinema Lightbox */
-    #fullscreen-media-modal {
-      position: fixed; inset: 0; z-index: 100000; background: rgba(0, 0, 0, 0.96);
-      display: none; flex-direction: column; align-items: center; justify-content: center;
-      padding: 16px; backdrop-filter: blur(20px);
-    }
+    #fullscreen-media-modal { position: fixed; inset: 0; z-index: 100000; background: rgba(0, 0, 0, 0.96); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(20px); }
     #fullscreen-media-modal.active { display: flex; }
-    .lightbox-header {
-      position: absolute; top: 16px; left: 16px; right: 16px;
-      display: flex; justify-content: space-between; align-items: center; z-index: 10;
-    }
-    .btn-lightbox-back {
-      background: rgba(255,255,255,0.12); color: #fff; border: 1px solid var(--border);
-      padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700;
-      cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(8px);
-    }
+    .lightbox-header { position: absolute; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+    .btn-lightbox-back { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid var(--border); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(8px); }
     .lightbox-content-box { width: 100%; height: 85dvh; display: flex; align-items: center; justify-content: center; }
     #lightbox-img-el { max-width: 98vw; max-height: 85dvh; object-fit: contain; border-radius: 12px; display: none; }
     #lightbox-video-el { max-width: 98vw; max-height: 85dvh; border-radius: 12px; display: none; outline: none; }
 
-    /* Inputs & Buttons */
     .field-group { margin-bottom: 16px; text-align: left; }
     .field-label { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
     .input-dark { width: 100%; padding: 12px 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 14px; font-size: 14px; color: #fff; outline: none; transition: border 0.15s; }
@@ -188,10 +128,7 @@
     .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
     .btn-secondary { width: 100%; padding: 12px; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); border-radius: 14px; font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 8px; }
 
-    /* Main App Shell */
     #app-shell { width: 100%; max-width: 1180px; height: 94dvh; background: var(--bg-panel); border-radius: 28px; border: 1px solid var(--border); box-shadow: var(--shadow); display: flex; overflow: hidden; position: relative; }
-    
-    /* Left Panel */
     #sidebar-panel { width: 380px; height: 100%; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: var(--bg-panel); z-index: 10; }
     .nav-header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .user-badge { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 6px 10px; border-radius: 16px; transition: background 0.15s; }
@@ -202,13 +139,11 @@
     .icon-btn-round:hover { background: var(--primary); }
     .icon-btn-round svg { width: 18px; height: 18px; fill: currentColor; }
 
-    /* Segmented Navigation Tabs */
     #tabs-bar { display: flex; padding: 10px 14px; border-bottom: 1px solid var(--border); gap: 8px; background: rgba(11, 17, 32, 0.4); flex-shrink: 0; }
     .tab-btn { flex: 1; padding: 10px 0; border: none; background: transparent; font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-radius: 12px; position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .tab-btn.active { background: var(--primary); color: #fff; }
     .tab-pill-badge { background: var(--success); color: #000; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 10px; display: none; }
 
-    /* Conversation List */
     #chat-list { flex: 1; overflow-y: auto; list-style: none; }
     .list-item { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; gap: 14px; position: relative; }
     .list-item:hover { background: rgba(255, 255, 255, 0.04); }
@@ -222,14 +157,12 @@
     .item-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .unread-badge { background: var(--success); color: #000; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 12px; display: inline-block; flex-shrink: 0; }
 
-    /* Typing Status */
     .status-active-text { color: var(--success) !important; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
     .typing-dots span { display: inline-block; animation: bounceDot 1.2s infinite; }
     .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
     .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes bounceDot { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-3px); } }
 
-    /* Right Main Chat Room */
     #room-panel { flex: 1; display: flex; flex-direction: column; background: var(--bg-dark); height: 100%; position: relative; overflow: hidden; }
     #room-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); flex-shrink: 0; }
     .peer-info { display: flex; align-items: center; gap: 12px; cursor: pointer; min-width: 0; flex: 1; }
@@ -237,14 +170,12 @@
     .peer-sub { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
     #back-btn { display: none; background: none; border: none; font-size: 24px; color: var(--accent); margin-right: 8px; cursor: pointer; flex-shrink: 0; }
 
-    /* Disappearing Clock Action */
     .header-right-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .disappear-clock-btn { background: var(--bg-card); border: 1px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; transition: all 0.15s; }
     .disappear-clock-btn:hover { background: var(--primary); }
     .disappear-clock-btn svg { width: 18px; height: 18px; fill: currentColor; }
     .disappear-active-indicator { position: absolute; top: -4px; right: -4px; background: var(--accent); color: #000; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 8px; }
 
-    /* Messages Stream */
     #messages-feed { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; background: radial-gradient(circle at top right, rgba(30,41,59,0.3) 0%, rgba(11,17,32,1) 100%); }
     .msg-bubble { max-width: 72%; padding: 12px 16px; border-radius: 20px; font-size: 14px; line-height: 1.45; position: relative; word-break: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.3); animation: bubbleIn 0.15s ease; }
     @keyframes bubbleIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -254,14 +185,19 @@
     .msg-sender-tag { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 6px; display: inline-block; cursor: pointer; padding: 2px 8px; border-radius: 10px; background: rgba(56, 189, 248, 0.12); }
     .msg-sender-tag:hover { background: rgba(56, 189, 248, 0.25); text-decoration: underline; }
 
-    /* Clickable Chat Media Images & Videos */
+    /* Message Ticks / Status Indicators */
+    .msg-footer-meta { display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 10px; color: rgba(255,255,255,0.7); margin-top: 4px; float: right; margin-left: 10px; }
+    .msg-tick { font-weight: bold; font-size: 11px; }
+    .msg-tick.sent { color: #A0AEC0; }
+    .msg-tick.delivered { color: #CBD5E0; }
+    .msg-tick.read { color: #10B981; }
+
     .msg-img { max-width: 100%; max-height: 280px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); object-fit: cover; cursor: pointer; transition: transform 0.15s; }
     .msg-img:hover { transform: scale(1.02); }
     .msg-video { max-width: 100%; max-height: 280px; border-radius: 14px; margin-top: 6px; display: block; border: 1px solid var(--border); outline: none; background: #000; }
     .msg-audio-player { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 16px; margin-top: 6px; min-width: 220px; }
     .msg-audio-player audio { width: 100%; height: 32px; border-radius: 8px; outline: none; }
 
-    /* Input Dock */
     #room-footer { 
       padding: 12px 18px; border-top: 1px solid var(--border); background: var(--bg-panel); 
       display: flex; align-items: center; gap: 8px; min-height: 68px; flex-shrink: 0; width: 100%; 
@@ -274,7 +210,6 @@
     .dock-btn:hover { background: var(--primary); }
     .dock-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
-    /* Interactive Voice Recording Bar Overlay */
     #recording-bar { display: none; align-items: center; justify-content: space-between; width: 100%; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 16px; border-radius: 24px; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .recording-status { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; color: #fff; }
@@ -284,14 +219,12 @@
     .btn-cancel-record { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 18px; font-size: 13px; font-weight: 600; cursor: pointer; }
     .btn-send-record { background: var(--primary); color: #fff; border: none; padding: 8px 16px; border-radius: 18px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
-    /* Member List Item */
     .member-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
     .member-row:hover { opacity: 0.85; }
     .status-badge { font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; }
     .status-badge.active { background: rgba(16, 185, 129, 0.2); color: var(--success); }
     .status-badge.inactive { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
 
-    /* Mobile Responsive Layout — FIXED FULL-SCREEN LAYER */
     @media (max-width: 768px) {
       body { padding: 0; }
       #app-shell { height: 100dvh; width: 100vw; border-radius: 0; border: none; }
@@ -328,8 +261,6 @@
       
       <form id="auth-form" onsubmit="handleAuthSubmit(event)">
         <div id="signup-extra-fields" style="display: none;">
-          
-          <!-- Custom Premium Avatar Studio Upload Ring -->
           <div class="avatar-studio-wrap">
             <label class="avatar-upload-ring" title="Tap to select profile picture">
               <img id="signup-avatar-preview" class="avatar-studio-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=neutral_default" alt="Avatar" />
@@ -381,7 +312,6 @@
         <button type="submit" id="auth-submit-btn" class="btn-primary">Log In</button>
       </form>
 
-      <!-- Forgot Password Link -->
       <div style="text-align: center; margin-top: 12px;">
         <button type="button" style="background:none; border:none; color: var(--accent); font-size:13px; font-weight:600; cursor:pointer;" onclick="openForgotPasswordModal()">Forgot Password?</button>
       </div>
@@ -409,7 +339,52 @@
     </div>
   </div>
 
-  <!-- ADMIN SUPER-DASHBOARD MODAL (anilkrishna385@gmail.com exclusively) -->
+  <!-- PRIVACY SETTINGS MODAL -->
+  <div id="privacy-settings-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 400px;">
+      <div class="modal-header">
+        <span class="modal-title">Privacy Settings</span>
+        <button class="btn-close" onclick="closeModal('privacy-settings-modal')">✕</button>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Who can message me?</label>
+        <select id="privacy-msg-select" class="input-dark" style="cursor: pointer;">
+          <option value="anyone">Anyone</option>
+          <option value="friends">Only Friends</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Who can see my avatar?</label>
+        <select id="privacy-avatar-select" class="input-dark" style="cursor: pointer;">
+          <option value="everyone">Everyone</option>
+          <option value="friends">Only Friends</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Who can see my last seen?</label>
+        <select id="privacy-lastseen-select" class="input-dark" style="cursor: pointer;">
+          <option value="everyone">Everyone</option>
+          <option value="friends">Only Friends</option>
+          <option value="nobody">Nobody</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="savePrivacySettings()">Save Settings</button>
+    </div>
+  </div>
+
+  <!-- FRIEND REQUESTS MODAL -->
+  <div id="friend-requests-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <span class="modal-title">Friend Requests</span>
+        <button class="btn-close" onclick="closeModal('friend-requests-modal')">✕</button>
+      </div>
+      <span class="field-label" style="margin-bottom: 10px;">Pending Received Requests</span>
+      <div id="friend-requests-feed" style="max-height: 280px; overflow-y: auto;"></div>
+    </div>
+  </div>
+
+  <!-- ADMIN SUPER-DASHBOARD MODAL -->
   <div id="admin-dashboard-modal" class="modal-overlay">
     <div class="modal-card" style="max-width: 680px;">
       <div class="modal-header">
@@ -437,7 +412,7 @@
     </div>
   </div>
 
-  <!-- ADMIN CHAT INSPECTOR AUDIT MODAL (Watch Chats of Any User) -->
+  <!-- ADMIN CHAT INSPECTOR AUDIT MODAL -->
   <div id="admin-audit-modal" class="modal-overlay">
     <div class="modal-card" style="max-width: 580px;">
       <div class="modal-header">
@@ -500,8 +475,10 @@
           </div>
         </div>
         <div class="header-actions">
-          <!-- ADMIN DASHBOARD TRIGGER BUTTON (Only visible to anilkrishna385@gmail.com) -->
           <button id="admin-trigger-btn" class="icon-btn-round" style="display: none; border-color: var(--warning); color: var(--warning);" onclick="openAdminDashboard()" title="Open Admin Command Center">👑</button>
+          
+          <button class="icon-btn-round" onclick="openFriendRequestsModal()" title="Friend Requests">🤝</button>
+          <button class="icon-btn-round" onclick="openPrivacySettingsModal()" title="Privacy Settings">⚙️</button>
           
           <button class="icon-btn-round" onclick="openSearchModal()" title="Search">
             <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
@@ -628,6 +605,7 @@
         </div>
 
         <div id="tg-card-actions">
+          <button id="tg-action-friend-btn" class="btn-primary" style="margin-bottom: 8px;" onclick="handleSendFriendRequest()">🤝 Add Friend</button>
           <button id="tg-action-dm-btn" class="btn-primary" style="margin-bottom: 8px;">💬 Send Direct Message</button>
           <button id="tg-action-edit-btn" class="btn-secondary" style="margin-bottom: 8px; display: none;" onclick="openEditProfileModal()">✏️ Edit My Profile</button>
           <button id="tg-action-copy-btn" class="btn-secondary" onclick="copyUserHandle()">📋 Copy Username</button>
@@ -636,7 +614,7 @@
     </div>
   </div>
 
-  <!-- EDIT PROFILE MODAL (With Interactive Premium Avatar Studio) -->
+  <!-- EDIT PROFILE MODAL -->
   <div id="profile-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -707,7 +685,7 @@
     </div>
   </div>
 
-  <!-- SEARCH MODAL (Sticky Top Header — NEVER aligned to center!) -->
+  <!-- SEARCH MODAL -->
   <div id="search-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="sticky-search-header">
@@ -760,6 +738,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-storage-compat.min.js"></script>
 
   <script>
     // 1. FIREBASE CONFIGURATION (chatapp-8a75f)
@@ -776,6 +755,7 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+    const storage = firebase.storage();
 
     // App State, Cache & Unread Count Tracking
     let currentUser = null;
@@ -790,13 +770,11 @@
     const unreadMessageCounts = new Map();
     let typingStatusTimeout = null;
 
-    // Hardcoded Admin Verification
     const ADMIN_EMAIL = "anilkrishna385@gmail.com";
     function isSuperAdmin(email) {
       return email && email.toLowerCase() === ADMIN_EMAIL;
     }
 
-    // Password Visibility Toggle
     function togglePasswordVisibility(inputId, btnEl) {
       const input = document.getElementById(inputId);
       if (input.type === "password") {
@@ -861,7 +839,7 @@
       } catch (e) {}
     }
 
-    // Security Privacy Shield Handlers
+    // Security Privacy Shield
     function dismissPrivacyShield() {
       document.getElementById('privacy-shield').classList.remove('active');
     }
@@ -879,7 +857,6 @@
       }
     });
 
-    // Media & Voice Recording State
     let isRecording = false;
     let mediaRecorder = null;
     let audioChunks = [];
@@ -887,7 +864,6 @@
     let recordSeconds = 0;
     let discardRecording = false;
 
-    // Base64 Compression Helpers (~80 KB JPEG)
     function compressImageToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -930,7 +906,6 @@
       });
     }
 
-    // Custom Interactive Avatar Studio Handlers
     function updateDefaultStudioAvatar(gender, imgElementId) {
       const img = document.getElementById(imgElementId);
       const seedPrefix = gender === 'male' ? 'boy_' : (gender === 'female' ? 'girl_' : 'neutral_');
@@ -965,7 +940,6 @@
       document.getElementById(id).classList.remove('active');
     }
 
-    // Full-Screen Media Cinema Lightbox
     function openMediaLightbox(url, isVideo = false) {
       const modal = document.getElementById('fullscreen-media-modal');
       const imgEl = document.getElementById('lightbox-img-el');
@@ -993,14 +967,37 @@
       modal.classList.remove('active');
     }
 
-    // 2. AUTH & ACTIVE PRESENCE MONITOR (With Realtime Profile Snapshots)
+    // AUTO-INITIALIZE DEFAULT PUBLIC GROUPS ("Kerala chat room" & "Friends")
+    async function ensureDefaultPublicGroups() {
+      const pubGroups = [
+        { name: "Kerala chat room", handle: "@kerala_chat", desc: "Official Kerala chat room for everyone" },
+        { name: "Friends", handle: "@friends_group", desc: "Public group for friends and open chat" }
+      ];
+
+      for (let g of pubGroups) {
+        const snap = await db.collection("groups").where("handle", "==", g.handle).get();
+        if (snap.empty) {
+          await db.collection("groups").add({
+            name: g.name,
+            handle: g.handle,
+            description: g.desc,
+            isPrivate: false,
+            photoUrl: "https://api.dicebear.com/7.x/shapes/svg?seed=" + g.handle,
+            adminId: "system",
+            members: [currentUser ? currentUser.uid : "system"],
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      }
+    }
+
+    // 2. AUTH & ACTIVE PRESENCE MONITOR
     let myProfileUnsubscribe = null;
     auth.onAuthStateChanged(async (user) => {
       currentUser = user;
       if (user) {
         const userRef = db.collection("users").doc(user.uid);
         
-        // Listen to my own profile in real-time
         if (myProfileUnsubscribe) myProfileUnsubscribe();
         myProfileUnsubscribe = userRef.onSnapshot((docSnap) => {
           if (docSnap.exists) {
@@ -1018,7 +1015,6 @@
           }
         });
 
-        // Initialize doc if new
         const checkSnap = await userRef.get();
         if (!checkSnap.exists) {
           const initProfile = {
@@ -1029,6 +1025,9 @@
             bio: user.isAnonymous ? "Guest Session" : "Pulse Messenger User",
             photoUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=neutral_" + user.uid,
             isGuest: !!user.isAnonymous,
+            friends: [],
+            friendRequests: { received: [], sent: [] },
+            privacy: { whoCanMessage: 'anyone', avatarVisibility: 'everyone', lastSeenVisibility: 'everyone' },
             lastSeen: firebase.firestore.FieldValue.serverTimestamp()
           };
           await userRef.set(initProfile);
@@ -1041,6 +1040,8 @@
 
         document.getElementById('auth-screen').style.display = 'none';
         document.getElementById('app-shell').style.display = 'flex';
+
+        await ensureDefaultPublicGroups();
 
         const params = new URLSearchParams(window.location.search);
         const joinId = params.get('join');
@@ -1066,10 +1067,7 @@
       document.getElementById('toggle-auth-btn').textContent = isRegistering ? 'Already have an account? Log In' : 'New here? Create Account';
     });
 
-    // Forgot Password Reset Flow
-    function openForgotPasswordModal() {
-      openModal('forgot-pass-modal');
-    }
+    function openForgotPasswordModal() { openModal('forgot-pass-modal'); }
 
     async function sendPasswordResetLink() {
       const email = document.getElementById('reset-email-input').value.trim();
@@ -1086,10 +1084,7 @@
       }
     }
 
-    // Guest Login Modal & Gender Selection (Uses Background Temporary Account to bypass Firebase Anonymous restrictions)
-    function openGuestGenderModal() {
-      openModal('guest-gender-modal');
-    }
+    function openGuestGenderModal() { openModal('guest-gender-modal'); }
 
     async function proceedAsGuest() {
       const gender = document.getElementById('guest-gender-select').value;
@@ -1115,6 +1110,9 @@
           gender: gender,
           photoUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${seedPrefix}${uid}`,
           isGuest: true,
+          friends: [],
+          friendRequests: { received: [], sent: [] },
+          privacy: { whoCanMessage: 'anyone', avatarVisibility: 'everyone', lastSeenVisibility: 'everyone' },
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
         });
         showToast('Welcome Guest!');
@@ -1170,6 +1168,9 @@
             bio: bio,
             photoUrl: photoUrl,
             isGuest: false,
+            friends: [],
+            friendRequests: { received: [], sent: [] },
+            privacy: { whoCanMessage: 'anyone', avatarVisibility: 'everyone', lastSeenVisibility: 'everyone' },
             lastSeen: firebase.firestore.FieldValue.serverTimestamp()
           });
           showToast('Account created successfully!');
@@ -1182,7 +1183,105 @@
       }
     }
 
-    // 3. ADMIN SUPER-DASHBOARD (anilkrishna385@gmail.com exclusively)
+    // 3. FRIEND REQUEST SYSTEM & PRIVACY SETTINGS
+    function openPrivacySettingsModal() {
+      const p = myProfile?.privacy || { whoCanMessage: 'anyone', avatarVisibility: 'everyone', lastSeenVisibility: 'everyone' };
+      document.getElementById('privacy-msg-select').value = p.whoCanMessage || 'anyone';
+      document.getElementById('privacy-avatar-select').value = p.avatarVisibility || 'everyone';
+      document.getElementById('privacy-lastseen-select').value = p.lastSeenVisibility || 'everyone';
+      openModal('privacy-settings-modal');
+    }
+
+    async function savePrivacySettings() {
+      const whoMsg = document.getElementById('privacy-msg-select').value;
+      const avatarVis = document.getElementById('privacy-avatar-select').value;
+      const lastSeenVis = document.getElementById('privacy-lastseen-select').value;
+
+      await db.collection("users").doc(currentUser.uid).update({
+        privacy: { whoCanMessage: whoMsg, avatarVisibility: avatarVis, lastSeenVisibility: lastSeenVis }
+      });
+      closeModal('privacy-settings-modal');
+      showToast('Privacy settings saved!');
+    }
+
+    async function handleSendFriendRequest() {
+      if (!viewingProfileUser || viewingProfileUser.uid === currentUser.uid) return;
+      const targetUid = viewingProfileUser.uid;
+
+      if (myProfile?.friends?.includes(targetUid)) {
+        return showToast('You are already friends!', 'error');
+      }
+
+      await db.collection("users").doc(targetUid).update({
+        "friendRequests.received": firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
+      });
+      await db.collection("users").doc(currentUser.uid).update({
+        "friendRequests.sent": firebase.firestore.FieldValue.arrayUnion(targetUid)
+      });
+
+      showToast('🤝 Friend request sent to ' + viewingProfileUser.name + '!');
+    }
+
+    function openFriendRequestsModal() {
+      openModal('friend-requests-modal');
+      renderFriendRequests();
+    }
+
+    async function renderFriendRequests() {
+      const feed = document.getElementById('friend-requests-feed');
+      feed.innerHTML = '';
+
+      const reqIds = myProfile?.friendRequests?.received || [];
+      if (reqIds.length === 0) {
+        feed.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding:20px;">No pending friend requests.</div>';
+        return;
+      }
+
+      for (let uid of reqIds) {
+        const uDoc = await db.collection("users").doc(uid).get();
+        if (!uDoc.exists) continue;
+        const u = uDoc.data();
+
+        const row = document.createElement('div');
+        row.className = 'member-row';
+        row.innerHTML = `
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img src="${u.photoUrl}" class="avatar-icon" style="width:36px; height:36px;" />
+            <div>
+              <strong>${u.name}</strong><br><small style="color:var(--text-muted);">${u.username}</small>
+            </div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-primary" style="padding:6px 12px; font-size:12px;" onclick="acceptFriendRequest('${u.uid}')">Accept</button>
+            <button class="btn-secondary" style="padding:6px 12px; font-size:12px; margin:0;" onclick="declineFriendRequest('${u.uid}')">Decline</button>
+          </div>
+        `;
+        feed.appendChild(row);
+      }
+    }
+
+    async function acceptFriendRequest(senderUid) {
+      await db.collection("users").doc(currentUser.uid).update({
+        friends: firebase.firestore.FieldValue.arrayUnion(senderUid),
+        "friendRequests.received": firebase.firestore.FieldValue.arrayRemove(senderUid)
+      });
+      await db.collection("users").doc(senderUid).update({
+        friends: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+        "friendRequests.sent": firebase.firestore.FieldValue.arrayRemove(currentUser.uid)
+      });
+      showToast('🤝 Friend request accepted!');
+      renderFriendRequests();
+    }
+
+    async function declineFriendRequest(senderUid) {
+      await db.collection("users").doc(currentUser.uid).update({
+        "friendRequests.received": firebase.firestore.FieldValue.arrayRemove(senderUid)
+      });
+      showToast('Friend request declined.');
+      renderFriendRequests();
+    }
+
+    // 4. ADMIN SUPER-DASHBOARD (anilkrishna385@gmail.com)
     async function openAdminDashboard() {
       if (!isSuperAdmin(myProfile?.email)) {
         return showToast('⚠️ Unauthorized. Super-Admin credentials required.', 'error');
@@ -1225,7 +1324,6 @@
       });
     }
 
-    // Admin Account Deletion Power
     async function adminDeleteUserAccount(targetUid, userName) {
       if (!isSuperAdmin(myProfile?.email)) return;
       if (!confirm(`Are you sure you want to permanently delete user: ${userName}?`)) return;
@@ -1233,23 +1331,21 @@
       try {
         await db.collection("users").doc(targetUid).delete();
         showToast(`🗑️ Account for ${userName} deleted successfully!`);
-        openAdminDashboard(); // Refresh directory table
+        openAdminDashboard();
       } catch (err) {
         showToast('Error deleting user: ' + err.message, 'error');
       }
     }
 
-    // Admin Chat Audit / Surveillance Feed
-    let auditUnsubscribe = null;
+    // Comprehensive Admin Surveillance Feed (Texts, Images, Videos, Voice)
     async function adminInspectUserChats(targetUid, userName) {
       if (!isSuperAdmin(myProfile?.email)) return;
       document.getElementById('audit-target-name').textContent = userName;
       openModal('admin-audit-modal');
 
       const feedEl = document.getElementById('admin-audit-feed');
-      feedEl.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding:20px;">Scanning recent messages across all channels...</div>';
+      feedEl.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding:20px;">Scanning recent messages...</div>';
 
-      // Find all DMs involving target user
       const dmsSnap = await db.collection("dms").where("participants", "array-contains", targetUid).get();
       feedEl.innerHTML = '';
 
@@ -1258,10 +1354,9 @@
         return;
       }
 
-      // Display recent messages from the first active DM channel
       dmsSnap.forEach((doc) => {
         db.collection("dms").doc(doc.id).collection("messages")
-          .orderBy("createdAt", "desc").limit(15)
+          .orderBy("createdAt", "desc").limit(20)
           .get().then((msgSnap) => {
             msgSnap.forEach((mDoc) => {
               const m = mDoc.data();
@@ -1270,12 +1365,19 @@
               box.style.padding = "10px 14px";
               box.style.borderRadius = "12px";
               box.style.border = "1px solid var(--border)";
+
+              let mediaTag = '';
+              if (m.type === 'text') mediaTag = `<span>${escapeHtml(m.text)}</span>`;
+              else if (m.type === 'image') mediaTag = `<img src="${m.mediaUrl}" style="max-width:100%; max-height:160px; border-radius:8px; margin-top:4px;" />`;
+              else if (m.type === 'video') mediaTag = `<video src="${m.mediaUrl}" controls style="max-width:100%; max-height:160px; border-radius:8px; margin-top:4px;"></video>`;
+              else if (m.type === 'voice') mediaTag = `<audio src="${m.mediaUrl}" controls style="width:100%; height:30px; margin-top:4px;"></audio>`;
+
               box.innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--accent); margin-bottom:4px;">
+                <div style="display:flex; justify-space-between; font-size:11px; color:var(--accent); margin-bottom:4px;">
                   <span><strong>${escapeHtml(m.senderName || 'Unknown')}</strong> (${escapeHtml(m.senderHandle || '@user')})</span>
                   <span>${m.createdAt ? new Date(m.createdAt.toMillis()).toLocaleTimeString() : ''}</span>
                 </div>
-                <div style="font-size:13px; color:#fff;">${escapeHtml(m.text || '[' + (m.type || 'Media') + ']')}</div>
+                <div>${mediaTag}</div>
               `;
               feedEl.appendChild(box);
             });
@@ -1283,7 +1385,7 @@
       });
     }
 
-    // 4. TELEGRAM USER PROFILE CARD SYSTEM
+    // 5. TELEGRAM USER PROFILE CARD SYSTEM
     async function showUserProfile(userId) {
       let user = userCache.get(userId);
       if (!user) {
@@ -1294,17 +1396,35 @@
       }
       viewingProfileUser = user;
 
-      document.getElementById('tg-card-avatar').src = user.photoUrl;
+      const privacy = user.privacy || {};
+      const isFriend = myProfile?.friends?.includes(userId);
+      const isMe = userId === currentUser.uid;
+
+      // Respect Avatar Privacy Settings
+      if (!isMe && privacy.avatarVisibility === 'friends' && !isFriend) {
+        document.getElementById('tg-card-avatar').src = "https://api.dicebear.com/7.x/avataaars/svg?seed=hidden";
+      } else {
+        document.getElementById('tg-card-avatar').src = user.photoUrl;
+      }
+
       document.getElementById('tg-card-name').textContent = user.name;
       document.getElementById('tg-card-handle').textContent = user.username;
       document.getElementById('tg-card-bio').textContent = user.bio || 'No bio provided.';
       
-      const isActive = (Date.now() - (user.lastSeen?.toMillis() || 0)) < 180000;
       const statusEl = document.getElementById('tg-card-status');
-      statusEl.className = `telegram-status ${isActive ? 'active' : 'offline'}`;
-      statusEl.textContent = isActive ? '● Active Now' : '○ Offline';
+      if (!isMe && privacy.lastSeenVisibility === 'nobody') {
+        statusEl.textContent = "Last seen hidden";
+        statusEl.className = "telegram-status offline";
+      } else if (!isMe && privacy.lastSeenVisibility === 'friends' && !isFriend) {
+        statusEl.textContent = "Last seen hidden";
+        statusEl.className = "telegram-status offline";
+      } else {
+        const isActive = (Date.now() - (user.lastSeen?.toMillis() || 0)) < 180000;
+        statusEl.className = `telegram-status ${isActive ? 'active' : 'offline'}`;
+        statusEl.textContent = isActive ? '● Active Now' : '○ Offline';
+      }
 
-      const isMe = userId === currentUser.uid;
+      document.getElementById('tg-action-friend-btn').style.display = (isMe || isFriend) ? 'none' : 'block';
       document.getElementById('tg-action-dm-btn').style.display = isMe ? 'none' : 'block';
       document.getElementById('tg-action-edit-btn').style.display = isMe ? 'block' : 'none';
 
@@ -1358,7 +1478,7 @@
       showToast('Profile updated!');
     }
 
-    // 5. CONVERSATION FEED & TOTAL UNREAD BADGES
+    // 6. CONVERSATION FEED & UNREAD BADGES
     function switchTab(tabName) {
       currentTab = tabName;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1493,7 +1613,7 @@
       listEl.appendChild(li);
     }
 
-    // 6. MESSAGING, RECEIVER-ONLY WATER DROP SOUND & DISAPPEARING CLOCK
+    // 7. MESSAGING & MESSAGE RECEIPT TICKS (Sent, Delivered, Read)
     function selectConversation(item) {
       activeChat = item;
       unreadMessageCounts.set(item.id, 0);
@@ -1511,7 +1631,7 @@
       document.getElementById('room-peer-avatar').src = item.avatar;
       
       if (item.type === 'group') {
-        document.getElementById('room-peer-status').textContent = '👥 Tap for Group Info & Links';
+        document.getElementById('room-peer-status').textContent = '👥 Tap for Group Info & Members';
         document.getElementById('invite-btn').style.display = 'inline-block';
       } else {
         document.getElementById('room-peer-status').textContent = item.isActive ? '● Active Now' : '○ Offline';
@@ -1543,15 +1663,22 @@
 
             snapshot.forEach((doc) => {
               const msg = doc.data();
+              const msgId = doc.id;
               
               if (timer > 0 && msg.createdAt) {
                 const ageSecs = (Date.now() - msg.createdAt.toMillis()) / 1000;
                 if (ageSecs > timer) return;
               }
 
+              // Update Message Read Receipt Status to 'read' if active room
+              if (msg.senderId !== currentUser.uid && msg.status !== 'read') {
+                db.collection(collName).doc(item.id).collection('messages').doc(msgId).update({
+                  status: 'read'
+                });
+              }
+
               renderMessageBubble(msg);
               
-              // Receiver-Only Sound Guarantee
               if (!isInitialLoad && msg.senderId !== currentUser.uid) {
                 playDropletTone();
                 if (!activeChat || activeChat.id !== item.id) {
@@ -1626,7 +1753,16 @@
         content = `<div class="msg-audio-player"><audio controls src="${msg.mediaUrl}"></audio></div>`;
       }
 
-      div.innerHTML = senderTag + content;
+      // Render Ticks (Sent, Delivered, Read) for all message types!
+      let tickSymbol = '✓';
+      let tickClass = 'sent';
+      if (msg.status === 'delivered') { tickSymbol = '✓✓'; tickClass = 'delivered'; }
+      else if (msg.status === 'read') { tickSymbol = '✓✓'; tickClass = 'read'; }
+
+      const timeStr = msg.createdAt ? new Date(msg.createdAt.toMillis()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+      const metaFooter = `<div class="msg-footer-meta"><span>${timeStr}</span> ${isMe ? `<span class="msg-tick ${tickClass}">${tickSymbol}</span>` : ''}</div>`;
+
+      div.innerHTML = senderTag + content + metaFooter;
       feed.appendChild(div);
     }
 
@@ -1643,6 +1779,7 @@
       db.collection(collName).doc(activeChat.id).collection('messages').add({
         text: text,
         type: 'text',
+        status: 'sent',
         senderId: currentUser.uid,
         senderName: myProfile.name,
         senderHandle: myProfile.username,
@@ -1660,7 +1797,7 @@
     document.getElementById('send-text-btn').addEventListener('click', sendChatMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
-    // 7. SMART MEDIA PICKER & GUEST MEDIA RESTRICTIONS
+    // 8. MEDIA UPLOAD ENGINE (UP TO 50 MB VIDEO VIA STORAGE)
     async function uploadMessageMedia(mediaData, type) {
       if (!activeChat) return;
       try {
@@ -1668,6 +1805,7 @@
         await db.collection(collName).doc(activeChat.id).collection('messages').add({
           mediaUrl: mediaData,
           type: type,
+          status: 'sent',
           senderId: currentUser.uid,
           senderName: myProfile.name,
           senderHandle: myProfile.username,
@@ -1691,18 +1829,36 @@
       }
 
       if (currentUser && currentUser.isAnonymous) {
-        showToast('⚠️ Guest accounts cannot share photos or videos. Please log in or sign up!', 'error');
+        showToast('⚠️ Guest accounts cannot share media. Please log in!', 'error');
         return;
       }
 
       if (file.type.startsWith('video/')) {
-        if (file.size > 800000) {
-          return showToast('Video is too large for instant send. Please select a short clip under 800 KB', 'error');
+        // Enforce 50 MB Video Limit
+        if (file.size > 50 * 1024 * 1024) {
+          return showToast('⚠️ Video exceeds the maximum 50 MB size limit!', 'error');
         }
-        showToast('Sending short video clip...');
-        const base64Vid = await blobToBase64(file);
-        await uploadMessageMedia(base64Vid, 'video');
-        showToast('Video posted!');
+
+        showToast('Uploading video (Up to 50 MB)...');
+        try {
+          const fileRef = storage.ref().child(`chat_videos/${Date.now()}_${file.name}`);
+          const task = fileRef.put(file);
+          
+          task.on('state_changed', 
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              if (Math.round(progress) % 25 === 0) showToast(`Uploading video: ${Math.round(progress)}%`);
+            }, 
+            (err) => showToast('Video upload failed: ' + err.message, 'error'), 
+            async () => {
+              const downloadUrl = await task.snapshot.ref.getDownloadURL();
+              await uploadMessageMedia(downloadUrl, 'video');
+              showToast('Video uploaded and posted!');
+            }
+          );
+        } catch (err) {
+          showToast('Video error: ' + err.message, 'error');
+        }
       } else {
         showToast('Processing photo...');
         const base64Img = await compressImageToBase64(file);
@@ -1741,7 +1897,7 @@
       if (!activeChat) return showToast('Select a conversation first!', 'error');
 
       if (currentUser && currentUser.isAnonymous) {
-        showToast('⚠️ Guest accounts cannot send voice notes. Please log in or sign up!', 'error');
+        showToast('⚠️ Guest accounts cannot send voice notes. Please log in!', 'error');
         return;
       }
 
@@ -1807,7 +1963,7 @@
       }
     });
 
-    // 8. STICKY TOP EXACT-PREFIX MATCHING SEARCH
+    // 9. DIRECTORY SEARCH & EXACT-PREFIX MATCHING
     function openSearchModal() { openModal('search-modal'); }
 
     async function executeSearch(query) {
@@ -1862,7 +2018,7 @@
       });
     }
 
-    // 9. PUBLIC VS PRIVATE GROUP CREATION & REVOKABLE LINKS
+    // 10. PUBLIC VS PRIVATE GROUP CREATION & REVOKABLE LINKS
     function openCreateGroupModal() {
       setGroupPrivacyMode(false);
       openModal('create-group-modal');
@@ -1956,6 +2112,7 @@
       showToast('Old link revoked! New invite link generated.');
     }
 
+    // Group Member Directory with Formatted Last Seen Timestamps
     async function handleHeaderClick() {
       if (!activeChat) return;
       if (activeChat.type === 'dm') {
@@ -1991,6 +2148,7 @@
         }
 
         const isActive = (Date.now() - (u.lastSeen?.toMillis() || 0)) < 180000;
+        const lastSeenStr = u.lastSeen ? new Date(u.lastSeen.toMillis()).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : 'Recently';
         const isAdmin = memberId === grp.adminId;
 
         const div = document.createElement('div');
@@ -2000,7 +2158,7 @@
             <img src="${u.photoUrl}" class="avatar-icon" style="width:38px; height:38px;" />
             <div>
               <strong>${u.name} ${isAdmin ? '<span style="color:var(--accent); font-size:11px;">(Admin)</span>' : ''}</strong>
-              <br><small style="color:var(--text-muted);">${u.username}</small>
+              <br><small style="color:var(--text-muted);">${u.username} • Last seen: ${lastSeenStr}</small>
             </div>
           </div>
           <div>
@@ -2028,7 +2186,25 @@
       showToast('Admin updated group settings!');
     }
 
+    // DM Initiation with Privacy Check ("Only Friends")
     async function startDirectChat(peerId, peerName, peerAvatar) {
+      let peerUser = userCache.get(peerId);
+      if (!peerUser) {
+        const uDoc = await db.collection("users").doc(peerId).get();
+        if (uDoc.exists) {
+          peerUser = uDoc.data();
+          userCache.set(peerId, peerUser);
+        }
+      }
+
+      // Check Target User's Messaging Privacy Rule
+      const privacy = peerUser?.privacy || {};
+      const isFriend = myProfile?.friends?.includes(peerId);
+
+      if (privacy.whoCanMessage === 'friends' && !isFriend && peerId !== currentUser.uid) {
+        return showToast('⚠️ This user only accepts direct messages from friends.', 'error');
+      }
+
       const dmId = [currentUser.uid, peerId].sort().join('_');
       const dmRef = db.collection("dms").doc(dmId);
       const snap = await dmRef.get();
